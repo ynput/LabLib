@@ -32,3 +32,6 @@ vendor/
 resources/private/
 results/
 
+
+.poetry/
+.python-version

@@ -15,7 +15,13 @@ from selenium.webdriver.common.by import By
 
 import PyOpenColorIO as OCIO
 
-from . import utils, operators as ops
+from ..operators import (
+    OCIOFileTransform,
+    OCIOCDLTransform,
+    OCIOColorSpace,
+)
+
+from .. import utils, operators as ops
 
 
 @dataclass
@@ -47,7 +53,9 @@ class EffectsFileProcessor:
         self._repo_ops = []
 
     def __post_init__(self) -> None:
-        self._wrapper_class_members = dict(inspect.getmembers(ops, inspect.isclass))
+        self._wrapper_class_members = dict(
+            inspect.getmembers(ops, inspect.isclass))
+        print(self._wrapper_class_members.keys())
         self._color_ops: List = []
         self._repo_ops: List = []
         self._class_search_key: str = "class"
@@ -90,7 +98,8 @@ class EffectsFileProcessor:
 
     def _get_operator_sanitized(self, op: Any, data: Dict) -> Any:
         # sanitize for different source data structures.
-        # fix for nuke vs ocio, cdl transform should not have a src field by ocio specs
+        # fix for nuke vs ocio, cdl transform should not have a src field by
+        # OCIO specs
         if "CDL" in op.__name__:
             del data["src"]
         return op(**data)
@@ -116,29 +125,24 @@ class EffectsFileProcessor:
         with open(self.src, "r") as f:
             ops_data = json.load(f)
 
-        ocio_nodes = []
-        repo_nodes = []
-        for value in ops_data.values():
+        all_ops = list(ops_data.values())
+        all_ops.sort(key=lambda op: op[self._index_search_key])
+
+        ops_objs = []
+        for value in all_ops:
             if not isinstance(value, dict):
                 continue
 
-            class_name = "{}Transform".format(
-                value[self._class_search_key]
-                .replace("OCIO", "")
-                .replace("Transform", "")
-            )
+            class_name = value["class"]
             if class_name in self._wrapper_class_members:
-                ocio_nodes.append(value)
+                ops_objs.append(value)
 
-            elif "Repo{}".format(class_name) in self._wrapper_class_members:
-                repo_nodes.append(value)
-
-        ocio_nodes.sort(key=lambda d: d[self._index_search_key])
-        repo_nodes.sort(key=lambda d: d[self._index_search_key])
-        for c in ocio_nodes:
-            self._color_ops.append(self._get_operator(c))
-        for c in repo_nodes:
-            self._repo_ops.append(self._get_operator(c))
+        for ops_obj in ops_objs:
+            if isinstance(ops_obj, (
+                    OCIOFileTransform, OCIOCDLTransform, OCIOColorSpace)):
+                self._color_ops.append(self._get_operator(c))
+            else:
+                self._repo_ops.append(self._get_operator(c))
 
     def clear_operators(self) -> None:
         self.color_ops = []
@@ -184,42 +188,6 @@ class ColorProcessor:
         self._ocio_search_paths: List = []
         self._ocio_config_name: str = "config.ocio"
         self._dest_path: str = None
-
-    # @property
-    # def operators(self) -> None:
-    #     return self.operators
-    #
-    # @operators.setter
-    # def operators(self, *args) -> None:
-    #     self.set_operators(*args)
-    #
-    # @operators.deleter
-    # def operators(self) -> None:
-    #     self.clear_operators()
-    #
-    # @property
-    # def views(self) -> List:
-    #     return self._views
-    #
-    # @views.setter
-    # def views(self, *args: Union[str, List[str]]) -> None:
-    #     self.set_views(*args)
-    #
-    # @views.deleter
-    # def views(self) -> None:
-    #     self.clear_views()
-    #
-    # @property
-    # def vars(self) -> List:
-    #     return self._vars
-    #
-    # @vars.setter
-    # def vars(self, var_dict: Dict) -> None:
-    #     self.set_vars(**var_dict)
-    #
-    # @vars.deleter
-    # def vars(self) -> None:
-    #     self.clear_vars()
 
     def set_ocio_config_name(self, name: str) -> None:
         self._ocio_config_name = name
@@ -345,10 +313,13 @@ class ColorProcessor:
         cspace.setName(self.context)
         cspace.setFamily(self.family)
         cspace.setTransform(
-            group_transform, OCIO.ColorSpaceDirection.COLORSPACE_DIR_FROM_REFERENCE
+            group_transform,
+            OCIO.ColorSpaceDirection.COLORSPACE_DIR_FROM_REFERENCE
         )
         look = OCIO.Look(
-            name=self.context, processSpace=self.working_space, transform=look_transform
+            name=self.context,
+            processSpace=self.working_space,
+            transform=look_transform
         )
         self._ocio_config.addColorSpace(cspace)
         self._ocio_config.addLook(look)
@@ -364,7 +335,9 @@ class ColorProcessor:
         else:
             views_value = ",".join(self._views)
 
-        self._ocio_config.setActiveViews("{},{}".format(self.context, views_value))
+        self._ocio_config.setActiveViews(
+            f"{self.context},{views_value}"
+        )
         self._ocio_config.validate()
 
     def write_config(self, dest: str = None) -> str:
@@ -399,8 +372,9 @@ class ColorProcessor:
         return [
             "--colorconfig",
             self._dest_path,
-            '--ociolook:from="{}":to="{}"'.format(
-                self.working_space, self.working_space
+            (
+                f"--ociolook:from=\"{self.working_space}\""
+                f":to=\"{self.working_space}\""
             ),
             self.context,
         ]
