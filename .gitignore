@@ -32,3 +32,5 @@ vendor/
 resources/private/
 results/
 
+
+.poetry/
