@@ -3,7 +3,6 @@ from copy import deepcopy
 from pathlib import Path
 import re
 import subprocess
-from typing import List
 
 import opentimelineio.opentime as opentime
 
@@ -40,7 +39,8 @@ class ImageInfo(BaseOperator):
     def update(self, force_ffprobe=True):
         """Update ImageInfo from a given file path.
         NOTE: force_ffprobe overrides iinfo values with ffprobe values.
-              It's used since they report different framerates for testing exr files.
+              It's used since they report different framerates for testing exr
+              files.
         """
         iinfo_res = llu.call_iinfo(self.filepath)
         ffprobe_res = llu.call_ffprobe(self.filepath)
