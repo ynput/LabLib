@@ -1,5 +1,5 @@
-from lablib import utils
-from lablib.operators import BaseOperator, ImageInfo, SequenceInfo
+from . import utils
+from .operators import BaseOperator, ImageInfo, SequenceInfo
 
 __all__ = [
     "utils",

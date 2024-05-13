@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 from typing import Dict, List, Optional
 
-from lablib.operators import BaseOperator, ImageInfo
+from . import BaseOperator, ImageInfo
 
 
 class SequenceInfo(BaseOperator):

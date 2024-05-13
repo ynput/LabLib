@@ -4,7 +4,7 @@ from typing import List, Union
 
 import PyOpenColorIO as ocio
 
-from lablib.operators import BaseOperator
+from . import BaseOperator
 
 
 class LUTFileTransform(BaseOperator):

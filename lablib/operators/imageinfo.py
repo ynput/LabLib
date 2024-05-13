@@ -7,8 +7,8 @@ from typing import List
 
 import opentimelineio.opentime as opentime
 
-from lablib.operators import BaseOperator
-import lablib.utils as llu
+from . import BaseOperator
+from .. import utils as llu
 
 
 DEFAULTS = {

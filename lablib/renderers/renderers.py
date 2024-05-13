@@ -7,9 +7,9 @@ from typing import List
 
 from pathlib import Path
 
-from .utils import read_image_info, offset_timecode
-from .processors import ColorProcessor, RepoProcessor, SlateProcessor
-from .operators import SequenceInfo
+from ..utils import read_image_info, offset_timecode
+from ..processors import ColorProcessor, RepoProcessor, SlateProcessor
+from ..operators import SequenceInfo
 
 
 @dataclass

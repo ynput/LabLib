@@ -16,6 +16,7 @@ from selenium.webdriver.common.by import By
 import PyOpenColorIO as OCIO
 
 from . import utils, operators as ops
+from .. import utils, operators as ops
 
 
 @dataclass
