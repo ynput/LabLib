@@ -9,8 +9,8 @@ from .color import (
 from .repositions import (
     Transform,
     Crop,
-    Resize,
-    CornerPin,
+    Mirror2,
+    CornerPin2D,
 )
 
 __all__ = [
@@ -22,6 +22,6 @@ __all__ = [
     "OCIOFileTransform",
     "Transform",
     "Crop",
-    "Resize",
-    "CornerPin",
+    "Mirror2",
+    "CornerPin2D",
 ]
