@@ -1,9 +1,28 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
-import PyOpenColorIO as ocio
+import PyOpenColorIO as OCIO
 
+
+def get_direction(direction: Union[str, int]) -> int:
+    if direction == "inverse":
+        return OCIO.TransformDirection.TRANSFORM_DIR_INVERSE
+    return OCIO.TransformDirection.TRANSFORM_DIR_FORWARD
+
+
+def get_interpolation(interpolation: str) -> int:
+    if interpolation == "linear":
+        return OCIO.Interpolation.INTERP_LINEAR
+    elif interpolation == "best":
+        return OCIO.Interpolation.INTERP_BEST
+    elif interpolation == "nearest":
+        return OCIO.Interpolation.INTERP_NEAREST
+    elif interpolation == "tetrahedral":
+        return OCIO.Interpolation.INTERP_TETRAHEDRAL
+    elif interpolation == "cubic":
+        return OCIO.Interpolation.INTERP_CUBIC
+    return OCIO.Interpolation.INTERP_DEFAULT
 
 @dataclass
 class OCIOFileTransform:
@@ -13,19 +32,25 @@ class OCIOFileTransform:
     interpolation: str = "linear"
 
     def to_ocio_obj(self):
+        # define direction
+        direction = get_direction(self.direction)
+
+        # define interpolation
+        interpolation = get_interpolation(self.interpolation)
+
         return [
-            ocio.FileTransform(
+            OCIO.FileTransform(
                 src=Path(self.file).as_posix(),
-                cccid=self.cccid,
-                interpolation=self.interpolation,
-                direction=self.direction,
+                cccId=self.cccid,
+                direction=direction,
+                interpolation=interpolation,
             )
         ]
 
     @classmethod
     def from_node_data(cls, data):
         return cls(
-            src=data.get("file", ""),
+            file=data.get("file", ""),
             cccid=data.get("cccid", ""),
             direction=data.get("direction", 0),
             interpolation=data.get("interpolation", "linear")
@@ -39,7 +64,7 @@ class OCIOColorSpace:
 
     def to_ocio_obj(self):
         return [
-            ocio.ColorSpaceTransform(
+            OCIO.ColorSpaceTransform(
                 src=self.in_colorspace,
                 dst=self.out_colorspace,
             )
@@ -48,42 +73,69 @@ class OCIOColorSpace:
     @classmethod
     def from_node_data(cls, data):
         return cls(
-            src=data.get("in_colorspace", ""),
-            dst=data.get("out_colorspace", ""),
+            in_colorspace=data.get("in_colorspace", ""),
+            out_colorspace=data.get("out_colorspace", ""),
         )
 
 
 @dataclass
 class OCIOCDLTransform:
-    file: str = ""
+    file: Optional[str] = None
     direction: int = 0
     offset: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
     power: List[float] = field(default_factory=lambda: [1.0, 1.0, 1.0])
     slope: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
     saturation: float = 1.0
+    interpolation: str = "linear"
 
     def to_ocio_obj(self):
         effects = []
-        lut_file = Path(self.file)
 
-        # add LUT file file attr was used
-        if lut_file.exists():
+        # define direction
+        direction = get_direction(self.direction)
+
+        if self.file:
+            # define interpolation
+            interpolation = get_interpolation(self.interpolation)
+            lut_file = Path(self.file)
+
             effects.append(
-                ocio.FileTransform(
+                OCIO.FileTransform(
                     src=lut_file.as_posix(),
-                    interpolation="linear",
-                    direction=self.direction,
+                    interpolation=interpolation,
+                    direction=direction,
                 )
             )
 
         effects.append(
-            ocio.CDLTransform(
+            OCIO.CDLTransform(
                 slope=self.slope,
                 offset=self.offset,
                 power=self.power,
                 sat=self.saturation,
-                direction=self.direction,
+                direction=direction,
             )
         )
 
         return effects
+
+    @classmethod
+    def from_node_data(cls, data):
+        if data.get("file"):
+            return cls(
+                file=data.get("file", ""),
+                interpolation=data.get("interpolation", "linear"),
+                direction=data.get("direction", 0),
+                offset=data.get("offset", [0.0, 0.0, 0.0]),
+                power=data.get("power", [1.0, 1.0, 1.0]),
+                slope=data.get("slope", [0.0, 0.0, 0.0]),
+                saturation=data.get("saturation", 1.0),
+            )
+        else:
+            return cls(
+                direction=data.get("direction", 0),
+                offset=data.get("offset", [0.0, 0.0, 0.0]),
+                power=data.get("power", [1.0, 1.0, 1.0]),
+                slope=data.get("slope", [0.0, 0.0, 0.0]),
+                saturation=data.get("saturation", 1.0),
+            )

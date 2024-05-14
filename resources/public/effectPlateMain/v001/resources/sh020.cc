@@ -1,0 +1,1 @@
+<ColorCorrection id=""><SOPNode><Description></Description><Slope>1.018 1.0155 1.06</Slope><Offset>-0.039 -0.039 -0.039</Offset><Power>0.88 0.8375 0.7973</Power></SOPNode><SatNode><Saturation>1</Saturation></SatNode></ColorCorrection>
