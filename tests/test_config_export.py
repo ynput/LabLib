@@ -38,25 +38,28 @@ with open(DATA_PATH, "r") as f:
 def test_EffectsFileProcessor(path: str):
     path = Path(path)
     effect_processor = AYONHieroEffectsFileProcessor(path)
+    effect_processor.load()
+
     log.info(effect_processor.color_operators)
-    assert effect_processor.src == path
-    assert len(effect_processor.color_operators) == 4
+    assert effect_processor.filepath == path
+    # 5 because CDLTransform is converted into CDLTransform and FileTransform
+    assert len(effect_processor.color_operators) == 5
 
 
-# # Compute Effects file from AYON
-# epr = EffectsFileProcessor(EFFECT_PATH)
+# Compute Effects file from AYON
+epr = AYONHieroEffectsFileProcessor(EFFECT_PATH)
 
-# # Compute color transformations
-# color_processor = OCIOConfigFileProcessor(
-#     operators=epr.color_operators,
-#     staging_dir=STAGING_DIR,
-#     context=working_data["asset"],
-#     family=working_data["project"]["code"],
-#     views=["sRGB", "Rec.709", "Log", "Raw"],
-# )
+# Compute color transformations
+ocio_config_processor = OCIOConfigFileProcessor(
+    operators=epr.color_operators,
+    staging_dir=STAGING_DIR,
+    context=working_data["asset"],
+    family=working_data["project"]["code"],
+    views=["sRGB", "Rec.709", "Log", "Raw"],
+)
 
-# color_processor.create_config()
+ocio_config_processor.create_config()
 
-# color_cmd = color_processor.get_oiiotool_cmd()
+color_cmd = ocio_config_processor.get_oiiotool_cmd()
 
-# print(color_cmd)
+print(color_cmd)

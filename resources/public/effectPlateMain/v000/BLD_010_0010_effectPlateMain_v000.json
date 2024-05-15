@@ -30,9 +30,9 @@
             "name": "OCIOCDLTransform5",
             "note_font_color": 0,
             "offset": [
-                0.0,
-                0.0,
-                0.0
+                0.1,
+                0.4,
+                -0.2
             ],
             "offset_panelDropped": false,
             "onCreate": "",
@@ -40,19 +40,19 @@
             "panel": null,
             "postage_stamp": false,
             "power": [
-                1.0,
-                1.0,
-                1.0
+                0.1,
+                1.1,
+                1.5
             ],
             "power_panelDropped": false,
             "read_from_file": true,
             "reload": "",
             "rootNodeUpdated": "",
-            "saturation": 1.0,
+            "saturation": 0.85,
             "selected": true,
             "slope": [
-                1.0,
-                1.0,
+                0.98,
+                0.8,
                 1.0
             ],
             "slope_panelDropped": false,

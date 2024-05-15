@@ -142,19 +142,7 @@ class OCIOConfigFileProcessor:
 
     def process_config(self) -> None:
         for op in self.operators:
-            props = vars(op)
-            if props.get("direction"):
-                props["direction"] = OCIO.TransformDirection.TRANSFORM_DIR_INVERSE
-            else:
-                props["direction"] = OCIO.TransformDirection.TRANSFORM_DIR_FORWARD
-            ocio_class_name = getattr(OCIO, op.__class__.__name__)
-
-            if props.get("src"):
-                op_path = Path(props["src"]).resolve()
-                if op_path.is_file():
-                    props["src"] = op_path.name
-
-            self._ocio_transforms.append(ocio_class_name(**props))
+            self._ocio_transforms.append(op)
 
         for k, v in self._vars.items():
             self._ocio_config.addEnvironmentVar(k, v)
@@ -164,10 +152,10 @@ class OCIOConfigFileProcessor:
         look_transform = OCIO.ColorSpaceTransform(
             src=self.working_space, dst=self.context
         )
-        cspace = OCIO.ColorSpace()
-        cspace.setName(self.context)
-        cspace.setFamily(self.family)
-        cspace.setTransform(
+        colorspace = OCIO.ColorSpace()
+        colorspace.setName(self.context)
+        colorspace.setFamily(self.family)
+        colorspace.setTransform(
             group_transform,
             OCIO.ColorSpaceDirection.COLORSPACE_DIR_FROM_REFERENCE
         )
@@ -176,7 +164,7 @@ class OCIOConfigFileProcessor:
             processSpace=self.working_space,
             transform=look_transform
         )
-        self._ocio_config.addColorSpace(cspace)
+        self._ocio_config.addColorSpace(colorspace)
         self._ocio_config.addLook(look)
         self._ocio_config.addDisplayView(
             self._ocio_config.getActiveDisplays().split(",")[0],

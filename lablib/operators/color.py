@@ -82,6 +82,7 @@ class OCIOColorSpace:
 class OCIOCDLTransform:
     file: Optional[str] = None
     direction: int = 0
+    cccid: str = ""
     offset: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
     power: List[float] = field(default_factory=lambda: [1.0, 1.0, 1.0])
     slope: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
@@ -102,6 +103,7 @@ class OCIOCDLTransform:
             effects.append(
                 OCIO.FileTransform(
                     src=lut_file.as_posix(),
+                    cccId=self.cccid,
                     interpolation=interpolation,
                     direction=direction,
                 )
@@ -130,6 +132,7 @@ class OCIOCDLTransform:
                 power=data.get("power", [1.0, 1.0, 1.0]),
                 slope=data.get("slope", [0.0, 0.0, 0.0]),
                 saturation=data.get("saturation", 1.0),
+                cccid=data.get("cccid", ""),
             )
         else:
             return cls(

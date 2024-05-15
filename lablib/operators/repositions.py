@@ -89,7 +89,7 @@ class CornerPin2D:
 
     def to_oiio_args(self):
         # TODO: use matrix operation from utils.py
-        pass
+        return []
 
     @classmethod
     def from_node_data(cls, data):
