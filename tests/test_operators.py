@@ -32,7 +32,7 @@ def test_ImageInfo(path: str):
 
 def test_single_frame_sequence():
     path = Path("resources/public/plateMain/v000")
-    seq_info = SequenceInfo.scan(path)
+    seq_info = SequenceInfo.scan(path)[0]
     log.info(f"{seq_info = }")
     print(seq_info)
     assert seq_info.path == path
@@ -45,7 +45,7 @@ def test_single_frame_sequence():
 
 def test_SequenceInfo_missing_frames():
     path = Path("resources/public/plateMain/v001")
-    seq_info = SequenceInfo.scan(path)
+    seq_info = SequenceInfo.scan(path)[0]
     log.info(f"{seq_info = }")
     assert seq_info.path == path
     assert seq_info.start_frame == 1001

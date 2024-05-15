@@ -264,8 +264,10 @@ class SequenceInfo(ImageIOBase):
                 files_map[seq_key] = []
             files_map[seq_key].append(ImageInfo(item))
 
-        for seq_files in files_map.values():
-            return cls(path=seq_key.parent, imageinfos=seq_files)
+        return [
+            cls(path=seq_key.parent, imageinfos=seq_files)
+            for seq_key, seq_files in files_map.items()
+        ]
 
     def update(self, **kwargs):
         if kwargs.get("path"):
