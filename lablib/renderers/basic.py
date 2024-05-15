@@ -7,15 +7,17 @@ from typing import List
 
 from pathlib import Path
 
-from ..utils import read_image_info, offset_timecode
-from ..processors import ColorProcessor, RepoProcessor, SlateProcessor
+from ..processors import (
+    OCIOConfigFileProcessor,
+    OIIORepositionProcessor,
+)
 from ..operators import SequenceInfo
 
 
 @dataclass
-class DefaultRenderer:
-    color_proc: ColorProcessor = None
-    repo_proc: RepoProcessor = None
+class BasicRenderer:
+    color_proc: OCIOConfigFileProcessor = None
+    repo_proc: OIIORepositionProcessor = None
     source_sequence: SequenceInfo = None
     staging_dir: str = None
     name: str = None
@@ -34,10 +36,10 @@ class DefaultRenderer:
             shutil.rmtree(render_staging_dir.as_posix(), ignore_errors=True)
             render_staging_dir.mkdir(parents=True, exist_ok=True)
 
-    def set_color_processor(self, processor: ColorProcessor) -> None:
+    def set_color_processor(self, processor: OCIOConfigFileProcessor) -> None:
         self.color_proc = processor
 
-    def set_repo_processor(self, processor: RepoProcessor) -> None:
+    def set_repo_processor(self, processor: OIIORepositionProcessor) -> None:
         self.repo_proc = processor
 
     def set_debug(self, debug: bool) -> None:
@@ -59,6 +61,8 @@ class DefaultRenderer:
         if not self.color_proc and not self.repo_proc:
             raise ValueError("Missing both valid Processors!")
         self.setup_staging_dir()
+        # TODO: we should add OIIOTOOL required version into pyproject.toml
+        #       since we are using treaded version of OIIOTOOL
         cmd = [
             "oiiotool",
             "-i",
@@ -119,6 +123,7 @@ class DefaultRenderer:
         if in_args:
             cmd.extend(in_args)
         cmd.extend(["-i", src])
+        # QUESTION: shouldn't we add cornerpin optionally?
         cmd.extend(
             [
                 "-vf",
@@ -147,64 +152,3 @@ class DefaultRenderer:
         subprocess.run(cmd)
         result = SequenceInfo()
         return result.compute_longest(Path(dst).resolve().parent.as_posix())
-
-
-@dataclass
-class DefaultSlateRenderer:
-    slate_proc: SlateProcessor = None
-    source_sequence: SequenceInfo = None
-    dest: str = None
-
-    def __post_init__(self) -> None:
-        self._thumbs: List = None
-        self._debug: bool = False
-        self._command: List = []
-        if self.source_sequence:
-            self.set_source_sequence(self.source_sequence)
-            self.slate_proc.source_files = self.source_sequence.frames
-        if self.dest:
-            self.set_destination(self.dest)
-
-    def set_slate_processor(self, processor: SlateProcessor) -> None:
-        self.slate_proc = processor
-
-    def set_debug(self, debug: bool) -> None:
-        self._debug = debug
-
-    def set_source_sequence(self, source_sequence: SequenceInfo) -> None:
-        self.source_sequence = source_sequence
-        head, frame, tail = source_sequence._get_file_splits(source_sequence.frames[0])
-        self.dest = "{}{}{}".format(
-            head, str(int(frame) - 1).zfill(source_sequence.padding), tail
-        )
-
-    def set_destination(self, dest: str) -> None:
-        self.dest = dest
-
-    def render(self) -> None:
-        first_frame = read_image_info(self.source_sequence.frames[0])
-        timecode = offset_timecode(
-            tc=first_frame.timecode, frame_offset=-1, fps=first_frame.fps
-        )
-        self.slate_proc.create_base_slate()
-        if not self.slate_proc:
-            raise ValueError("Missing valid SlateProcessor!")
-        cmd = ["oiiotool"]
-        cmd.extend(self.slate_proc.get_oiiotool_cmd())
-        cmd.extend(
-            [
-                "--ch",
-                "R,G,B",
-                "--attrib:type=timecode",
-                "smpte:TimeCode",
-                "'{}'".format(timecode.replace('"', "")),
-            ]
-        )
-        if self._debug:
-            cmd.extend(["--debug", "-v"])
-        cmd.extend(["-o", self.dest])
-        self._command = cmd
-        subprocess.run(cmd)
-        slate_base_image_path = Path(self.slate_proc._slate_base_image_path).resolve()
-        slate_base_image_path.unlink()
-        shutil.rmtree(slate_base_image_path.parent)
