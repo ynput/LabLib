@@ -3,9 +3,9 @@ import logging
 import pytest
 from pathlib import Path
 
-from lablib.processors import (
-    EffectsFileProcessor,
-    ColorProcessor,
+from lablib import (
+    AYONHieroEffectsFileProcessor,
+    OCIOConfigFileProcessor,
 )
 
 log = logging.getLogger(__name__)
@@ -35,7 +35,8 @@ with open(DATA_PATH, "r") as f:
 )
 def test_EffectsFileProcessor(path: str):
     path = Path(path)
-    effect_processor = EffectsFileProcessor(path)
+    effect_processor = AYONHieroEffectsFileProcessor(path)
+    log.info(effect_processor.color_operators)
     assert effect_processor.src == path
     assert len(effect_processor.color_operators) == 4
 
