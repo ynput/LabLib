@@ -4,6 +4,8 @@ from typing import List, Optional, Union
 
 import PyOpenColorIO as OCIO
 
+from ..lib.imageio import ImageIOBase
+
 
 def get_direction(direction: Union[str, int]) -> int:
     if direction == "inverse":
@@ -24,37 +26,61 @@ def get_interpolation(interpolation: str) -> int:
         return OCIO.Interpolation.INTERP_CUBIC
     return OCIO.Interpolation.INTERP_DEFAULT
 
-@dataclass
-class OCIOFileTransform:
-    file: str = ""
-    cccid: str = ""
-    direction: int = 0
-    interpolation: str = "linear"
 
-    def to_ocio_obj(self):
-        # define direction
-        direction = get_direction(self.direction)
+class OCIOFileTransform(ImageIOBase):
+    _ocio_obj: OCIO.FileTransform = OCIO.FileTransform()
 
-        # define interpolation
-        interpolation = get_interpolation(self.interpolation)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
-        return [
-            OCIO.FileTransform(
-                src=Path(self.file).as_posix(),
-                cccId=self.cccid,
-                direction=direction,
-                interpolation=interpolation,
-            )
-        ]
+        if not kwargs.get("file"):
+            raise ValueError("file is required")
+        self.path = kwargs["file"]
 
-    @classmethod
-    def from_node_data(cls, data):
-        return cls(
-            file=data.get("file", ""),
-            cccid=data.get("cccid", ""),
-            direction=data.get("direction", 0),
-            interpolation=data.get("interpolation", "linear")
-        )
+        self.log.info(f"{self._ocio_obj = }")
+        self.log.info(f"{dir(self._ocio_obj) = }")
+
+    @property
+    def source(self):
+        return self.path
+
+    @source.setter
+    def source(self, value: str):
+        self.path = value
+        self._ocio_obj.setSrc(value)
+
+    @property
+    def file(self):
+        return self._ocio_obj.getSrc()
+
+    @file.setter
+    def file(self, value: str):
+        self.source = value
+
+    @property
+    def cccid(self):
+        return self._ocio_obj.getCCCId()
+
+    @cccid.setter
+    def cccid(self, value: str):
+        self._ocio_obj.setCCCId(value)
+
+    @property
+    def direction(self):
+        self.log.debug(f"{self._ocio_obj.getDirection() = }")
+        return self._ocio_obj.getDirection()
+
+    @direction.setter
+    def direction(self, value: str):
+        self._ocio_obj.setDirection(get_direction(value))
+
+    @property
+    def interpolation(self):
+        return self._ocio_obj.getInterpolation()
+
+    @interpolation.setter
+    def interpolation(self, value: str):
+        self._ocio_obj.setInterpolation(get_interpolation(value))
 
 
 @dataclass

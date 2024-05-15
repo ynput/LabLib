@@ -25,16 +25,15 @@ log.setLevel(logging.DEBUG)
     ],
 )
 def test_OCIOFileTransform(data: dict):
-    lut_file = Path(data["file"]).as_posix()
-    lut = OCIOFileTransform.from_node_data(data)
-    lut_obj = lut.to_ocio_obj()
+    lut_file = Path(data["file"])
+    lut = OCIOFileTransform(**data)
     expected_direction = OCIO.TransformDirection.TRANSFORM_DIR_FORWARD
     expected_interpolation = OCIO.Interpolation.INTERP_LINEAR
-    assert len(lut_obj) == 1
-    assert lut_obj[0].getSrc() == lut_file
-    assert lut_obj[0].getCCCId() == "TEST_CCCID"
-    assert lut_obj[0].getDirection() == expected_direction
-    assert lut_obj[0].getInterpolation() == expected_interpolation
+    assert lut.path == lut_file
+    assert lut.file == lut_file.as_posix()
+    assert lut.cccid == "TEST_CCCID"
+    assert lut.direction == expected_direction
+    assert lut.interpolation == expected_interpolation
 
     log.info(f"{lut = }")
 
