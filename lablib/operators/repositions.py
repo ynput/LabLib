@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from lablib.utils import flip_matrix
+from lablib.lib.utils import flip_matrix
 
 
 @dataclass

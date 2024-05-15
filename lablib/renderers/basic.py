@@ -11,7 +11,7 @@ from ..processors import (
     OCIOConfigFileProcessor,
     OIIORepositionProcessor,
 )
-from ..operators import SequenceInfo
+from ..lib import SequenceInfo
 
 
 @dataclass
