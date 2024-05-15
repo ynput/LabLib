@@ -30,11 +30,8 @@ class ImageIOBase:
     log = logging.getLogger(__name__)
     log.setLevel(logging.DEBUG)
 
-    def __init__(self, path: Union[str, Path], *args, **kwargs):
-        self.path = path
+    def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
-            if k == "file":  # that's for the cdl operator
-                k = "path"
             setattr(self, k, v)
         self.update(*args, **kwargs)
 
@@ -49,6 +46,10 @@ class ImageIOBase:
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}{self.__dict__}"
+
+    def update(self, **kwargs) -> None:
+        """Update operator attributes by calling implemented setter of keyword argument key."""
+        raise NotImplementedError("update should be implemented.")
 
     @property
     def path(self) -> Path:
@@ -67,16 +68,12 @@ class ImageIOBase:
     def filepath(self) -> Path:
         return self.path
 
-    def update(self, *args, **kwargs) -> None:
-        """Update operator attributes from a given file path."""
-        raise NotImplementedError("update should be implemented.")
-
 
 class ImageInfo(ImageIOBase):
     """ImageInfo class for reading image metadata."""
 
     def __init__(self, path: Path):
-        super().__init__(path)
+        super().__init__(path=path)
 
     def __gt__(self, other: ImageInfo) -> bool:
         return self.frame_number > other.frame_number
@@ -84,14 +81,17 @@ class ImageInfo(ImageIOBase):
     def __lt__(self, other: ImageInfo) -> bool:
         return self.frame_number < other.frame_number
 
-    def update(self, force_ffprobe=True):
+    def update(self, force_ffprobe=True, **kwargs):
         """Update ImageInfo from a given file path.
         NOTE: force_ffprobe overrides iinfo values with ffprobe values.
               It's used since they report different framerates for testing exr
               files.
         """
-        iinfo_res = utils.call_iinfo(self.filepath)
-        ffprobe_res = utils.call_ffprobe(self.filepath)
+        if kwargs.get("path"):
+            self.path = kwargs["path"]
+
+        iinfo_res = utils.call_iinfo(self.path)
+        ffprobe_res = utils.call_ffprobe(self.path)
 
         for k, v in iinfo_res.items():
             if not v:
@@ -389,9 +389,7 @@ class ImageInfo(ImageIOBase):
 
 class SequenceInfo(ImageIOBase):
     def __init__(self, path: Path, imageinfos: List[ImageInfo]):
-        super().__init__(path, imageinfos)
-        # self.imageinfos = imageinfos
-        # self.update(imageinfos)
+        super().__init__(path=path, imageinfos=imageinfos)
 
     def _get_file_splits(self, file_name: str) -> None:
         head, ext = os.path.splitext(file_name)
@@ -468,12 +466,11 @@ class SequenceInfo(ImageIOBase):
         for seq_files in files_map.values():
             return cls(path=seq_key.parent, imageinfos=seq_files)
 
-    def update(self, imageinfos: Optional[List[ImageInfo]]):
-        if imageinfos:
-            self.log.debug(f"Updating from new frames: {imageinfos}")
-            self.imageinfos = imageinfos
-
-        # TODO: check for missing frames
+    def update(self, **kwargs):
+        if kwargs.get("path"):
+            self.path = kwargs["path"]
+        if kwargs.get("imageinfos"):
+            self.imageinfos = kwargs["imageinfos"]
 
     @property
     def imageinfos(self) -> List[int]:
