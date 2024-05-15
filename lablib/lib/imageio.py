@@ -33,6 +33,8 @@ class ImageIOBase:
     def __init__(self, path: Union[str, Path], *args, **kwargs):
         self.path = path
         for k, v in kwargs.items():
+            if k == "file":  # that's for the cdl operator
+                k = "path"
             setattr(self, k, v)
         self.update(*args, **kwargs)
 
