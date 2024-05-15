@@ -47,7 +47,8 @@ class ImageIOBase:
 
     def update(self, **kwargs) -> None:
         """Update operator attributes by calling implemented setter of keyword argument key."""
-        raise NotImplementedError("update should be implemented.")
+        self.log.warning(f"Update not implemented for {self.__class__.__name__}")
+        pass
 
     @property
     def path(self) -> Path:
