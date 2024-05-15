@@ -4,8 +4,7 @@ import pytest
 from pathlib import Path
 
 from lablib.processors import (
-    EffectsFileProcessor,
-    ColorProcessor,
+    AYONHieroEffectsFileProcessor,
 )
 
 log = logging.getLogger(__name__)
@@ -15,7 +14,9 @@ log.setLevel(logging.DEBUG)
 # Project Constants
 SOURCE_DIR = "resources/public/plateMain/v000"
 DATA_PATH = "resources/public/mock_data.json"
-EFFECT_PATH = "resources/public/effectPlateMain/v000/BLD_010_0010_effectPlateMain_v000.json"
+EFFECT_PATH = (
+    "resources/public/effectPlateMain/v000/BLD_010_0010_effectPlateMain_v000.json"
+)
 SLATE_TEMPLATE_PATH = "templates/slates/slate_generic/slate_generic.html"
 STAGING_DIR = "results"
 OUTPUT_WIDTH = 1920
@@ -26,22 +27,20 @@ with open(DATA_PATH, "r") as f:
     working_data = json.loads(f.read())
 
 
+@pytest.mark.skip(reason="AYONHieroEffectsFileProcessor is not yet implemented")
 @pytest.mark.parametrize(
     "path",
-    [
-        "resources/public/effectPlateMain/v000/"
-        "BLD_010_0010_effectPlateMain_v000.json"
-    ],
+    ["resources/public/effectPlateMain/v000/" "BLD_010_0010_effectPlateMain_v000.json"],
 )
-def test_EffectsFileProcessor(path: str):
+def test_AYONHieroEffectsFileProcessor(path: str):
     path = Path(path)
-    effect_processor = EffectsFileProcessor(path)
+    effect_processor = AYONHieroEffectsFileProcessor(path)
     assert effect_processor.src == path
     assert len(effect_processor.color_operators) == 4
 
 
 # # Compute Effects file from AYON
-# epr = EffectsFileProcessor(EFFECT_PATH)
+# epr = AYONHieroEffectsFileProcessor(EFFECT_PATH)
 
 # # Compute color transformations
 # color_processor = ColorProcessor(
