@@ -3,16 +3,14 @@ from __future__ import annotations
 import os
 from pathlib import Path
 import re
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from . import BaseOperator, ImageInfo
 
 
 class SequenceInfo(BaseOperator):
     def __init__(self, path: Path, imageinfos: List[ImageInfo]):
-        super().__init__(path, imageinfos)
-        # self.imageinfos = imageinfos
-        # self.update(imageinfos)
+        super().__init__(path=path, imageinfos=imageinfos)
 
     def _get_file_splits(self, file_name: str) -> None:
         head, ext = os.path.splitext(file_name)
@@ -89,12 +87,11 @@ class SequenceInfo(BaseOperator):
         for seq_files in files_map.values():
             return cls(path=seq_key.parent, imageinfos=seq_files)
 
-    def update(self, imageinfos: Optional[List[ImageInfo]]):
-        if imageinfos:
-            self.log.debug(f"Updating from new frames: {imageinfos}")
-            self.imageinfos = imageinfos
-
-        # TODO: check for missing frames
+    def update(self, **kwargs):
+        if kwargs.get("path"):
+            self.path = kwargs["path"]
+        if kwargs.get("imageinfos"):
+            self.imageinfos = kwargs["imageinfos"]
 
     @property
     def imageinfos(self) -> List[int]:

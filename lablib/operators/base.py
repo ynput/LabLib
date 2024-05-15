@@ -7,8 +7,7 @@ class BaseOperator:
     log = logging.getLogger(__name__)
     log.setLevel(logging.DEBUG)
 
-    def __init__(self, path: Union[str, Path], *args, **kwargs):
-        self.path = path
+    def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
         self.update(*args, **kwargs)
@@ -24,6 +23,10 @@ class BaseOperator:
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}{self.__dict__}"
+
+    def update(self, *args, **kwargs) -> None:
+        """Update operator attributes from a given file path."""
+        raise NotImplementedError("update should be implemented.")
 
     @property
     def path(self) -> Path:
@@ -41,7 +44,3 @@ class BaseOperator:
     @property
     def filepath(self) -> Path:
         return self.path
-
-    def update(self, *args, **kwargs) -> None:
-        """Update operator attributes from a given file path."""
-        raise NotImplementedError("update should be implemented.")

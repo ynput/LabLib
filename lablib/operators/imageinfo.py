@@ -28,7 +28,7 @@ class ImageInfo(BaseOperator):
     """ImageInfo class for reading image metadata."""
 
     def __init__(self, path: Path):
-        super().__init__(path)
+        super().__init__(path=path)
 
     def __gt__(self, other: ImageInfo) -> bool:
         return self.frame_number > other.frame_number
@@ -36,14 +36,17 @@ class ImageInfo(BaseOperator):
     def __lt__(self, other: ImageInfo) -> bool:
         return self.frame_number < other.frame_number
 
-    def update(self, force_ffprobe=True):
+    def update(self, force_ffprobe=True, **kwargs):
         """Update ImageInfo from a given file path.
         NOTE: force_ffprobe overrides iinfo values with ffprobe values.
               It's used since they report different framerates for testing exr
               files.
         """
-        iinfo_res = llu.call_iinfo(self.filepath)
-        ffprobe_res = llu.call_ffprobe(self.filepath)
+        if kwargs.get("path"):
+            self.path = kwargs["path"]
+
+        iinfo_res = llu.call_iinfo(self.path)
+        ffprobe_res = llu.call_ffprobe(self.path)
 
         for k, v in iinfo_res.items():
             if not v:
