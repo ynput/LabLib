@@ -4,7 +4,7 @@ from pathlib import Path
 
 from opentimelineio.opentime import RationalTime
 
-from lablib.operators import (
+from lablib.lib import (
     ImageInfo,
     SequenceInfo,
 )
