@@ -1,6 +1,3 @@
-from .base import BaseOperator
-from .imageinfo import ImageInfo
-from .sequenceinfo import SequenceInfo
 from .color import (
     OCIOCDLTransform,
     OCIOColorSpace,
@@ -14,9 +11,6 @@ from .repositions import (
 )
 
 __all__ = [
-    "BaseOperator",
-    "ImageInfo",
-    "SequenceInfo",
     "OCIOCDLTransform",
     "OCIOColorSpace",
     "OCIOFileTransform",

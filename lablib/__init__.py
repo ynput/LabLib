@@ -5,9 +5,16 @@ from .processors import (
     SlateHtmlProcessor,
 )
 
+from .renderers import (
+    SlateRenderer,
+    BasicRenderer,
+)
+
 __all__ = [
     "OCIOConfigFileProcessor",
     "AYONHieroEffectsFileProcessor",
     "OIIORepositionProcessor",
     "SlateHtmlProcessor",
+    "SlateRenderer",
+    "BasicRenderer",
 ]
