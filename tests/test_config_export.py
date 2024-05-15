@@ -12,6 +12,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
+# TODO: convert to parametrize data
 # Project Constants
 SOURCE_DIR = "resources/public/plateMain/v000"
 DATA_PATH = "resources/public/mock_data.json"
@@ -26,6 +27,7 @@ with open(DATA_PATH, "r") as f:
     working_data = json.loads(f.read())
 
 
+# TODO: convert to fixture for OCIOConfigFileProcessor
 @pytest.mark.parametrize(
     "path",
     [
@@ -45,7 +47,7 @@ def test_EffectsFileProcessor(path: str):
 # epr = EffectsFileProcessor(EFFECT_PATH)
 
 # # Compute color transformations
-# color_processor = ColorProcessor(
+# color_processor = OCIOConfigFileProcessor(
 #     operators=epr.color_operators,
 #     staging_dir=STAGING_DIR,
 #     context=working_data["asset"],
