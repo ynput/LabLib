@@ -43,6 +43,7 @@ class Transform:
             skew_order=data.get("skew_order", "XY"),
         )
 
+
 @dataclass
 class Crop:
     box: List[int] = field(default_factory=lambda: [0, 0, 1920, 1080])
