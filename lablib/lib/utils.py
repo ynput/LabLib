@@ -19,11 +19,18 @@ def call_iinfo(filepath: str | Path) -> dict:
         filepath = Path(filepath)
     abspath = str(filepath.resolve())
     cmd = ["iinfo", "-v", abspath]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = proc.communicate(timeout=10)
-    if err:
-        log.error(f"{err = }")
-        return {}
+
+    out, err, proc = None, None, None
+    retries = 3
+    for retry in range(retries):
+        try:
+            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = proc.communicate(timeout=3)
+            if not err:
+                break
+        except subprocess.TimeoutExpired:
+            log.warning(f"iinfo timed out: retry {retry+1}/{retries}")
+            proc.kill()
 
     result = {}
     for line in out.strip().splitlines():
