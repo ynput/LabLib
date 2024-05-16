@@ -1,29 +1,78 @@
 from __future__ import annotations
 
 import os
+import logging
 import uuid
 from typing import List, Union, Dict
-from dataclasses import dataclass, field
 from pathlib import Path
-
 
 import PyOpenColorIO as OCIO
 
-@dataclass
+from attr import has
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
+
+
 class OCIOConfigFileProcessor:
-    operators: List = field(default_factory=list)
-    config_path: str = None
-    staging_dir: str = None
-    context: str = "LabLib"
-    family: str = "LabLib"
-    working_space: str = "ACES - ACEScg"
-    views: List[str] = field(default_factory=list)
+    _description: str
+    _vars: Dict[str, str] = {}
+    _views: List[str] = []
+    _config_path: Path  # OCIO Config file
+    _ocio_config: OCIO.Config   # OCIO Config object
+    _ocio_transforms: List = []
+    _ocio_search_paths: List[str]
+    _ocio_config_name: str = "config.ocio"
+    _dest_path: str
+    _operators: List[OCIO.Transform]
 
-    def __post_init__(self) -> None:
-        if not self.config_path:
-            self.config_path = Path(os.environ.get("OCIO")).as_posix()
+    def __init__(
+        self,
+        context: str = None,
+        family: str = None,
+        operators: List[OCIO.Transform] = None,
+        config_path: str = None,
+        working_space: str = None,
+        views: List[str] = None,
+        description: str = None,
+        staging_dir: str = None,
+        environment_variables: Dict = None,
+    ):
+        # Context is required
+        if context:
+            self.context = context
+        else:
+            raise ValueError("Context is required!")
 
-        if not self.staging_dir:
+        self.family = family or "LabLib"
+
+        # Default working space
+        if working_space is None:
+            self.working_space = "ACES - ACEScg"
+        else:
+            self.working_space = working_space
+
+        # Default views
+        if views:
+            self.set_views(views)
+
+        if operators:
+            self.set_operators(operators)
+
+        # Set OCIO config path and with validation
+        if config_path is None:
+            if OCIO_env_path := os.environ.get("OCIO", None):
+                config_path = Path(OCIO_env_path)
+            else:
+                raise ValueError("OCIO environment variable not set!")
+
+        if config_path.is_file():
+            self._config_path = config_path
+        else:
+            raise FileNotFoundError(f"Config file not found: {config_path}")
+
+        # Default staging directory
+        if staging_dir is None:
             self.staging_dir = (
                 Path(
                     os.environ.get("TEMP", os.environ["TMP"]),
@@ -33,22 +82,16 @@ class OCIOConfigFileProcessor:
                 .resolve()
                 .as_posix()
             )
-        self._description: str = None
-        self._vars: Dict = {}
-        self._views: List[str] = None
-        if self.views:
-            self._views: List[str] = self.set_views(self.views)
-        self._ocio_config: OCIO.Config = None
-        self._ocio_transforms: List = []
-        self._ocio_search_paths: List = []
-        self._ocio_config_name: str = "config.ocio"
-        self._dest_path: str = None
+        else:
+            self.staging_dir = staging_dir
+
+        self._description = description or "LabLib OCIO Config"
+
+        if environment_variables:
+            self.set_vars(**environment_variables)
 
     def set_ocio_config_name(self, name: str) -> None:
         self._ocio_config_name = name
-
-    def set_staging_dir(self, path: str) -> None:
-        self.staging_dir = Path(path).resolve().as_posix()
 
     def set_views(self, *args: Union[str, List[str]]) -> None:
         self.clear_views()
@@ -62,11 +105,8 @@ class OCIOConfigFileProcessor:
         self.clear_vars()
         self.append_vars(**kwargs)
 
-    def set_description(self, desc: str) -> None:
-        self._description = desc
-
     def clear_operators(self) -> None:
-        self.operators = []
+        self._operators = []
 
     def clear_views(self):
         self._views = []
@@ -79,7 +119,7 @@ class OCIOConfigFileProcessor:
             if isinstance(arg, list):
                 self.append_operators(*arg)
             else:
-                self.operators.append(arg)
+                self._operators.append(arg)
 
     def append_views(self, *args: Union[str, List[str]]) -> None:
         for arg in args:
@@ -100,49 +140,67 @@ class OCIOConfigFileProcessor:
     def _get_search_paths_from_config(self) -> List[str]:
         return list(self._ocio_config.getSearchPaths())
 
-    def _sanitize_search_paths(self, paths: List[str]) -> List[str]:
+    def _sanitize_search_paths(self, paths: List[str]) -> None:
         real_paths = []
         for p in paths:
-            computed_path = Path(Path(self.config_path).parent, p).resolve()
+            computed_path = self._config_path.parent / p
             if computed_path.is_file():
-                computed_path = Path(computed_path.parent).resolve()
+                computed_path = computed_path.parent.resolve()
                 real_paths.append(computed_path.as_posix())
             elif computed_path.is_dir():
                 computed_path = computed_path.resolve()
                 real_paths.append(computed_path.as_posix())
 
         real_paths = list(set(real_paths))
-        self._search_paths = real_paths
-        return real_paths
+        var_paths = [self._swap_variables(path) for path in real_paths]
+        self._search_paths = var_paths
 
-    def _get_absolute_search_paths_from_ocio(self) -> List[str]:
+    def _get_absolute_search_paths(self) -> None:
         paths = self._get_search_paths_from_config()
-        for op in self._ocio_transforms:
-            try:
-                paths.append(op.getSrc())
-            except:
-                # TODO find out why this crashes and capture explicit
-                #   exceptions
+        for ocio_transform in self._ocio_transforms:
+            if not hasattr(ocio_transform, "getSrc"):
                 continue
-        return self._sanitize_search_paths(paths)
+            search_path = Path(ocio_transform.getSrc())
+            if not search_path.exists():
+                log.warning(f"Path not found: {search_path}")
 
-    def _get_absolute_search_paths(self) -> List[str]:
-        paths = self._get_search_paths_from_config()
-        for op in self.operators:
-            if hasattr(op, "src"):
-                paths.append(op.src)
-        return self._sanitize_search_paths(paths)
+            paths.append(ocio_transform.getSrc())
 
-    def _read_config(self) -> None:
-        self._ocio_config = OCIO.Config.CreateFromFile(self.config_path)
+        self._sanitize_search_paths(paths)
 
-    def load_config_from_file(self, src: str) -> None:
-        self.config_path = src
-        self._read_config()
+    def _change_src_paths_to_names(self) -> None:
+        for ocio_transform in self._ocio_transforms:
+            if not hasattr(ocio_transform, "getSrc"):
+                continue
+
+            # TODO: this should be probably somewhere else
+            if (
+                hasattr(ocio_transform, "getCCCId")
+                and ocio_transform.getCCCId()
+            ):
+                ocio_transform.setCCCId(
+                    self._swap_variables(ocio_transform.getCCCId())
+                )
+
+            search_path = Path(ocio_transform.getSrc())
+            if not search_path.exists():
+                log.warning(f"Path not found: {search_path}")
+
+            # Change the src path to the name of the search path
+            # and replace any found variables
+            ocio_transform.setSrc(
+                self._swap_variables(search_path.name))
+
+    def _swap_variables(self, text: str) -> str:
+        new_text = text
+        for k, v in self._vars.items():
+            new_text = text.replace(v, f"${k}")
+        return new_text
+
+    def load_config_from_file(self, filepath: str) -> None:
+        self._ocio_config = OCIO.Config.CreateFromFile(filepath)
 
     def process_config(self) -> None:
-        for op in self.operators:
-            self._ocio_transforms.append(op)
 
         for k, v in self._vars.items():
             self._ocio_config.addEnvironmentVar(k, v)
@@ -204,8 +262,13 @@ class OCIOConfigFileProcessor:
         if not dest:
             dest = Path(self.staging_dir, self._ocio_config_name)
         dest = Path(dest).resolve().as_posix()
-        self.load_config_from_file(Path(self.config_path).resolve().as_posix())
+        self.load_config_from_file(self._config_path.resolve().as_posix())
+
+        for op in self._operators:
+            self._ocio_transforms.append(op)
+
         self._get_absolute_search_paths()
+        self._change_src_paths_to_names()
         self.process_config()
         self.write_config(dest)
         self._dest_path = dest
