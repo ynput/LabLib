@@ -79,15 +79,16 @@ def test_Transform(transform_op_data):
     ],
 )
 def test_Crop(crop_op_data):
-    crop = Crop.from_node_data(crop_op_data)
+    crop = Crop.from_node_data(crop_op_data["node"])
+    log.info(f"{crop = }")
     oiio_args = crop.to_oiio_args()
 
     # assert fields
-    assert crop.box == [0, 0, 1920, 1080]
+    assert crop.box == [0.0, 0.0, 1920.0, 1080.0]
 
     # assert argument output
     assert oiio_args == [
-        "--crop 0,0,1920,1080",
+        "--crop 0.0 0.0 1920.0 1080.0",
     ]
 
 

@@ -51,7 +51,7 @@ class Crop:
     def to_oiio_args(self):
         return [
             # using xmin,ymin,xmax,ymax
-            f"--crop {self.box[0]},{self.box[1]},{self.box[2]},{self.box[3]}",
+            f"--crop {self.box[0]} {self.box[1]} {self.box[2]} {self.box[3]}",
         ]
 
     @classmethod
