@@ -1,5 +1,10 @@
-from lablib.operators import Transform, Crop
-from fixtures import transform_op_data, crop_op_data
+import logging
+
+from lablib.operators import Transform, Crop, Mirror2
+from fixtures import transform_op_data, crop_op_data, mirror_op_data
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 def test_Transform(transform_op_data):
