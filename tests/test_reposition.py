@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def __get_reposition_operators(file: Union[Path, str], type: str = None):
+def __get_reposition_operators(file: Union[Path, str], type: str = None) -> List[dict]:
     if isinstance(file, str):
         file = Path(file)
 
