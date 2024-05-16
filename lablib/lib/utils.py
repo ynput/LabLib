@@ -19,12 +19,15 @@ def call_iinfo(filepath: str | Path) -> dict:
         filepath = Path(filepath)
     abspath = str(filepath.resolve())
     cmd = ["iinfo", "-v", abspath]
-    cmd_out = (
-        subprocess.run(cmd, capture_output=True, text=True).stdout.strip().splitlines()
-    )
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = proc.communicate(timeout=10)
+    if err:
+        log.error(f"{err = }")
+        return {}
 
     result = {}
-    for line in cmd_out:
+    for line in out.strip().splitlines():
+        line = line.decode("utf-8")
         log.debug(f"iinfo {line = }")
         if abspath in line and line.find(abspath) < 2:
             vars = line.split(": ")[1].split(",")
