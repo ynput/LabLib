@@ -48,9 +48,6 @@ class BasicRenderer:
     def set_source_sequence(self, sequence: SequenceInfo) -> None:
         self.source_sequence = sequence
 
-    def set_staging_dir(self, dir: str) -> None:
-        self.staging_dir = dir
-
     def set_threads(self, threads: int) -> None:
         self._threads = threads
 

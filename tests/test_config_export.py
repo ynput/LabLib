@@ -1,5 +1,6 @@
 import json
 import logging
+from pprint import pformat
 import pytest
 from pathlib import Path
 
@@ -28,7 +29,6 @@ def effect_processor():
     effect_processor.clear_operators()
 
 
-
 @pytest.mark.parametrize(
     "mock_data_path", ["resources/public/mock_data.json"])
 def test_OCIOConfigFileProcessor(mock_data_path, effect_processor):
@@ -38,6 +38,8 @@ def test_OCIOConfigFileProcessor(mock_data_path, effect_processor):
     # Get data from Asset
     with open(mock_data_path, "r") as f:
         working_data = json.loads(f.read())
+
+    log.debug(pformat(working_data))
 
     # Compute color transformations
     ocio_config_processor = OCIOConfigFileProcessor(
