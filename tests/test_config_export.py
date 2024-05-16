@@ -5,9 +5,9 @@ import pytest
 from pathlib import Path
 
 from lablib import (
-    AYONHieroEffectsFileProcessor,
     OCIOConfigFileProcessor,
 )
+from fixtures import effect_processor
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -15,19 +15,6 @@ log.setLevel(logging.DEBUG)
 
 # Project Constants
 STAGING_DIR = "results"
-
-
-@pytest.fixture(scope="module")
-def effect_processor():
-    path = Path(
-        "resources/public/effectPlateMain/v000/"
-        "BLD_010_0010_effectPlateMain_v000.json"
-    )
-    effect_processor = AYONHieroEffectsFileProcessor(path)
-    effect_processor.load()
-    yield effect_processor
-    effect_processor.clear_operators()
-
 
 @pytest.mark.parametrize(
     "mock_data_path", ["resources/public/mock_data.json"])
@@ -48,6 +35,10 @@ def test_OCIOConfigFileProcessor(mock_data_path, effect_processor):
         context=working_data["asset"],
         family=working_data["project"]["code"],
         views=["sRGB", "Rec.709", "Log", "Raw"],
+        environment_variables={
+            "PROJECT_ROOT": "C:/CODE/LabLib/resources",
+            "CONTEXT": "BLD_010_0010",
+        },
     )
 
     ocio_config_processor.create_config()
