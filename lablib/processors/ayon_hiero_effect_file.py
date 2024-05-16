@@ -33,6 +33,7 @@ class AYONHieroEffectsFileProcessor(object):
         return self._repo_ops
 
     def _load(self) -> None:
+
         effect_file_path = self.filepath.resolve().as_posix()
 
         # get all relative files recursively so we can make sure files in
@@ -89,8 +90,8 @@ class AYONHieroEffectsFileProcessor(object):
         node_value["file"] = relative_file.resolve().as_posix()
 
     def clear_operators(self) -> None:
-        self.color_ops = []
-        self.repo_ops = []
+        self._color_ops = []
+        self._repo_ops = []
 
     def load(self) -> None:
         self.clear_operators()
