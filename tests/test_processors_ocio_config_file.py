@@ -1,14 +1,30 @@
 import json
-from pprint import pformat
+from pathlib import Path
 import pytest
 
-from lablib import OCIOConfigFileProcessor
+from lablib import (
+    OCIOConfigFileProcessor,
+    AYONHieroEffectsFileProcessor
+)
 
 
 from tests.lib.testing_classes import MainTestClass
 
 
 class TestConfigExportProcessor(MainTestClass):
+
+    @pytest.fixture()
+    def effect_processor(self):
+        path = Path(
+            "resources/public/effectPlateMain/v000/"
+            "BLD_010_0010_effectPlateMain_v000.json"
+        )
+        effect_processor = AYONHieroEffectsFileProcessor(path)
+        self.log.debug(f"{effect_processor = }")
+        effect_processor.load()
+        yield effect_processor
+
+
     @pytest.mark.parametrize(
         "mock_data_path", ["resources/public/mock_data.json"])
     def test_OCIOConfigFileProcessor(

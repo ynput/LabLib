@@ -3,8 +3,6 @@ import pytest
 from pathlib import Path
 import shutil
 
-from lablib import AYONHieroEffectsFileProcessor
-
 
 class BaseTestClass:
     pass
@@ -23,17 +21,6 @@ class MainTestClass(BaseTestClass):
             self._logger[__name__].setLevel(logging.DEBUG)
 
         return self._logger.get(__name__)
-
-    @pytest.fixture()
-    def effect_processor(self):
-        path = Path(
-            "resources/public/effectPlateMain/v000/"
-            "BLD_010_0010_effectPlateMain_v000.json"
-        )
-        effect_processor = AYONHieroEffectsFileProcessor(path)
-        self.log.debug(f"{effect_processor = }")
-        effect_processor.load()
-        yield effect_processor
 
     @pytest.fixture(scope="session")
     def test_staging_dir(self):
