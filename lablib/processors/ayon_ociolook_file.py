@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import json
 import logging
-import inspect
 
-from typing import List, Dict, Any
+from typing import List, Any
 from pathlib import Path
 
 from ..operators import AYONOCIOLookProduct
@@ -53,7 +52,7 @@ class AYONOCIOLookFileProcessor(object):
         # INFO: This is a temporary fix to handle the case where
         #   the filepath is not found in the data
         # add all relative files to the data
-        for item in ops_data["data"]["ocioLookItems"].items():
+        for item in ops_data["data"]["ocioLookItems"]:
             self._sanitize_file_path(item, all_relative_files)
 
         class_obj = AYONOCIOLookProduct.from_node_data(ops_data["data"])
@@ -73,7 +72,6 @@ class AYONOCIOLookFileProcessor(object):
             log.warning(
                 f"File not found: {repre_data['name']}.{repre_data['ext']}."
             )
-
 
     def _clear_operators(self) -> None:
         self._color_ops = []

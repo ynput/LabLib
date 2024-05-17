@@ -1,6 +1,7 @@
 from .processors import (
     OCIOConfigFileProcessor,
     AYONHieroEffectsFileProcessor,
+    AYONOCIOLookFileProcessor,
     OIIORepositionProcessor,
     SlateHtmlProcessor,
 )
@@ -13,6 +14,7 @@ from .renderers import (
 __all__ = [
     "OCIOConfigFileProcessor",
     "AYONHieroEffectsFileProcessor",
+    "AYONOCIOLookFileProcessor",
     "OIIORepositionProcessor",
     "SlateHtmlProcessor",
     "SlateRenderer",
