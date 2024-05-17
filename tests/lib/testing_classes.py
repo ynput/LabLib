@@ -1,6 +1,7 @@
 import logging
 import pytest
 from pathlib import Path
+import shutil
 
 from lablib import AYONHieroEffectsFileProcessor
 
@@ -10,7 +11,9 @@ class BaseTestClass:
 
 
 class MainTestClass(BaseTestClass):
-    STAGING_DIR = "results"
+    STAGING_DIR = "test_results"
+    KEEP_TEST_RESULTS = True
+
     _logger = {}
 
     @property
@@ -31,3 +34,14 @@ class MainTestClass(BaseTestClass):
         self.log.debug(f"{effect_processor = }")
         effect_processor.load()
         yield effect_processor
+
+    @pytest.fixture(scope="session")
+    def test_staging_dir(self):
+        test_parent_dir = Path(__file__).resolve().parent.parent.parent
+        staging_dir_path = Path(test_parent_dir, self.STAGING_DIR)
+        staging_dir_path.mkdir(exist_ok=True)
+        yield staging_dir_path
+
+        if not self.KEEP_TEST_RESULTS:
+            shutil.rmtree(
+                staging_dir_path, ignore_errors=False)

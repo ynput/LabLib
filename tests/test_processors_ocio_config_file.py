@@ -12,9 +12,12 @@ from tests.lib.testing_classes import MainTestClass
 class TestConfigExportProcessor(MainTestClass):
     @pytest.mark.parametrize(
         "mock_data_path", ["resources/public/mock_data.json"])
-    def test_OCIOConfigFileProcessor(self, mock_data_path, effect_processor):  # noqa: F811, E501
-        test_parent_dir = Path(__file__).resolve().parent.parent
-        staging_dir_path = Path(test_parent_dir, self.STAGING_DIR).as_posix()
+    def test_OCIOConfigFileProcessor(
+        self, mock_data_path,
+        effect_processor,
+        test_staging_dir,
+    ):
+        staging_dir_path = test_staging_dir.as_posix()
 
         # Get data from Asset
         with open(mock_data_path, "r") as f:
@@ -25,7 +28,7 @@ class TestConfigExportProcessor(MainTestClass):
         # Compute color transformations
         ocio_config_processor = OCIOConfigFileProcessor(
             operators=effect_processor.color_operators,
-            staging_dir=self.STAGING_DIR,
+            staging_dir=test_staging_dir,
             context=working_data["asset"],
             family=working_data["project"]["code"],
             views=["sRGB", "Rec.709", "Log", "Raw"],
