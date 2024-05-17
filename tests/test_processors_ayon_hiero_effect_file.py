@@ -16,7 +16,7 @@ class TestAYONHieroEffectFileProcessor(MainTestClass):
     )
     def test_EffectsFileProcessor(self, path, effect_processor):  # noqa: F811
 
-        self.log.info(effect_processor.color_operators)
+        self.log.debug(effect_processor.color_operators)
         assert effect_processor.filepath == Path(path)
         # 5 because CDLTransform is converted into CDLTransform and
         # FileTransform

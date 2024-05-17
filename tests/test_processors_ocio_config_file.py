@@ -1,7 +1,6 @@
 import json
 from pprint import pformat
 import pytest
-from pathlib import Path
 
 from lablib import OCIOConfigFileProcessor
 
@@ -23,8 +22,6 @@ class TestConfigExportProcessor(MainTestClass):
         with open(mock_data_path, "r") as f:
             working_data = json.loads(f.read())
 
-        self.log.debug(pformat(working_data))
-
         # Compute color transformations
         ocio_config_processor = OCIOConfigFileProcessor(
             operators=effect_processor.color_operators,
@@ -33,8 +30,8 @@ class TestConfigExportProcessor(MainTestClass):
             family=working_data["project"]["code"],
             views=["sRGB", "Rec.709", "Log", "Raw"],
             environment_variables={
-                "PROJECT_ROOT": "C:/CODE/LabLib/resources",
                 "CONTEXT": "BLD_010_0010",
+                "PROJECT_ROOT": "C:/CODE/LabLib/resources",
             },
         )
 
@@ -42,7 +39,7 @@ class TestConfigExportProcessor(MainTestClass):
 
         color_cmd = ocio_config_processor.get_oiiotool_cmd()
 
-        self.log.info(color_cmd)
+        self.log.debug(color_cmd)
         assert color_cmd == [
             "--colorconfig",
             f"{staging_dir_path}/config.ocio",
