@@ -18,7 +18,8 @@ def call_iinfo(filepath: str | Path) -> dict:
     if isinstance(filepath, str):
         filepath = Path(filepath)
     abspath = str(filepath.resolve())
-    cmd = ["iinfo", "-v", abspath]
+
+    cmd = ["oiiotool", "--info", "-v", abspath]
     cmd_out = (
         subprocess.run(cmd, capture_output=True, text=True).stdout.strip().splitlines()
     )
