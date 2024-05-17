@@ -6,6 +6,7 @@ from lablib.operators import (
     OCIOFileTransform,
     OCIOColorSpace,
     OCIOCDLTransform,
+    AYONOCIOLookProduct,
 )
 
 from tests.lib.testing_classes import MainTestClass
@@ -113,3 +114,68 @@ class TestColorOperators(MainTestClass):
         assert cdl_transform.getSat() == data["saturation"]
 
         self.log.debug(f"{cdl_obj = }")
+
+    @pytest.mark.parametrize(
+        "data, expected_len",
+        [
+            (
+                {
+                    "ocioLookItems": [
+                        {
+                            "file": "path/to/lut1.cube",
+                            "input_colorspace": {
+                                "colorspace": "Output - sRGB"
+                            },
+                            "output_colorspace": {
+                                "colorspace": "ACES - ACEScc"
+                            },
+                            "direction": "forward",
+                            "interpolation": "tetrahedral"
+                        }
+                    ],
+                    "ocioLookWorkingSpace": {
+                        "colorspace": "ACES - ACEScg"
+                    },
+                },
+                3
+            ),
+            (
+                {
+                    "ocioLookItems": [
+                        {
+                            "file": "path/to/lut1.cube",
+                            "input_colorspace": {
+                                "colorspace": "Output - sRGB"
+                            },
+                            "output_colorspace": {
+                                "colorspace": "ACES - ACEScc"
+                            },
+                            "direction": "forward",
+                            "interpolation": "tetrahedral"
+                        },
+                        {
+                            "file": "path/to/lut2.cube",
+                            "input_colorspace": {
+                                "colorspace": "Output - Rec.709"
+                            },
+                            "output_colorspace": {
+                                "colorspace": "ACES - ACEScc"
+                            },
+                            "direction": "forward",
+                            "interpolation": "tetrahedral"
+                        },
+                    ],
+                    "ocioLookWorkingSpace": {
+                        "colorspace": "ACES - ACEScg"
+                    },
+                },
+                5
+            ),
+        ],
+    )
+    def test_AYONOCIOLookProduct(self, data: dict, expected_len: int):
+        cdl = AYONOCIOLookProduct.from_node_data(data)
+        cdl_obj = cdl.to_ocio_obj()
+
+        self.log.debug(f"{cdl_obj = }")
+        assert len(cdl_obj) == expected_len
