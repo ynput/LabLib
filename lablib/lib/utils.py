@@ -25,9 +25,8 @@ def call_iinfo(filepath: str | Path) -> dict:
     )
 
     result = {}
-    for line in cmd_out.strip().splitlines():
-        line = line.decode("utf-8")
-        log.debug(f"iinfo {line = }")
+    for line in cmd_out:
+        log.debug(f"oiiotool {line = }")
         if abspath in line and line.find(abspath) < 2:
             vars = line.split(": ")[1].split(",")
             size = vars[0].strip().split("x")
