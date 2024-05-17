@@ -32,8 +32,11 @@ class TestLib(MainTestClass):
 
     def test_single_frame_sequence(self):
         path = Path("resources/public/plateMain/v000")
+
+        # get first element since multiple image sequences can live in the same folder
         seq_info = SequenceInfo.scan(path)[0]
         self.log.debug(f"{seq_info = }")
+
         assert seq_info.path == path
         assert seq_info.hash_string == "BLD_010_0010_plateMain_v000.1001#1.exr"
         assert seq_info.start_frame == 1001
@@ -43,8 +46,11 @@ class TestLib(MainTestClass):
 
     def test_SequenceInfo_missing_frames(self):
         path = Path("resources/public/plateMain/v001")
+
+        # get first element since multiple image sequences can live in the same folder
         seq_info = SequenceInfo.scan(path)[0]
         self.log.debug(f"{seq_info = }")
+
         assert seq_info.path == path
         assert seq_info.start_frame == 1001
         assert seq_info.end_frame == 1003
