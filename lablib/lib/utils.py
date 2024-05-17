@@ -5,7 +5,7 @@ import uuid
 import logging
 import subprocess
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import opentimelineio as otio
 
@@ -14,18 +14,32 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
+def __call_cmd(cmd: List[str], timeout=0, retries=0) -> Optional[str]:
+    out, err, proc = None, None, None
+
+    for retry in range(retries):
+        try:
+            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = proc.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            log.warning(f"{cmd[0]} timed out: retry {retry+1}/{retries}")
+            proc.kill()
+            continue
+
+    return out
+
+
 def call_iinfo(filepath: str | Path) -> dict:
     if isinstance(filepath, str):
         filepath = Path(filepath)
     abspath = str(filepath.resolve())
 
     cmd = ["oiiotool", "--info", "-v", abspath]
-    cmd_out = (
-        subprocess.run(cmd, capture_output=True, text=True).stdout.strip().splitlines()
-    )
+    cmd_out = __call_cmd(cmd, timeout=3, retries=3)
 
     result = {}
-    for line in cmd_out:
+    for line in cmd_out.strip().splitlines():
+        line = line.decode("utf-8")
         log.debug(f"oiiotool {line = }")
         if abspath in line and line.find(abspath) < 2:
             vars = line.split(": ")[1].split(",")
@@ -71,11 +85,11 @@ def call_ffprobe(filepath: str | Path) -> dict:
         "default=noprint_wrappers=1",
         abspath,
     ]
-    cmd_out = (
-        subprocess.run(cmd, capture_output=True, text=True).stdout.strip().splitlines()
-    )
+    cmd_out = __call_cmd(cmd, timeout=3, retries=3)
+
     result = {}
-    for line in cmd_out:
+    for line in cmd_out.strip().splitlines():
+        line = line.decode("utf-8")
         log.debug(f"ffprobe {line = }")
         vars = line.split("=")
         if "width" in vars[0]:
