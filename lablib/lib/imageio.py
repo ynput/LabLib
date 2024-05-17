@@ -4,7 +4,7 @@ import os
 import re
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Dict, List, Optional, Union, Any
 
 import opentimelineio.opentime as opentime
 

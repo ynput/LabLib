@@ -18,22 +18,14 @@ def call_iinfo(filepath: str | Path) -> dict:
     if isinstance(filepath, str):
         filepath = Path(filepath)
     abspath = str(filepath.resolve())
-    cmd = ["iinfo", "-v", abspath]
 
-    out, err, proc = None, None, None
-    retries = 3
-    for retry in range(retries):
-        try:
-            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            out, err = proc.communicate(timeout=3)
-            if not err:
-                break
-        except subprocess.TimeoutExpired:
-            log.warning(f"iinfo timed out: retry {retry+1}/{retries}")
-            proc.kill()
+    cmd = ["oiiotool", "--info", "-v", abspath]
+    cmd_out = (
+        subprocess.run(cmd, capture_output=True, text=True).stdout.strip().splitlines()
+    )
 
     result = {}
-    for line in out.strip().splitlines():
+    for line in cmd_out.strip().splitlines():
         line = line.decode("utf-8")
         log.debug(f"iinfo {line = }")
         if abspath in line and line.find(abspath) < 2:

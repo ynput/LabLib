@@ -35,3 +35,5 @@ results/
 
 .poetry/
 .python-version
+
+test_results/
