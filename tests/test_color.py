@@ -17,7 +17,10 @@ log.setLevel(logging.DEBUG)
     "data",
     [
         {
-            "file": "resources/public/effectPlateMain/v000/resources/BLD_Ext_D_2-Sin709.cube",
+            "file": (
+                "resources/public/effectPlateMain/v000/"
+                "resources/BLD_Ext_D_2-Sin709.cube"
+            ),
             "cccid": "TEST_CCCID",
             "direction": 0,
             "interpolation": "linear",
@@ -31,12 +34,16 @@ def test_OCIOFileTransform(data: dict):
     expected_direction = OCIO.TransformDirection.TRANSFORM_DIR_FORWARD
     expected_interpolation = OCIO.Interpolation.INTERP_LINEAR
     assert len(lut_obj) == 1
-    assert lut_obj[0].getSrc() == lut_file
-    assert lut_obj[0].getCCCId() == "TEST_CCCID"
-    assert lut_obj[0].getDirection() == expected_direction
-    assert lut_obj[0].getInterpolation() == expected_interpolation
 
-    log.info(f"{lut = }")
+    # get the ocio object
+    ocio_obj = lut_obj.pop()
+
+    assert ocio_obj.getSrc() == lut_file
+    assert ocio_obj.getCCCId() == "TEST_CCCID"
+    assert ocio_obj.getDirection() == expected_direction
+    assert ocio_obj.getInterpolation() == expected_interpolation
+
+    log.debug(f"{lut = }")
 
 
 @pytest.mark.parametrize(
@@ -53,17 +60,23 @@ def test_OCIOColorSpace(data: dict):
     colorspace_obj = colorspace.to_ocio_obj()
 
     assert len(colorspace_obj) == 1
-    assert colorspace_obj[0].getSrc() == data["in_colorspace"]
-    assert colorspace_obj[0].getDst() == data["out_colorspace"]
+    # get the ocio object
+    ocio_obj = colorspace_obj.pop()
 
-    log.info(f"{colorspace_obj = }")
+    assert ocio_obj.getSrc() == data["in_colorspace"]
+    assert ocio_obj.getDst() == data["out_colorspace"]
+
+    log.debug(f"{colorspace_obj = }")
 
 
 @pytest.mark.parametrize(
     "data",
     [
         {
-            "file": "resources/public/effectPlateMain/v000/resources/BLD_010_0010.cc",
+            "file": (
+                "resources/public/effectPlateMain/v000/"
+                "resources/BLD_010_0010.cc"
+            ),
             "slope": [1.0, 1.0, 1.0],
             "offset": [0.0, 0.0, 0.0],
             "power": [1.0, 1.0, 1.0],
@@ -83,6 +96,7 @@ def test_OCIOCDLTransform(data: dict):
     cdl_obj = cdl.to_ocio_obj()
 
     expected_len = 1
+    # sourcery skip: no-conditionals-in-tests
     if data.get("file"):
         expected_len = 2
         file_transform = cdl_obj[0]
@@ -93,11 +107,11 @@ def test_OCIOCDLTransform(data: dict):
     else:
         cdl_transform = cdl_obj[0]
 
-    print(f"{cdl_obj = }")
+    log.debug(f"{cdl_obj = }")
     assert len(cdl_obj) == expected_len
     assert cdl_transform.getSlope() == data["slope"]
     assert cdl_transform.getOffset() == data["offset"]
     assert cdl_transform.getPower() == data["power"]
     assert cdl_transform.getSat() == data["saturation"]
 
-    log.info(f"{cdl_obj = }")
+    log.debug(f"{cdl_obj = }")

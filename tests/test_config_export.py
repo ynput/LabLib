@@ -4,21 +4,17 @@ from pprint import pformat
 import pytest
 from pathlib import Path
 
-from lablib import (
-    OCIOConfigFileProcessor,
-)
+from lablib import OCIOConfigFileProcessor
 from fixtures import effect_processor
+from constants import STAGING_DIR
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-# Project Constants
-STAGING_DIR = "results"
-
 @pytest.mark.parametrize(
     "mock_data_path", ["resources/public/mock_data.json"])
-def test_OCIOConfigFileProcessor(mock_data_path, effect_processor):
+def test_OCIOConfigFileProcessor(mock_data_path, effect_processor):  # noqa: F811, E501
     test_parent_dir = Path(__file__).resolve().parent.parent
     staging_dir_path = Path(test_parent_dir, STAGING_DIR).as_posix()
 

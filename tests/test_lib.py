@@ -19,6 +19,7 @@ log.setLevel(logging.DEBUG)
 def test_ImageInfo(path: str):
     path = Path(path)
     image_info = ImageInfo(path)
+    log.debug(f"{image_info = }")
     assert image_info.par == 1.0
     assert image_info.fps == 24.0
     assert image_info.width == 4382
@@ -33,8 +34,7 @@ def test_ImageInfo(path: str):
 def test_single_frame_sequence():
     path = Path("resources/public/plateMain/v000")
     seq_info = SequenceInfo.scan(path)
-    log.info(f"{seq_info = }")
-    print(seq_info)
+    log.debug(f"{seq_info = }")
     assert seq_info.path == path
     assert seq_info.hash_string == "BLD_010_0010_plateMain_v000.1001#1.exr"
     assert seq_info.start_frame == 1001
@@ -46,7 +46,7 @@ def test_single_frame_sequence():
 def test_SequenceInfo_missing_frames():
     path = Path("resources/public/plateMain/v001")
     seq_info = SequenceInfo.scan(path)
-    log.info(f"{seq_info = }")
+    log.debug(f"{seq_info = }")
     assert seq_info.path == path
     assert seq_info.start_frame == 1001
     assert seq_info.end_frame == 1003

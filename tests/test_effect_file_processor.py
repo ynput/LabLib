@@ -12,9 +12,11 @@ log.setLevel(logging.DEBUG)
 @pytest.mark.parametrize(
     "path",
     [
-        "resources/public/effectPlateMain/v000/BLD_010_0010_effectPlateMain_v000.json"]
+        "resources/public/effectPlateMain/v000/"
+        "BLD_010_0010_effectPlateMain_v000.json"
+    ]
 )
-def test_EffectsFileProcessor(path, effect_processor):
+def test_EffectsFileProcessor(path, effect_processor):  # noqa: F811
 
     log.info(effect_processor.color_operators)
     assert effect_processor.filepath == Path(path)
