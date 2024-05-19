@@ -64,11 +64,10 @@ class TestRepositionProcessor(MainTestClass):
             op = None
             if "Transform" in k:
                 op = repositions.Transform.from_node_data(v)
-                self.log.warning(f"{op = }")
             if "Mirror" in k:
-                ops.append(repositions.Mirror2.from_node_data(v))
+                op = repositions.Mirror2.from_node_data(v)
             if "Crop" in k:
-                ops.append(repositions.Crop.from_node_data(v))
+                op = repositions.Crop.from_node_data(v)
 
             if not op:
                 self.log.warning(f"Skipping {k} with {v}...")
