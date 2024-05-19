@@ -1,7 +1,13 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from lablib.lib.utils import flip_matrix
+from lablib.lib.utils import (
+    identity_matrix,
+    transpose_matrix,
+    matrix_to_csv,
+    calculate_matrix,
+    mult_matrix,
+)
 
 
 @dataclass
@@ -17,14 +23,15 @@ class Transform:
     skew_order: str = "XY"
 
     def to_oiio_args(self):
-        # TODO: use utils.py to convert to matrix
-        return [
-            # TODO: make sure this is correct for oiio
-            f"--translate {self.translate[0]} {self.translate[1]}",
-            f"--rotate {self.rotate}",
-            f"--scale {self.scale[0]} {self.scale[1]}",
-            f"--center {self.center[0]} {self.center[1]}",
-        ]
+        matrix = calculate_matrix(
+            t=self.translate, r=self.rotate, s=self.scale, c=self.center
+        )
+        identity = identity_matrix()
+        matrix_xfm = mult_matrix(identity, matrix)
+        matrix_tr = transpose_matrix(matrix_xfm)
+        warp_cmd = matrix_to_csv(matrix_tr)
+        warp_flag = "--warp:filter=cubic:recompute_roi=1"  # TODO: expose filter
+        return [warp_flag, warp_cmd]
 
     @classmethod
     def from_node_data(cls, data):
