@@ -86,9 +86,7 @@ class TestRepositionOperators(MainTestClass):
         assert crop.box == [0.0, 0.0, 1920.0, 1080.0]
 
         # assert argument output
-        assert oiio_args == [
-            "--crop 0.0 0.0 1920.0 1080.0",
-        ]
+        assert oiio_args == ["--crop", "0.0,0.0,1920.0,1080.0"]
 
     @pytest.mark.parametrize(
         "index, mirror_op_data",
