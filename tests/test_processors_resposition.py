@@ -35,8 +35,8 @@ class TestRepositionProcessor(MainTestClass):
     @pytest.mark.parametrize(
         "test_index, operators_data",
         (
-            (i, d)
-            for i, d in enumerate(
+            (i, operators)
+            for i, operators in enumerate(
                 [
                     {
                         "Transform": {
