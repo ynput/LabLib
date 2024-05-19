@@ -61,10 +61,8 @@ class TestRepositionOperators(MainTestClass):
 
         # assert argument output
         assert oiio_args == [
-            "--translate 0.0 0.0",
-            "--rotate 0.0",
-            "--scale 1.075 1.075",
-            "--center 2191.0 1155.0",
+            "--warp:filter=cubic:recompute_roi=1",
+            "1.075,0.0,0.0,0.0,1.075,0.0,-164.32499999999982,-86.625,1.0",
         ]
 
     @pytest.mark.parametrize(
