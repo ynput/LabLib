@@ -9,7 +9,7 @@ class Transform:
     translate: List[float] = field(default_factory=lambda: [0.0, 0.0])
     rotate: float = 0.0
     # needs to be treated as a list of floats but can be single float
-    scale: List[float] = field(default_factory=lambda: [0.0, 0.0])
+    scale: List[float] = field(default_factory=lambda: [1.0, 1.0])
     center: List[float] = field(default_factory=lambda: [0.0, 0.0])
     invert: bool = False
     skewX: float = 0.0
