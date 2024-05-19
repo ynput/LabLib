@@ -47,11 +47,13 @@ class Transform:
 @dataclass
 class Crop:
     box: List[int] = field(default_factory=lambda: [0, 0, 1920, 1080])
+    # NOTE: could also be called with width, height, x, y
 
     def to_oiio_args(self):
         return [
+            "--crop",
             # using xmin,ymin,xmax,ymax
-            f"--crop {self.box[0]} {self.box[1]} {self.box[2]} {self.box[3]}",
+            f"{self.box[0]},{self.box[1]},{self.box[2]},{self.box[3]}",
         ]
 
     @classmethod
