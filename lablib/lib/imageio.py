@@ -300,9 +300,8 @@ class SequenceInfo(ImageIOBase):
         frame: ImageInfo = min(self.frames)
         ext: str = frame.extension
         basename = frame.name.split(".")[0]
-        frame_number: int = frame.frame_number
 
-        result = f"{basename}.{frame_number}#{len(self.frames)}{ext}"
+        result = f"{basename}.{self.start_frame}-{self.end_frame}#{ext}"
         return result
 
     @property
