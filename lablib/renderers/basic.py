@@ -82,6 +82,7 @@ class BasicRenderer:
     format: str = None
     staging_dir: str = None
     source_sequence: SequenceInfo = None
+    container_name: str = "lablib.mov"
 
     # rendering options
     # NOTE: currently only used for oiiotool
@@ -96,6 +97,7 @@ class BasicRenderer:
             self.staging_dir = Path("lablib_render").resolve().as_posix()
         if not self.codec:
             log.warning("No codec provided.")
+
         self._codec = Codec(self.codec)
 
     def setup_staging_dir(self) -> None:
@@ -150,6 +152,7 @@ class BasicRenderer:
         if not self.codec:
             raise ValueError(f"Missing codec! Supported codecs are {SUPPORTED_CODECS}")
 
+        # common args
         cmd = ["ffmpeg", "-loglevel", "error", "-hide_banner"]
         common_args = [
             "-y",
@@ -164,15 +167,19 @@ class BasicRenderer:
             min(self.source_sequence.frames).fps,
         ]
 
-        input_args = [
-            "-i",
-            Path(self.staging_dir, self.name, self.source_sequence.hash_string)
-            .resolve()
-            .as_posix(),
-        ]
-        codec_args = self._codec.get_ffmpeg_args()
-        output_args = [self.staging_dir]
+        # input args
+        input_path = Path(
+            self._staging_dir, self.name, self.source_sequence.hash_string
+        )
+        input_args = ["-i", input_path.as_posix()]
 
+        # output and codec args
+        output_path = Path(self.staging_path, self.container_name)
+        output_args = [output_path.as_posix()]
+        codec_args = self._codec.get_ffmpeg_args()
+
+        # chain all args
+        # NOTE: ffmpegs output arg is the last one
         chain = [common_args, input_args, codec_args, output_args]
         for args in chain:
             cmd.extend(args)
