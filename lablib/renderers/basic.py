@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
+import logging
 import subprocess
 import shutil
 from typing import List
@@ -12,6 +13,9 @@ from ..processors import (
     OIIORepositionProcessor,
 )
 from ..lib import SequenceInfo
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 @dataclass
@@ -93,14 +97,18 @@ class BasicRenderer:
             ["-o", Path(self.staging_dir, self.name, dest_path).resolve().as_posix()]
         )
         self._command = cmd
-        if self._debug:
-            print("oiiotool cmd >>> {}".format(" ".join(self._command)))
-        subprocess.run(cmd)
-        result = SequenceInfo()
-        Path(self.color_proc._dest_path).resolve().unlink()
-        return result.compute_longest(
-            Path(self.staging_dir, self.name).resolve().as_posix()
-        )
+
+        # run oiiotool command
+        log.info("oiiotool cmd >>> {}".format(" ".join(self._command)))
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            log.error(result.stderr)
+            raise ValueError("Failed to render sequence!")
+
+        # get rendered sequence info
+        result = SequenceInfo.scan(Path(self.staging_dir, self.name))[0]
+        log.info("Rendered sequence info >>> {}".format(result[0]))
+        return result
 
     def render_repo_ffmpeg(
         self,
