@@ -21,6 +21,7 @@ class TestBasicRenderer(MainTestClass):
             "repo_proc": OIIORepositionProcessor(),
             "source_sequence": SequenceInfo.scan("resources/public/plateMain/v000")[0],
             "staging_dir": "test_results",
+            "codec": "DNxHR-SQ",
             # "name": None,
             # "format": None,
         }

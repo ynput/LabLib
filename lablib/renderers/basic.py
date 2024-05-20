@@ -18,6 +18,59 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
+SUPPORTED_CODECS = ["ProRes422-HQ", "ProRes4444-XQ", "DNxHR-SQ"]
+
+
+@dataclass
+class Codec:
+    name: str
+
+    def get_ffmpeg_args(self) -> List[str]:
+        if self.name not in SUPPORTED_CODECS:
+            raise ValueError(f"Codec {self.name} not supported!")
+
+        args = []
+        if self.name == "ProRes422-HQ":
+            args = [
+                "-vcodec",
+                "prores_ks",
+                "-profile:v",
+                "3",
+                "-vendor",
+                "apl0",
+                "-pix_fmt",
+                "yuv422p10le",
+                "-vtag",
+                "apch",
+            ]
+        if self.name == "ProRes4444-XQ":
+            args = [
+                "-vcodec",
+                "prores_ks",
+                "-profile:v",
+                "4",
+                "-vendor",
+                "apl0",
+                "-pix_fmt",
+                "yuva444p10le",
+                "-vtag",
+                "ap4h",
+                "-vtag",
+                "hvc1",
+            ]
+        if self.name == "DNxHR-SQ":
+            args = [
+                "-vcodec",
+                "dnxhd",
+                "-profile:v",
+                "2",
+                "-pix_fmt",
+                "yuv422p",
+            ]
+
+        return args
+
+
 @dataclass
 class BasicRenderer:
     # processors
@@ -33,6 +86,17 @@ class BasicRenderer:
     # rendering options
     # NOTE: currently only used for oiiotool
     threads: int = field(default=4, init=False, repr=False)
+    codec: str = None
+    audio: str = None
+    fps: int = None
+
+    def __post_init__(self) -> None:
+        if not self.staging_dir:
+            log.warning("No staging directory provided. Rendering to cwd")
+            self.staging_dir = Path("lablib_render").resolve().as_posix()
+        if not self.codec:
+            log.warning("No codec provided.")
+        self._codec = Codec(self.codec)
 
     def setup_staging_dir(self) -> None:
         render_staging_dir = Path(self.staging_dir, self.name)
@@ -52,7 +116,7 @@ class BasicRenderer:
             .resolve()
             .as_posix(),
             "--threads",
-            str(self._threads),
+            str(self.threads),
         ]
 
         cmd.extend(["--ch", "R,G,B"])
@@ -82,11 +146,46 @@ class BasicRenderer:
 
         return cmd
 
+    def get_ffmpeg_cmd(self) -> List[str]:
+        if not self.codec:
+            raise ValueError(f"Missing codec! Supported codecs are {SUPPORTED_CODECS}")
+
+        cmd = ["ffmpeg", "-loglevel", "error", "-hide_banner"]
+        common_args = [
+            "-y",
+            "-xerror",
+            "-start_number",
+            self.source_sequence.start_frame,
+            "-r",
+            min(self.source_sequence.frames).fps,
+            "-thread_queue_size",
+            "4096",
+            "-framerate",
+            min(self.source_sequence.frames).fps,
+        ]
+
+        input_args = [
+            "-i",
+            Path(self.staging_dir, self.name, self.source_sequence.hash_string)
+            .resolve()
+            .as_posix(),
+        ]
+        codec_args = self._codec.get_ffmpeg_args()
+        output_args = [self.staging_dir]
+
+        chain = [common_args, input_args, codec_args, output_args]
+        for args in chain:
+            cmd.extend(args)
+
+        return cmd
+
     def render(self, debug=False) -> SequenceInfo:
         if not self.color_proc and not self.repo_proc:
             raise ValueError("Missing both valid Processors!")
         self.setup_staging_dir()
         cmd = self.get_oiiotool_cmd(debug)
+        ffmpeg_cmd = self.get_ffmpeg_cmd()
+        log.info(f"{ffmpeg_cmd = }")
 
         # run oiiotool command
         log.info("oiiotool cmd >>> {}".format(" ".join(cmd)))
@@ -100,6 +199,7 @@ class BasicRenderer:
         # get rendered sequence info
         result = SequenceInfo.scan(Path(self.staging_dir, self.name))[0]
         log.info(f"Rendered sequence info >>> {result}")
+
         return result
 
     def render_repo_ffmpeg(
