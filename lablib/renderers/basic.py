@@ -20,15 +20,19 @@ log.setLevel(logging.DEBUG)
 
 @dataclass
 class BasicRenderer:
-    color_proc: OCIOConfigFileProcessor = None
+    # processors
     repo_proc: OIIORepositionProcessor = None
+    color_proc: OCIOConfigFileProcessor = None
 
-    source_sequence: SequenceInfo = None
-    staging_dir: str = None
+    # files and directories
     name: str = "lablib_render"
     format: str = None
+    staging_dir: str = None
+    source_sequence: SequenceInfo = None
 
-    _threads: int = field(default=4, init=False, repr=False)
+    # rendering options
+    # NOTE: currently only used for oiiotool
+    threads: int = field(default=4, init=False, repr=False)
 
     def setup_staging_dir(self) -> None:
         render_staging_dir = Path(self.staging_dir, self.name)
