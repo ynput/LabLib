@@ -22,7 +22,7 @@ class OIIORepositionProcessor:
     dst_width: int = 0
     src_height: int = 0
     dst_height: int = 0
-    fit: bool = False
+    fit: str = False
 
     _wrapper_class_members = dict(inspect.getmembers(repositions, inspect.isclass))
 
