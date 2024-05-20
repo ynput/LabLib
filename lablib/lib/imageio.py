@@ -28,8 +28,7 @@ class ImageIOBase:
     log = logging.getLogger(__name__)
     log.setLevel(logging.DEBUG)
 
-    def __init__(self, path: Union[str, Path], *args, **kwargs):
-        self.path = path
+    def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
         self.update(*args, **kwargs)
@@ -45,6 +44,11 @@ class ImageIOBase:
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}{self.__dict__}"
+
+    def update(self, **kwargs) -> None:
+        """Update operator attributes by calling implemented setter of keyword argument key."""
+        self.log.warning(f"Update not implemented for {self.__class__.__name__}")
+        pass
 
     @property
     def path(self) -> Path:
@@ -63,16 +67,12 @@ class ImageIOBase:
     def filepath(self) -> Path:
         return self.path
 
-    def update(self, *args, **kwargs) -> None:
-        """Update operator attributes from a given file path."""
-        raise NotImplementedError("update should be implemented.")
-
 
 class ImageInfo(ImageIOBase):
     """ImageInfo class for reading image metadata."""
 
     def __init__(self, path: Path):
-        super().__init__(path)
+        super().__init__(path=path)
 
     def __gt__(self, other: ImageInfo) -> bool:
         return self.frame_number > other.frame_number
@@ -80,14 +80,17 @@ class ImageInfo(ImageIOBase):
     def __lt__(self, other: ImageInfo) -> bool:
         return self.frame_number < other.frame_number
 
-    def update(self, force_ffprobe=True):
+    def update(self, force_ffprobe=True, **kwargs):
         """Update ImageInfo from a given file path.
         NOTE: force_ffprobe overrides iinfo values with ffprobe values.
               It's used since they report different framerates for testing exr
               files.
         """
-        iinfo_res = utils.call_iinfo(self.filepath)
-        ffprobe_res = utils.call_ffprobe(self.filepath)
+        if kwargs.get("path"):
+            self.path = kwargs["path"]
+
+        iinfo_res = utils.call_iinfo(self.path)
+        ffprobe_res = utils.call_ffprobe(self.path)
 
         for k, v in iinfo_res.items():
             if not v:
@@ -232,54 +235,7 @@ class ImageInfo(ImageIOBase):
 
 class SequenceInfo(ImageIOBase):
     def __init__(self, path: Path, imageinfos: List[ImageInfo]):
-        super().__init__(path, imageinfos)
-        # self.imageinfos = imageinfos
-        # self.update(imageinfos)
-
-    def _get_file_splits(self, file_name: str) -> None:
-        head, ext = os.path.splitext(file_name)
-        frame = int(re.findall(r"\d+$", head)[0])
-        return head.replace(str(frame), ""), frame, ext
-
-    def _get_length(self) -> int:
-        return int(self.frame_end) - int(self.frame_start) + 1
-
-    def compute_all(self, scan_dir: str) -> List:
-        files = os.listdir(scan_dir)
-        sequenced_files = []
-        matched_files = []
-        for f in files:
-            head, tail = os.path.splitext(f)
-            matches = re.findall(r"\d+$", head)
-            if matches:
-                sequenced_files.append(f)
-                matched_files.append(head.replace(matches[0], ""))
-        matched_files = list(set(matched_files))
-
-        results = []
-        for m in matched_files:
-            seq = SequenceInfo()
-            for sf in sequenced_files:
-                if m in sf:
-                    seq.frames.append(os.path.join(scan_dir, sf).replace("\\", "/"))
-
-            head, frame, ext = self._get_file_splits(seq.frames[0])
-            seq.path = os.path.abspath(scan_dir).replace("\\", "/")
-            seq.frame_start = frame
-            seq.frame_end = self._get_file_splits(seq.frames[-1])[1]
-            seq.head = os.path.basename(head)
-            seq.tail = ext
-            seq.padding = len(str(frame))
-            seq.hash_string = "{}#{}".format(os.path.basename(head), ext)
-            seq.format_string = "{}%0{}d{}".format(
-                os.path.basename(head), len(str(frame)), ext
-            )
-            results.append(seq)
-
-        return results
-
-    def compute_longest(self, scan_dir: str) -> SequenceInfo:
-        return self.compute_all(scan_dir=scan_dir)[0]
+        super().__init__(path=path, imageinfos=imageinfos)
 
     @classmethod
     def scan(cls, directory: str | Path) -> List[SequenceInfo]:
@@ -308,15 +264,16 @@ class SequenceInfo(ImageIOBase):
                 files_map[seq_key] = []
             files_map[seq_key].append(ImageInfo(item))
 
-        for seq_files in files_map.values():
-            return cls(path=seq_key.parent, imageinfos=seq_files)
+        return [
+            cls(path=seq_key.parent, imageinfos=seq_files)
+            for seq_key, seq_files in files_map.items()
+        ]
 
-    def update(self, imageinfos: Optional[List[ImageInfo]]):
-        if imageinfos:
-            self.log.debug(f"Updating from new frames: {imageinfos}")
-            self.imageinfos = imageinfos
-
-        # TODO: check for missing frames
+    def update(self, **kwargs):
+        if kwargs.get("path"):
+            self.path = kwargs["path"]
+        if kwargs.get("imageinfos"):
+            self.imageinfos = kwargs["imageinfos"]
 
     @property
     def imageinfos(self) -> List[int]:
@@ -343,9 +300,8 @@ class SequenceInfo(ImageIOBase):
         frame: ImageInfo = min(self.frames)
         ext: str = frame.extension
         basename = frame.name.split(".")[0]
-        frame_number: int = frame.frame_number
 
-        result = f"{basename}.{frame_number}#{len(self.frames)}{ext}"
+        result = f"{basename}.{self.start_frame}-{self.end_frame}#{ext}"
         return result
 
     @property

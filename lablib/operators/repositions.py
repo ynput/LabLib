@@ -1,7 +1,13 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from lablib.lib.utils import flip_matrix
+from lablib.lib.utils import (
+    identity_matrix,
+    transpose_matrix,
+    matrix_to_csv,
+    calculate_matrix,
+    mult_matrix,
+)
 
 
 @dataclass
@@ -9,7 +15,7 @@ class Transform:
     translate: List[float] = field(default_factory=lambda: [0.0, 0.0])
     rotate: float = 0.0
     # needs to be treated as a list of floats but can be single float
-    scale: List[float] = field(default_factory=lambda: [0.0, 0.0])
+    scale: List[float] = field(default_factory=lambda: [1.0, 1.0])
     center: List[float] = field(default_factory=lambda: [0.0, 0.0])
     invert: bool = False
     skewX: float = 0.0
@@ -17,14 +23,15 @@ class Transform:
     skew_order: str = "XY"
 
     def to_oiio_args(self):
-        # TODO: use utils.py to convert to matrix
-        return [
-            # TODO: make sure this is correct for oiio
-            f"--translate {self.translate[0]} {self.translate[1]}",
-            f"--rotate {self.rotate}",
-            f"--scale {self.scale[0]} {self.scale[1]}",
-            f"--center {self.center[0]} {self.center[1]}",
-        ]
+        matrix = calculate_matrix(
+            t=self.translate, r=self.rotate, s=self.scale, c=self.center
+        )
+        identity = identity_matrix()
+        matrix_xfm = mult_matrix(identity, matrix)
+        matrix_tr = transpose_matrix(matrix_xfm)
+        warp_cmd = matrix_to_csv(matrix_tr)
+        warp_flag = "--warp:filter=cubic:recompute_roi=1"  # TODO: expose filter
+        return [warp_flag, warp_cmd]
 
     @classmethod
     def from_node_data(cls, data):
@@ -43,14 +50,17 @@ class Transform:
             skew_order=data.get("skew_order", "XY"),
         )
 
+
 @dataclass
 class Crop:
     box: List[int] = field(default_factory=lambda: [0, 0, 1920, 1080])
+    # NOTE: could also be called with width, height, x, y
 
     def to_oiio_args(self):
         return [
+            "--crop",
             # using xmin,ymin,xmax,ymax
-            f"--crop {self.box[0]},{self.box[1]},{self.box[2]},{self.box[3]}",
+            f"{self.box[0]},{self.box[1]},{self.box[2]},{self.box[3]}",
         ]
 
     @classmethod
