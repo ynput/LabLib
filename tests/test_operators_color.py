@@ -1,4 +1,5 @@
 import pytest
+import logging
 from pathlib import Path
 import PyOpenColorIO as OCIO
 
@@ -9,10 +10,10 @@ from lablib.operators import (
     AYONOCIOLookProduct,
 )
 
-from tests.lib.testing_classes import MainTestClass
+log = logging.getLogger(__name__)
 
 
-class TestColorOperators(MainTestClass):
+class TestColorOperators:
 
     @pytest.mark.parametrize(
         "data",
@@ -44,7 +45,7 @@ class TestColorOperators(MainTestClass):
         assert ocio_obj.getDirection() == expected_direction
         assert ocio_obj.getInterpolation() == expected_interpolation
 
-        self.log.debug(f"{lut = }")
+        log.debug(f"{lut = }")
 
     @pytest.mark.parametrize(
         "data",
@@ -66,7 +67,7 @@ class TestColorOperators(MainTestClass):
         assert ocio_obj.getSrc() == data["in_colorspace"]
         assert ocio_obj.getDst() == data["out_colorspace"]
 
-        self.log.debug(f"{colorspace_obj = }")
+        log.debug(f"{colorspace_obj = }")
 
     @pytest.mark.parametrize(
         "data",
@@ -106,14 +107,14 @@ class TestColorOperators(MainTestClass):
         else:
             cdl_transform = cdl_obj[0]
 
-        self.log.debug(f"{cdl_obj = }")
+        log.debug(f"{cdl_obj = }")
         assert len(cdl_obj) == expected_len
         assert cdl_transform.getSlope() == data["slope"]
         assert cdl_transform.getOffset() == data["offset"]
         assert cdl_transform.getPower() == data["power"]
         assert cdl_transform.getSat() == data["saturation"]
 
-        self.log.debug(f"{cdl_obj = }")
+        log.debug(f"{cdl_obj = }")
 
     @pytest.mark.parametrize(
         "data, expected_len",
@@ -177,5 +178,5 @@ class TestColorOperators(MainTestClass):
         cdl = AYONOCIOLookProduct.from_node_data(data)
         cdl_obj = cdl.to_ocio_obj()
 
-        self.log.debug(f"{cdl_obj = }")
+        log.debug(f"{cdl_obj = }")
         assert len(cdl_obj) == expected_len

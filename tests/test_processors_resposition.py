@@ -1,16 +1,14 @@
 import logging
-
 import pytest
 
 from lablib.operators import repositions
 from lablib.processors import OIIORepositionProcessor
-from tests.lib.testing_classes import MainTestClass
+
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
 
-class TestRepositionProcessor(MainTestClass):
+class TestRepositionProcessor:
     """Test reposition processor."""
 
     @pytest.mark.skip(reason="Not implemented")
@@ -69,7 +67,7 @@ class TestRepositionProcessor(MainTestClass):
                 op = repositions.Crop.from_node_data(v)
 
             if not op:
-                self.log.warning(f"Skipping {k} with {v}...")
+                log.warning(f"Skipping {k} with {v}...")
                 continue
             ops.append(op)
 
@@ -143,7 +141,7 @@ class TestRepositionProcessor(MainTestClass):
                 reformat_op = v
 
             if not op:
-                self.log.warning(f"Skipping {k} with {v}...")
+                log.warning(f"Skipping {k} with {v}...")
                 continue
             ops.append(op)
 

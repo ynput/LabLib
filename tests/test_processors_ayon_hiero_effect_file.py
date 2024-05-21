@@ -1,12 +1,13 @@
 import pytest
+import logging
 from pathlib import Path
 
 from lablib.processors import AYONHieroEffectsFileProcessor
 
-from tests.lib.testing_classes import MainTestClass
+log = logging.getLogger(__name__)
 
 
-class TestAYONHieroEffectFileProcessor(MainTestClass):
+class TestAYONHieroEffectFileProcessor:
 
     @pytest.mark.parametrize(
         "path",
@@ -20,10 +21,10 @@ class TestAYONHieroEffectFileProcessor(MainTestClass):
         effect_processor = AYONHieroEffectsFileProcessor(
             Path(path)
         )
-        self.log.debug(f"{effect_processor = }")
+        log.debug(f"{effect_processor = }")
         effect_processor.load()
 
-        self.log.debug(effect_processor.color_operators)
+        log.debug(effect_processor.color_operators)
         assert effect_processor.filepath == Path(path)
         # 5 because CDLTransform is converted into CDLTransform and
         # FileTransform

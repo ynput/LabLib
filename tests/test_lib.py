@@ -1,5 +1,6 @@
 import pytest
 from pathlib import Path
+import logging
 
 from opentimelineio.opentime import RationalTime
 
@@ -9,17 +10,17 @@ from lablib.lib import (
 )
 
 
-from tests.lib.testing_classes import MainTestClass
+log = logging.getLogger(__name__)
 
 
-class TestLib(MainTestClass):
+class TestLib:
     @pytest.mark.parametrize(
         "path", ["resources/public/plateMain/v000/BLD_010_0010_plateMain_v000.1001.exr"]
     )
     def test_ImageInfo(self, path: str):
         path = Path(path)
         image_info = ImageInfo(path)
-        self.log.debug(f"{image_info = }")
+        log.debug(f"{image_info = }")
         assert image_info.par == 1.0
         assert image_info.fps == 24.0
         assert image_info.width == 4382
@@ -35,7 +36,7 @@ class TestLib(MainTestClass):
 
         # get first element since multiple image sequences can live in the same folder
         seq_info = SequenceInfo.scan(path)[0]
-        self.log.debug(f"{seq_info = }")
+        log.debug(f"{seq_info = }")
 
         assert seq_info.path == path
         assert seq_info.hash_string == "BLD_010_0010_plateMain_v000.1001-1001#.exr"
@@ -49,7 +50,7 @@ class TestLib(MainTestClass):
 
         # get first element since multiple image sequences can live in the same folder
         seq_info = SequenceInfo.scan(path)[0]
-        self.log.debug(f"{seq_info = }")
+        log.debug(f"{seq_info = }")
 
         assert seq_info.path == path
         assert seq_info.start_frame == 1001
