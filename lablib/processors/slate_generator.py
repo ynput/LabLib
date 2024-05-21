@@ -78,9 +78,6 @@ class SlateHtmlProcessor:
     def set_template_path(self, path: str) -> None:
         self.slate_template_path = Path(path).resolve().as_posix()
 
-    def set_staging_dir(self, path: str) -> None:
-        self.staging_dir = Path(path).resolve().as_posix()
-
     def set_data(self, data: Dict) -> None:
         self.data = data
 

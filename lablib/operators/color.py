@@ -26,6 +26,7 @@ def get_interpolation(interpolation: str) -> int:
 
 @dataclass
 class OCIOFileTransform:
+    """Foundry Hiero Timeline soft effect node class """
     file: str = ""
     cccid: str = ""
     direction: int = 0
@@ -59,6 +60,8 @@ class OCIOFileTransform:
 
 @dataclass
 class OCIOColorSpace:
+    """Foundry Hiero Timeline soft effect node class"""
+
     in_colorspace: str = "ACES - ACEScg"
     out_colorspace: str = "ACES - ACEScg"
 
@@ -80,8 +83,15 @@ class OCIOColorSpace:
 
 @dataclass
 class OCIOCDLTransform:
+    """Foundry Hiero Timeline soft effect node class.
+
+    Since this node class combines two of OCIO classes (FileTransform and
+    CDLTransform), we will separate them here within `to_ocio_obj` method.
+    """
+
     file: Optional[str] = None
     direction: int = 0
+    cccid: str = ""
     offset: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
     power: List[float] = field(default_factory=lambda: [1.0, 1.0, 1.0])
     slope: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
@@ -102,6 +112,7 @@ class OCIOCDLTransform:
             effects.append(
                 OCIO.FileTransform(
                     src=lut_file.as_posix(),
+                    cccId=self.cccid,
                     interpolation=interpolation,
                     direction=direction,
                 )
@@ -130,6 +141,7 @@ class OCIOCDLTransform:
                 power=data.get("power", [1.0, 1.0, 1.0]),
                 slope=data.get("slope", [0.0, 0.0, 0.0]),
                 saturation=data.get("saturation", 1.0),
+                cccid=data.get("cccid", ""),
             )
         else:
             return cls(
@@ -139,3 +151,98 @@ class OCIOCDLTransform:
                 slope=data.get("slope", [0.0, 0.0, 0.0]),
                 saturation=data.get("saturation", 1.0),
             )
+
+
+@dataclass
+class AYONOCIOLookProduct:
+    """AYON ocioLook product dataclass
+
+    This class will hold all the necessary data for the ocioLook product, so
+    it can be covered into FileTransform and ColorSpaceTransform during
+    `to_ocio_obj` method.
+
+    Example of input data:
+    {
+        "ocioLookItems": [
+            {
+                "name": "LUTfile",
+                "file: "path/to/lut.cube", # currently created via processor
+                "ext": "cube",
+                "input_colorspace": {
+                    "colorspace": "Output - sRGB",
+                    "name": "color_picking",
+                    "type": "roles"
+                },
+                "output_colorspace": {
+                    "colorspace": "ACES - ACEScc",
+                    "name": "color_timing",
+                    "type": "roles"
+                },
+                "direction": "forward",
+                "interpolation": "tetrahedral",
+                "config_data": {
+                    "path": "path/to/config.ocio",
+                    "template": "{BUILTIN_OCIO_ROOT}/aces_1.2/config.ocio",
+                    "colorspace": "compositing_linear"
+                }
+            }
+        ],
+        "ocioLookWorkingSpace": {
+            "colorspace": "ACES - ACEScg",
+            "name": "compositing_linear",
+            "type": "roles"
+        }
+    }
+    """
+    ocioLookItems: List[dict] = field(default_factory=list)
+    ocioLookWorkingSpace: dict = field(default_factory=dict)
+
+    def to_ocio_obj(self):
+        look_working_colorspace = self.ocioLookWorkingSpace["colorspace"]
+        all_transformations = []
+        for index, item in enumerate(self.ocioLookItems):
+            filepath = item["file"]
+            lut_in_colorspace = item["input_colorspace"]["colorspace"]
+            lut_out_colorspace = item["output_colorspace"]["colorspace"]
+            direction = item["direction"]
+            interpolation = item["interpolation"]
+
+            if index == 0:
+                # set the first colorspace as the current working colorspace
+                current_working_colorspace = look_working_colorspace
+
+            if current_working_colorspace != lut_in_colorspace:
+                all_transformations.append(
+                    OCIO.ColorSpaceTransform(
+                        src=current_working_colorspace,
+                        dst=lut_in_colorspace,
+                    )
+                )
+
+            all_transformations.append(
+                OCIO.FileTransform(
+                    src=Path(filepath).as_posix(),
+                    interpolation=get_interpolation(interpolation),
+                    direction=get_direction(direction),
+                )
+            )
+
+            current_working_colorspace = lut_out_colorspace
+
+        # making sure we are back in the working colorspace
+        if current_working_colorspace != look_working_colorspace:
+            all_transformations.append(
+                OCIO.ColorSpaceTransform(
+                    src=current_working_colorspace,
+                    dst=look_working_colorspace,
+                )
+            )
+
+        return all_transformations
+
+    @classmethod
+    def from_node_data(cls, data):
+        return cls(
+            ocioLookItems=data.get("ocioLookItems", []),
+            ocioLookWorkingSpace=data.get("ocioLookWorkingSpace", {}),
+        )

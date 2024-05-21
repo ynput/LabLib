@@ -3,10 +3,8 @@ from __future__ import annotations
 import os
 import re
 import logging
-import subprocess
 from pathlib import Path
-from copy import deepcopy
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Any
 
 import opentimelineio.opentime as opentime
 
@@ -25,12 +23,12 @@ IMAGE_INFO_DEFAULTS = {
     "display_height": 1080,
 }
 
+
 class ImageIOBase:
     log = logging.getLogger(__name__)
     log.setLevel(logging.DEBUG)
 
-    def __init__(self, path: Union[str, Path], *args, **kwargs):
-        self.path = path
+    def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
         self.update(*args, **kwargs)
@@ -46,6 +44,11 @@ class ImageIOBase:
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}{self.__dict__}"
+
+    def update(self, **kwargs) -> None:
+        """Update operator attributes by calling implemented setter of keyword argument key."""
+        self.log.warning(f"Update not implemented for {self.__class__.__name__}")
+        pass
 
     @property
     def path(self) -> Path:
@@ -64,16 +67,12 @@ class ImageIOBase:
     def filepath(self) -> Path:
         return self.path
 
-    def update(self, *args, **kwargs) -> None:
-        """Update operator attributes from a given file path."""
-        raise NotImplementedError("update should be implemented.")
-
 
 class ImageInfo(ImageIOBase):
     """ImageInfo class for reading image metadata."""
 
     def __init__(self, path: Path):
-        super().__init__(path)
+        super().__init__(path=path)
 
     def __gt__(self, other: ImageInfo) -> bool:
         return self.frame_number > other.frame_number
@@ -81,14 +80,17 @@ class ImageInfo(ImageIOBase):
     def __lt__(self, other: ImageInfo) -> bool:
         return self.frame_number < other.frame_number
 
-    def update(self, force_ffprobe=True):
+    def update(self, force_ffprobe=True, **kwargs):
         """Update ImageInfo from a given file path.
         NOTE: force_ffprobe overrides iinfo values with ffprobe values.
               It's used since they report different framerates for testing exr
               files.
         """
-        iinfo_res = utils.call_iinfo(self.filepath)
-        ffprobe_res = utils.call_ffprobe(self.filepath)
+        if kwargs.get("path"):
+            self.path = kwargs["path"]
+
+        iinfo_res = utils.call_iinfo(self.path)
+        ffprobe_res = utils.call_ffprobe(self.path)
 
         for k, v in iinfo_res.items():
             if not v:
@@ -230,210 +232,10 @@ class ImageInfo(ImageIOBase):
     def name(self) -> str:
         return f"{self.path.stem}{self.path.suffix}"
 
-    def read_image_info(
-        self,
-        path: str,
-        default_timecode: str = None,
-        default_fps: float = None,
-        default_par: float = None,
-        default_channels: int = None,
-    ) -> ImageInfo:
-        if default_timecode is None:
-            default_timecode = "01:00:00:01"
-        if default_fps is None:
-            default_fps = 24.0
-        if default_par is None:
-            default_par = 1.0
-        if default_channels is None:
-            default_channels = 3
-
-        abspath = Path(path).as_posix()
-
-        result = {
-            "filename": abspath,
-            "origin_x": None,
-            "origin_y": None,
-            "width": None,
-            "height": None,
-            "display_width": None,
-            "display_height": None,
-            "channels": None,
-            "fps": None,
-            "par": None,
-            "timecode": None,
-        }
-
-        iinfo_res = deepcopy(result)
-        ffprobe_res = deepcopy(result)
-
-        iinfo_cmd = ["iinfo", "-v", abspath]
-
-        ffprobe_cmd = [
-            "ffprobe",
-            "-v",
-            "error",
-            "-select_streams",
-            "v:0",
-            "-show_entries",
-            "format_tags=timecode:stream_tags=timecode:stream=width,height,r_frame_rate,sample_aspect_ratio",
-            "-of",
-            "default=noprint_wrappers=1",
-            abspath,
-        ]
-
-        iinfo_out = (
-            subprocess.run(iinfo_cmd, capture_output=True, text=True)
-            .stdout.strip()
-            .splitlines()
-        )
-
-        ffprobe_out = (
-            subprocess.run(ffprobe_cmd, capture_output=True, text=True)
-            .stdout.strip()
-            .splitlines()
-        )
-
-        for l in iinfo_out:
-            if abspath in l and l.find(abspath) < 2:
-                vars = l.split(": ")[1].split(",")
-                size = vars[0].strip().split("x")
-                channels = vars[1].strip().split(" ")
-                iinfo_res.update(
-                    {
-                        "width": int(size[0].strip()),
-                        "height": int(size[1].strip()),
-                        "display_width": int(size[0].strip()),
-                        "display_height": int(size[1].strip()),
-                        "channels": int(channels[0].strip()),
-                    }
-                )
-            if "FramesPerSecond" in l or "framesPerSecond" in l:
-                vars = l.split(": ")[1].strip().split(" ")[0].split("/")
-                iinfo_res.update(
-                    {"fps": float(round(float(int(vars[0]) / int(vars[1])), 3))}
-                )
-            if "full/display size" in l:
-                size = l.split(": ")[1].split("x")
-                iinfo_res.update(
-                    {
-                        "display_width": int(size[0].strip()),
-                        "display_height": int(size[1].strip()),
-                    }
-                )
-            if "pixel data origin" in l:
-                origin = l.split(": ")[1].strip().split(",")
-                iinfo_res.update(
-                    {
-                        "origin_x": int(origin[0].replace("x=", "").strip()),
-                        "origin_y": int(origin[1].replace("y=", "").strip()),
-                    }
-                )
-            if "smpte:TimeCode" in l:
-                iinfo_res["timecode"] = l.split(": ")[1].strip()
-            if "PixelAspectRatio" in l:
-                iinfo_res["par"] = float(l.split(": ")[1].strip())
-
-        for l in ffprobe_out:
-            vars = l.split("=")
-            if "width" in vars[0]:
-                ffprobe_res["display_width"] = int(vars[1].strip())
-            if "height" in vars[0]:
-                ffprobe_res["display_height"] = int(vars[1].strip())
-            if "r_frame_rate" in vars[0]:
-                rate = vars[1].split("/")
-                ffprobe_res["fps"] = float(
-                    round(float(int(rate[0].strip()) / int(rate[1].strip())), 3)
-                )
-            if "timecode" in l:
-                ffprobe_res["timecode"] = vars[1]
-            if "sample_aspect_ratio" in l:
-                par = vars[1].split(":")
-                if vars[1] != "N/A":
-                    ffprobe_res["par"] = float(
-                        int(par[0].strip()) / int(par[1].strip())
-                    )
-                else:
-                    ffprobe_res["par"] = 1
-
-        for k, v in iinfo_res.items():
-            ffprobe_value = ffprobe_res[k]
-            if v == ffprobe_value:
-                result[k] = v
-            elif v and not ffprobe_value:
-                result[k] = v
-            elif ffprobe_value and not v:
-                result[k] = ffprobe_value
-            else:
-                result[k] = None
-
-        for key, default_value in (
-            ("width", result["display_width"]),
-            ("height", result["display_height"]),
-            ("origin_x", 0),
-            ("origin_y", 0),
-            ("timecode", default_timecode),
-            ("fps", default_fps),
-            ("par", default_par),
-            ("channels", default_channels),
-        ):
-            if not result[key]:
-                result[key] = default_value
-
-        for k, v in result.items():
-            self.log.info(f"{k} = {v}")
-            self[k] = v
-
 
 class SequenceInfo(ImageIOBase):
     def __init__(self, path: Path, imageinfos: List[ImageInfo]):
-        super().__init__(path, imageinfos)
-        # self.imageinfos = imageinfos
-        # self.update(imageinfos)
-
-    def _get_file_splits(self, file_name: str) -> None:
-        head, ext = os.path.splitext(file_name)
-        frame = int(re.findall(r"\d+$", head)[0])
-        return head.replace(str(frame), ""), frame, ext
-
-    def _get_length(self) -> int:
-        return int(self.frame_end) - int(self.frame_start) + 1
-
-    def compute_all(self, scan_dir: str) -> List:
-        files = os.listdir(scan_dir)
-        sequenced_files = []
-        matched_files = []
-        for f in files:
-            head, tail = os.path.splitext(f)
-            matches = re.findall(r"\d+$", head)
-            if matches:
-                sequenced_files.append(f)
-                matched_files.append(head.replace(matches[0], ""))
-        matched_files = list(set(matched_files))
-
-        results = []
-        for m in matched_files:
-            seq = SequenceInfo()
-            for sf in sequenced_files:
-                if m in sf:
-                    seq.frames.append(os.path.join(scan_dir, sf).replace("\\", "/"))
-
-            head, frame, ext = self._get_file_splits(seq.frames[0])
-            seq.path = os.path.abspath(scan_dir).replace("\\", "/")
-            seq.frame_start = frame
-            seq.frame_end = self._get_file_splits(seq.frames[-1])[1]
-            seq.head = os.path.basename(head)
-            seq.tail = ext
-            seq.padding = len(str(frame))
-            seq.hash_string = "{}#{}".format(os.path.basename(head), ext)
-            seq.format_string = "{}%0{}d{}".format(
-                os.path.basename(head), len(str(frame)), ext
-            )
-            results.append(seq)
-
-        return results
-
-    def compute_longest(self, scan_dir: str) -> SequenceInfo:
-        return self.compute_all(scan_dir=scan_dir)[0]
+        super().__init__(path=path, imageinfos=imageinfos)
 
     @classmethod
     def scan(cls, directory: str | Path) -> List[SequenceInfo]:
@@ -462,15 +264,16 @@ class SequenceInfo(ImageIOBase):
                 files_map[seq_key] = []
             files_map[seq_key].append(ImageInfo(item))
 
-        for seq_files in files_map.values():
-            return cls(path=seq_key.parent, imageinfos=seq_files)
+        return [
+            cls(path=seq_key.parent, imageinfos=seq_files)
+            for seq_key, seq_files in files_map.items()
+        ]
 
-    def update(self, imageinfos: Optional[List[ImageInfo]]):
-        if imageinfos:
-            self.log.debug(f"Updating from new frames: {imageinfos}")
-            self.imageinfos = imageinfos
-
-        # TODO: check for missing frames
+    def update(self, **kwargs):
+        if kwargs.get("path"):
+            self.path = kwargs["path"]
+        if kwargs.get("imageinfos"):
+            self.imageinfos = kwargs["imageinfos"]
 
     @property
     def imageinfos(self) -> List[int]:
@@ -497,9 +300,8 @@ class SequenceInfo(ImageIOBase):
         frame: ImageInfo = min(self.frames)
         ext: str = frame.extension
         basename = frame.name.split(".")[0]
-        frame_number: int = frame.frame_number
 
-        result = f"{basename}.{frame_number}#{len(self.frames)}{ext}"
+        result = f"{basename}.{self.start_frame}-{self.end_frame}#{ext}"
         return result
 
     @property

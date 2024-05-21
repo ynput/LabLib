@@ -1,0 +1,34 @@
+{
+    "version": 1,
+    "data":
+{
+    "ocioLookItems": [
+        {
+            "name": "LUTfile",
+            "ext": "cube",
+            "input_colorspace": {
+                "colorspace": "Output - sRGB",
+                "name": "color_picking",
+                "type": "roles"
+            },
+            "output_colorspace": {
+                "colorspace": "ACES - ACEScc",
+                "name": "color_timing",
+                "type": "roles"
+            },
+            "direction": "forward",
+            "interpolation": "tetrahedral",
+            "config_data": {
+                "path": "C:\\Users\\jakub\\AppData\\Local\\Ynput\\AYON\\addons\\ayon_ocio_1.0.0\\ayon_ocio\\configs\\OpenColorIOConfigs\\aces_1.2\\config.ocio",
+                "template": "{BUILTIN_OCIO_ROOT}/aces_1.2/config.ocio",
+                "colorspace": "compositing_linear"
+            }
+        }
+    ],
+    "ocioLookWorkingSpace": {
+        "colorspace": "ACES - ACEScg",
+        "name": "compositing_linear",
+        "type": "roles"
+    }
+}
+}
