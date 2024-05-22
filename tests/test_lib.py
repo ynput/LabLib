@@ -20,7 +20,7 @@ class TestLib:
     def test_ImageInfo(self, path: str):
         path = Path(path)
         image_info = ImageInfo(path)
-        log.debug(f"{image_info = }")
+        log.info(f"{image_info = }")
         assert image_info.par == 1.0
         assert image_info.fps == 24.0
         assert image_info.width == 4382
@@ -36,7 +36,7 @@ class TestLib:
 
         # get first element since multiple image sequences can live in the same folder
         seq_info = SequenceInfo.scan(path)[0]
-        log.debug(f"{seq_info = }")
+        log.info(f"{seq_info = }")
 
         assert seq_info.path == path
         assert seq_info.hash_string == "BLD_010_0010_plateMain_v000.1001-1001#.exr"
@@ -50,7 +50,7 @@ class TestLib:
 
         # get first element since multiple image sequences can live in the same folder
         seq_info = SequenceInfo.scan(path)[0]
-        log.debug(f"{seq_info = }")
+        log.info(f"{seq_info = }")
 
         assert seq_info.path == path
         assert seq_info.start_frame == 1001
