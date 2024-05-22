@@ -81,7 +81,6 @@ class ImageInfo:
     @property
     def rational_time(self) -> opentime.RationalTime:
         if not all([self.timecode, self.fps]):
-            # NOTE: i should use otio here
             raise Exception("no timecode and fps found")
 
         return opentime.from_timecode(self.timecode, self.fps)
