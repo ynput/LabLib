@@ -30,43 +30,32 @@ class Codec:
             raise ValueError(f"Codec {self.name} not supported!")
 
         args = []
+        # fmt: off
+        # TODO: i should probably abstract the cmdargs
         if self.name == "ProRes422-HQ":
             args = [
-                "-vcodec",
-                "prores_ks",
-                "-profile:v",
-                "3",
-                "-vendor",
-                "apl0",
-                "-pix_fmt",
-                "yuv422p10le",
-                "-vtag",
-                "apch",
+                "-vcodec", "prores_ks",
+                "-profile:v", "3",
+                "-vendor", "apl0",
+                "-pix_fmt", "yuv422p10le",
+                "-vtag", "apch",
             ]
         if self.name == "ProRes4444-XQ":
             args = [
-                "-vcodec",
-                "prores_ks",
-                "-profile:v",
-                "4",
-                "-vendor",
-                "apl0",
-                "-pix_fmt",
-                "yuva444p10le",
-                "-vtag",
-                "ap4h",
-                "-vtag",
-                "hvc1",
+                "-vcodec", "prores_ks",
+                "-profile:v", "4",
+                "-vendor", "apl0",
+                "-pix_fmt", "yuva444p10le",
+                "-vtag", "ap4h",
+                "-vtag", "hvc1",
             ]
         if self.name == "DNxHR-SQ":
             args = [
-                "-vcodec",
-                "dnxhd",
-                "-profile:v",
-                "2",
-                "-pix_fmt",
-                "yuv422p",
+                "-vcodec", "dnxhd",
+                "-profile:v", "2",
+                "-pix_fmt", "yuv422p",
             ]
+        # fmt: on
 
         return args
 
