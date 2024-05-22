@@ -6,13 +6,11 @@ from typing import List, Union
 import pytest
 
 from lablib.operators import Transform, Crop, Mirror2
-from tests.lib.testing_classes import MainTestClass
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
 
-class TestRepositionOperators(MainTestClass):
+class TestRepositionOperators:
     """Test reposition operators from effectsjson files."""
 
     def __get_reposition_operators(

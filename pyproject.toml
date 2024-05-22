@@ -1,8 +1,12 @@
 [tool.poetry]
 name = "lablib"
-version = "0.0.1-dev.1"
+version = "0.1.0-dev.1"
 description = ""
-authors = ["doerp <me@doerp.cool>"]
+authors = [
+    "maxpareschi <max.pareschi@22dogstudio.com>",
+    "jakubjezek001 <jakubjezek001@gmail.com>",
+    "doerp <me@doerp.cool>",
+]
 readme = "README.md"
 
 [tool.poetry.dependencies]

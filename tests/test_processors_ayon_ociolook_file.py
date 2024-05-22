@@ -1,12 +1,13 @@
 import pytest
+import logging
 from pathlib import Path
 
 from lablib.processors import AYONOCIOLookFileProcessor
 
-from tests.lib.testing_classes import MainTestClass
+log = logging.getLogger(__name__)
 
 
-class TestAYONOCIOLookFileProcessor(MainTestClass):
+class TestAYONOCIOLookFileProcessor:
 
     @pytest.mark.parametrize(
         "path,length",
@@ -24,10 +25,10 @@ class TestAYONOCIOLookFileProcessor(MainTestClass):
         look_processor = AYONOCIOLookFileProcessor(
             Path(path)
         )
-        self.log.debug(f"{look_processor = }")
+        log.debug(f"{look_processor = }")
         look_processor.load()
 
-        self.log.debug(look_processor.color_operators)
+        log.debug(look_processor.color_operators)
         assert look_processor.filepath == Path(path)
         # 5 because CDLTransform is converted into CDLTransform and
         # FileTransform

@@ -1,4 +1,5 @@
 import json
+import logging
 from pathlib import Path
 import pytest
 
@@ -8,10 +9,10 @@ from lablib import (
 )
 
 
-from tests.lib.testing_classes import MainTestClass
+log = logging.getLogger(__name__)
 
 
-class TestConfigExportProcessor(MainTestClass):
+class TestConfigExportProcessor:
 
     @pytest.fixture()
     def effect_processor(self):
@@ -20,7 +21,7 @@ class TestConfigExportProcessor(MainTestClass):
             "BLD_010_0010_effectPlateMain_v000.json"
         )
         effect_processor = AYONHieroEffectsFileProcessor(path)
-        self.log.debug(f"{effect_processor = }")
+        log.debug(f"{effect_processor = }")
         effect_processor.load()
         yield effect_processor
 
@@ -55,7 +56,7 @@ class TestConfigExportProcessor(MainTestClass):
 
         color_cmd = ocio_config_processor.get_oiiotool_cmd()
 
-        self.log.debug(color_cmd)
+        log.debug(color_cmd)
         assert color_cmd == [
             "--colorconfig",
             f"{staging_dir_path}/config.ocio",

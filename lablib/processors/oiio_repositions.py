@@ -22,7 +22,7 @@ class OIIORepositionProcessor:
     dst_width: int = 0
     src_height: int = 0
     dst_height: int = 0
-    fit: bool = False
+    fit: str = False
 
     _wrapper_class_members = dict(inspect.getmembers(repositions, inspect.isclass))
 
@@ -33,8 +33,11 @@ class OIIORepositionProcessor:
 
         if any([self.dst_height, self.dst_width]):
             dest_size = f"{self.dst_width}x{self.dst_height}"
-            # TODO: add fit/trim option
-            result.extend(["--resize", dest_size])
+            # TODO: check with renderer
+            if self.fit in ["letterbox", "width", "height"]:
+                result.extend([f"--fit:fillmode={self.fit}", dest_size])
+            else:
+                result.extend(["--resize", dest_size])
 
         log.debug(f"{result = }")
         return result
