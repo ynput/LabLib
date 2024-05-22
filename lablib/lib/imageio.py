@@ -106,6 +106,10 @@ class ImageInfo:
     def name(self) -> str:
         return f"{self.path.stem}{self.path.suffix}"
 
+    @property
+    def filepath(self) -> str:
+        return self.path.resolve().as_posix()
+
 
 @dataclass
 class SequenceInfo:

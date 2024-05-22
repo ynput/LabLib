@@ -15,10 +15,11 @@ log = logging.getLogger(__name__)
 
 class TestLib:
     @pytest.mark.parametrize(
-        "path", ["resources/public/plateMain/v000/BLD_010_0010_plateMain_v000.1001.exr"]
+        "filepath",
+        ["resources/public/plateMain/v000/BLD_010_0010_plateMain_v000.1001.exr"],
     )
-    def test_ImageInfo(self, path: str):
-        path = Path(path)
+    def test_ImageInfo(self, filepath: str):
+        path = Path(filepath)
         image_info = ImageInfo(path)
         log.info(f"{image_info = }")
         assert image_info.par == 1.0
@@ -26,7 +27,7 @@ class TestLib:
         assert image_info.width == 4382
         assert image_info.height == 2310
         assert image_info.channels == 3
-        assert image_info.filepath == path
+        assert image_info.filepath == path.resolve().as_posix()
         assert image_info.filename == path.name
         assert image_info.timecode == "02:10:04:17"
         assert image_info.rational_time == RationalTime(187313, 24)
