@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import os
 import re
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Union, Any
+from dataclasses import dataclass, field
+from typing import Dict, List
 
 import opentimelineio.opentime as opentime
 
@@ -23,56 +23,34 @@ IMAGE_INFO_DEFAULTS = {
     "display_height": 1080,
 }
 
-
-class ImageIOBase:
-    log = logging.getLogger(__name__)
-    log.setLevel(logging.DEBUG)
-
-    def __init__(self, *args, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-        self.update(*args, **kwargs)
-
-    def __getitem__(self, k: str) -> Any:
-        return getattr(self, k)
-
-    def __setitem__(self, k: str, v: Any) -> None:
-        if hasattr(self, k):
-            setattr(self, k, v)
-        else:
-            raise AttributeError(f"Attribute is not implemented: {k}")
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}{self.__dict__}"
-
-    def update(self, **kwargs) -> None:
-        """Update operator attributes by calling implemented setter of keyword argument key."""
-        self.log.warning(f"Update not implemented for {self.__class__.__name__}")
-        pass
-
-    @property
-    def path(self) -> Path:
-        return self._path
-
-    @path.setter
-    def path(self, path: Union[str, Path]) -> None:
-        if isinstance(path, str):
-            path = Path(path)
-        if not path.exists():
-            raise Exception(f"Path does not exist: {path}")
-
-        self._path = path
-
-    @property
-    def filepath(self) -> Path:
-        return self.path
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
-class ImageInfo(ImageIOBase):
+@dataclass
+class ImageInfo:
     """ImageInfo class for reading image metadata."""
 
-    def __init__(self, path: Path):
-        super().__init__(path=path)
+    path: Path = field(default_factory=Path)
+
+    # fmt: off
+    width: int = field(default=IMAGE_INFO_DEFAULTS["width"], init=False, repr=True)
+    height: int = field(default=IMAGE_INFO_DEFAULTS["height"], init=False, repr=True)
+    origin_x: int = field(default=IMAGE_INFO_DEFAULTS["origin_x"], init=False, repr=False)
+    origin_y: int = field(default=IMAGE_INFO_DEFAULTS["origin_y"], init=False, repr=False)
+    display_width: int = field(default=IMAGE_INFO_DEFAULTS["display_width"], init=False, repr=False)
+    display_height: int = field(default=IMAGE_INFO_DEFAULTS["display_height"], init=False, repr=False)
+    par: float = field(default=IMAGE_INFO_DEFAULTS["par"], init=False, repr=False)
+    channels: int = field(default=IMAGE_INFO_DEFAULTS["channels"], init=False, repr=True)
+
+    fps: float = field(default=IMAGE_INFO_DEFAULTS["fps"], init=False, repr=False)
+    timecode: str = field(default=IMAGE_INFO_DEFAULTS["timecode"], init=False, repr=False)
+    # fmt: on
+
+    def __post_init__(self):
+        if not self.path:
+            raise ValueError("ImageInfo needs to be initialized with a path")
+        self.update()
 
     def __gt__(self, other: ImageInfo) -> bool:
         return self.frame_number > other.frame_number
@@ -80,15 +58,12 @@ class ImageInfo(ImageIOBase):
     def __lt__(self, other: ImageInfo) -> bool:
         return self.frame_number < other.frame_number
 
-    def update(self, force_ffprobe=True, **kwargs):
-        """Update ImageInfo from a given file path.
+    def update(self, force_ffprobe=False):
+        """Update image info from iinfo and ffprobe values.
         NOTE: force_ffprobe overrides iinfo values with ffprobe values.
               It's used since they report different framerates for testing exr
               files.
         """
-        if kwargs.get("path"):
-            self.path = kwargs["path"]
-
         iinfo_res = utils.call_iinfo(self.path)
         ffprobe_res = utils.call_ffprobe(self.path)
 
@@ -97,107 +72,7 @@ class ImageInfo(ImageIOBase):
                 continue
             if ffprobe_res.get(k) and force_ffprobe:
                 v = ffprobe_res[k]
-            self[k] = v
-
-    @property
-    def width(self) -> int:
-        if not hasattr(self, "_width"):
-            return IMAGE_INFO_DEFAULTS["width"]
-        return self._width
-
-    @width.setter
-    def width(self, value: int):
-        self._width = value
-
-    @property
-    def height(self) -> int:
-        if not hasattr(self, "_height"):
-            return IMAGE_INFO_DEFAULTS["height"]
-        return self._height
-
-    @height.setter
-    def height(self, value: int):
-        self._height = value
-
-    @property
-    def display_height(self) -> int:
-        if not hasattr(self, "_display_height"):
-            return self.height  # default to initial height
-        return self._display_height
-
-    @display_height.setter
-    def display_height(self, value: int):
-        self._display_height = value
-
-    @property
-    def display_width(self) -> int:
-        if not hasattr(self, "_display_width"):
-            return self.width  # default to initial width
-        return self._display_width
-
-    @display_width.setter
-    def display_width(self, value: int):
-        self._display_width = value
-
-    @property
-    def channels(self) -> int:
-        if not hasattr(self, "_channels"):
-            return IMAGE_INFO_DEFAULTS["channels"]
-        return self._channels
-
-    @channels.setter
-    def channels(self, value: int):
-        self._channels = value
-
-    @property
-    def fps(self) -> int:
-        if not hasattr(self, "_fps"):
-            return IMAGE_INFO_DEFAULTS["fps"]
-        return self._fps
-
-    @fps.setter
-    def fps(self, value: int):
-        self._fps = value
-
-    @property
-    def par(self) -> int:
-        if not hasattr(self, "_par"):
-            return IMAGE_INFO_DEFAULTS["par"]
-        return self._par
-
-    @par.setter
-    def par(self, value: int):
-        self._par = value
-
-    @property
-    def timecode(self) -> str:
-        if not hasattr(self, "_timecode"):
-            return IMAGE_INFO_DEFAULTS["timecode"]
-        return self._timecode
-
-    @timecode.setter
-    def timecode(self, value: int):
-        self._timecode = value
-
-    @property
-    def origin_x(self) -> int:
-        if not hasattr(self, "_origin_x"):
-            return IMAGE_INFO_DEFAULTS["origin_x"]
-        return self._origin_x
-
-    @origin_x.setter
-    def origin_x(self, value: int):
-        self._origin_x = value
-
-    @property
-    def origin_y(self) -> int:
-        if not hasattr(self, "_origin_y"):
-            return IMAGE_INFO_DEFAULTS["origin_y"]
-        return self._origin_y
-
-    @origin_y.setter
-    def origin_y(self, value: int):
-        self._origin_y = value
+            setattr(self, k, v)
 
     @property
     def filename(self) -> str:
