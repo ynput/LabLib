@@ -84,8 +84,7 @@ class ImageInfo:
             # NOTE: i should use otio here
             raise Exception("no timecode and fps found")
 
-        result = opentime.from_timecode(self.timecode, self.fps)
-        return result
+        return opentime.from_timecode(self.timecode, self.fps)
 
     @property
     def frame_number(self) -> int:
