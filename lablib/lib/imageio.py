@@ -107,13 +107,20 @@ class ImageInfo:
         return f"{self.path.stem}{self.path.suffix}"
 
 
-class SequenceInfo(ImageIOBase):
-    def __init__(self, path: Path, imageinfos: List[ImageInfo]):
-        super().__init__(path=path, imageinfos=imageinfos)
+@dataclass
+class SequenceInfo:
+    path: Path = field(default_factory=Path)
+    imageinfos: List[ImageInfo] = field(default_factory=list)
+
+    def __post_init__(self):
+        if not all([self.path, self.imageinfos]):
+            raise ValueError(
+                "SequenceInfo needs to be initialized with path and imageinfos"
+            )
 
     @classmethod
     def scan(cls, directory: str | Path) -> List[SequenceInfo]:
-        cls.log.info(f"Scanning {directory}")
+        log.info(f"Scanning {directory}")
         if not isinstance(directory, Path):
             directory = Path(directory)
 
@@ -125,12 +132,12 @@ class SequenceInfo(ImageIOBase):
             if not item.is_file():
                 continue
             if item.suffix not in (".exr"):
-                cls.log.warning(f"{item.suffix} not in (.exr)")
+                log.warning(f"{item.suffix} not in (.exr)")
                 continue
 
             _parts = item.stem.split(".")
             if len(_parts) > 2:
-                cls.log.warning(f"{_parts = }")
+                log.warning(f"{_parts = }")
                 continue
             seq_key = Path(item.parent, _parts[0])
 
@@ -142,20 +149,6 @@ class SequenceInfo(ImageIOBase):
             cls(path=seq_key.parent, imageinfos=seq_files)
             for seq_key, seq_files in files_map.items()
         ]
-
-    def update(self, **kwargs):
-        if kwargs.get("path"):
-            self.path = kwargs["path"]
-        if kwargs.get("imageinfos"):
-            self.imageinfos = kwargs["imageinfos"]
-
-    @property
-    def imageinfos(self) -> List[int]:
-        return self._imageinfos
-
-    @imageinfos.setter
-    def imageinfos(self, value: List[ImageInfo]):
-        self._imageinfos = value
 
     @property
     def frames(self) -> List[int]:
