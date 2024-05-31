@@ -156,7 +156,7 @@ class BasicRenderer:
 
         # input args
         input_path: str = (
-            Path(self.source_sequence.path, self.source_sequence.ffmpeg_string)
+            Path(self.source_sequence.path, self.source_sequence.format_string)
             .resolve()
             .as_posix()
         )
