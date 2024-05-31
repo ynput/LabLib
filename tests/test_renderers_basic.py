@@ -15,7 +15,7 @@ def test_BasicRenderer():
     rend_data = {
         # "color_proc": None,
         "repo_proc": OIIORepositionProcessor(),
-        "source_sequence": SequenceInfo.scan("resources/public/plateMain/v000")[0],
+        "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
         "output_dir": "test_results",
         "codec": "ProRes422-HQ",
     }
