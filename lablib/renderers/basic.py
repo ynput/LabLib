@@ -156,7 +156,6 @@ class BasicRenderer:
             .as_posix()
         )
         input_args = ["-i", input_path]
-        # TODO: i want to be able to get the first ImageInfo easier
         timecode = min(self.source_sequence.frames).timecode
         input_args.extend(["-timecode", timecode])
         cmd.extend(input_args)
