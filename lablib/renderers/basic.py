@@ -71,10 +71,12 @@ class BasicRenderer:
     )
 
     # files and directories
-    name: str = "lablib_render"
-    format: str = None
-    staging_dir: str = None
-    source_sequence: SequenceInfo = None
+    # NOTE: name is used for the output ffolder name of file sequence
+    name: str = field(default="lablib_render", init=False, repr=False)
+    format: str = field(default_factory=str, init=True, repr=True)
+    staging_dir: str = (
+        None  # should be an internal only variable, shall i rename to output_dir?
+    )
     container_name: str = "lablib.mov"
 
     # rendering options
