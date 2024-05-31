@@ -163,13 +163,11 @@ class BasicRenderer:
         ]
 
         # input args
-        input_path = Path(
-            self._staging_dir, self.name, self.source_sequence.hash_string
-        )
+        input_path = Path(self.staging_dir, self.name, self.source_sequence.hash_string)
         input_args = ["-i", input_path.as_posix()]
 
         # output and codec args
-        output_path = Path(self.staging_path, self.container_name)
+        output_path = Path(self.staging_dir, self.container_name)
         output_args = [output_path.as_posix()]
         codec_args = self._codec.get_ffmpeg_args()
 
