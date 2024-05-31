@@ -22,4 +22,5 @@ def test_BasicRenderer():
         # "format": None,
     }
     rend = BasicRenderer(**rend_data)
-    rend.render()
+    log.info(f"renderer = {rend}")
+    rend.render(debug=True)

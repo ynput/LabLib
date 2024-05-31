@@ -147,7 +147,7 @@ class BasicRenderer:
             raise ValueError(f"Missing codec! Supported codecs are {SUPPORTED_CODECS}")
 
         # common args
-        cmd = ["ffmpeg", "-loglevel", "error", "-hide_banner"]
+        cmd = ["ffmpeg", "-loglevel", "info", "-hide_banner"]
         common_args = [
             "-y",
             "-xerror",
@@ -188,7 +188,6 @@ class BasicRenderer:
         self.setup_staging_dir()
         cmd = self.get_oiiotool_cmd(debug)
         ffmpeg_cmd = self.get_ffmpeg_cmd()
-        log.info(f"{ffmpeg_cmd = }")
 
         # run oiiotool command
         log.info("oiiotool cmd >>> {}".format(" ".join(cmd)))
