@@ -202,4 +202,16 @@ class BasicRenderer:
         result = SequenceInfo.scan(Path(self.staging_dir, self.name))[0]
         log.info(f"Rendered sequence info >>> {result}")
 
+        # run ffmpeg command
+        if self.codec:
+            log.info("ffmpeg cmd >>> {}".format(" ".join(ffmpeg_cmd)))
+            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True)
+            # NOTE: ffmpeg outputs to stderr
+            stderr = result.stderr.encode("utf-8").decode()
+            if result.returncode != 0:
+                log.error(stderr)
+                raise ValueError("Failed to render video container!")
+            if debug:
+                log.info(stderr)
+
         return result
