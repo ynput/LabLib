@@ -63,8 +63,12 @@ class Codec:
 @dataclass
 class BasicRenderer:
     # processors
-    repo_proc: OIIORepositionProcessor = None
-    color_proc: OCIOConfigFileProcessor = None
+    repo_proc: OIIORepositionProcessor = field(
+        default=None, default_factory=OIIORepositionProcessor
+    )
+    color_proc: OCIOConfigFileProcessor = field(
+        default=None, default_factory=OCIOConfigFileProcessor
+    )
 
     # files and directories
     name: str = "lablib_render"
