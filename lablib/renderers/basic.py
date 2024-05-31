@@ -77,6 +77,7 @@ class BasicRenderer:
     staging_dir: str = (
         None  # should be an internal only variable, shall i rename to output_dir?
     )
+    source_sequence: SequenceInfo = None
     container_name: str = "lablib.mov"
 
     # rendering options
