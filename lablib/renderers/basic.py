@@ -152,13 +152,13 @@ class BasicRenderer:
             "-y",
             "-xerror",
             "-start_number",
-            self.source_sequence.start_frame,
+            str(self.source_sequence.start_frame),
             "-r",
-            min(self.source_sequence.frames).fps,
+            str(min(self.source_sequence.frames).fps),
             "-thread_queue_size",
             "4096",
             "-framerate",
-            min(self.source_sequence.frames).fps,
+            str(min(self.source_sequence.frames).fps),
         ]
 
         # input args
