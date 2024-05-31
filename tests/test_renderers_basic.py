@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def test_BasicRenderer(self):
+def test_BasicRenderer():
     rend_data = {
         # "color_proc": None,
         "repo_proc": OIIORepositionProcessor(),
