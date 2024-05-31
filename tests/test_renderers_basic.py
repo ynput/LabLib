@@ -16,10 +16,8 @@ def test_BasicRenderer():
         # "color_proc": None,
         "repo_proc": OIIORepositionProcessor(),
         "source_sequence": SequenceInfo.scan("resources/public/plateMain/v000")[0],
-        "staging_dir": "test_results",
-        "codec": "DNxHR-SQ",
-        # "name": None,
-        # "format": None,
+        "output_dir": "test_results",
+        "codec": "ProRes422-HQ",
     }
     rend = BasicRenderer(**rend_data)
     log.info(f"renderer = {rend}")

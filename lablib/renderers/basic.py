@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 import logging
 import subprocess
 import shutil
+import tempfile
 from typing import List
 
 from pathlib import Path
@@ -23,12 +24,18 @@ SUPPORTED_CODECS = ["ProRes422-HQ", "ProRes4444-XQ", "DNxHR-SQ"]
 
 @dataclass
 class Codec:
-    name: str
+    name: str = field(default_factory=str, init=True, repr=True)
+
+    def __post_init__(self) -> None:
+        if not self.name:
+            log.warning("Codec not provided, using default codec DNxHR-SQ")
+            self.name = "DNxHR-SQ"
+        if self.name not in SUPPORTED_CODECS:
+            raise ValueError(
+                f"{self.name} is not found in supported codecs.\n{SUPPORTED_CODECS = }"
+            )
 
     def get_ffmpeg_args(self) -> List[str]:
-        if self.name not in SUPPORTED_CODECS:
-            raise ValueError(f"Codec {self.name} not supported!")
-
         args = []
         # fmt: off
         # TODO: i should probably abstract the cmdargs
@@ -63,42 +70,40 @@ class Codec:
 @dataclass
 class BasicRenderer:
     # processors
-    # NOTE: can't use default_factory currently since
-    #       color_proc requires a Context
-    repo_proc: OIIORepositionProcessor = field(default=None)
-    color_proc: OCIOConfigFileProcessor = field(default=None)
+    repo_proc: OIIORepositionProcessor = field(default=None, init=True, repr=False)
+    color_proc: OCIOConfigFileProcessor = field(default=None, init=True, repr=False)
 
     # files and directories
-    # NOTE: name is used for the output ffolder name of file sequence
-    name: str = field(default="lablib_render", init=False, repr=False)
-    format: str = field(default_factory=str, init=True, repr=True)
-    staging_dir: str = (
-        None  # should be an internal only variable, shall i rename to output_dir?
-    )
-    source_sequence: SequenceInfo = None
-    container_name: str = "lablib.mov"
+    output_dir: str = field(default_factory=str, init=True, repr=True)
+    source_sequence: SequenceInfo = field(default=None, init=True, repr=True)
+    container_name: str = field(default="lablib.mov", init=True, repr=True)
 
     # rendering options
-    # NOTE: currently only used for oiiotool
-    threads: int = field(default=4, init=False, repr=False)
-    codec: str = None
-    audio: str = None
+    threads: int = field(default=4, init=True, repr=False)
+    codec: str = field(default_factory=str, init=True, repr=True)
+    audio: str = field(default_factory=str, init=False, repr=False)
+    fps: int = field(default=None, init=False, repr=False)
     fps: int = None
 
     def __post_init__(self) -> None:
-        if not self.staging_dir:
-            log.warning("No staging directory provided. Rendering to cwd")
-            self.staging_dir = Path("lablib_render").resolve().as_posix()
-        if not self.codec:
-            log.warning("No codec provided.")
+        if not self.source_sequence:
+            raise ValueError("Missing source sequence!")
+        if not any([self.color_proc, self.repo_proc]):
+            raise ValueError("Missing valid Processor!")
+        if not self.output_dir:
+            log.warning("Rendering to $HOME/lablib_render")
+            self._output_dir = (Path.home() / "lablib_render").resolve()
+            if not self.output_dir.exists():
+                self.output_dir.mkdir()
 
-        self._codec = Codec(self.codec)
+        self._output_dir = Path(self.output_dir).resolve()
+        if not self._output_dir.is_dir():
+            self._output_dir.mkdir()
+            log.info(f"Output directory {self._output_dir} created!")
 
-    def setup_staging_dir(self) -> None:
-        render_staging_dir = Path(self.staging_dir, self.name)
-        if not render_staging_dir.resolve().is_dir():
-            shutil.rmtree(render_staging_dir.as_posix(), ignore_errors=True)
-            render_staging_dir.mkdir(parents=True, exist_ok=True)
+        self._staging_dir = Path(tempfile.mkdtemp())
+
+        self._codec = Codec(name=self.codec)
 
     def get_oiiotool_cmd(self, debug=False) -> List[str]:
         # TODO: we should add OIIOTOOL required version into pyproject.toml
@@ -126,28 +131,15 @@ class BasicRenderer:
             self.color_proc.create_config()
             cmd.extend(self.color_proc.get_oiiotool_cmd())
 
-        # format the output path
-        if self.format:
-            dest_path = "{}{}{}".format(
-                self.source_sequence.head,
-                "#",
-                ".{}".format(self.format) if self.format.find(".") < 0 else self.format,
-            )
-        else:
-            dest_path = self.source_sequence.hash_string
-
-        cmd.extend(
-            ["-o", Path(self.staging_dir, self.name, dest_path).resolve().as_posix()]
-        )
+        dest_path = self.source_sequence.hash_string
+        cmd.extend(["-o", (self._staging_dir / dest_path).as_posix()])
 
         return cmd
 
     def get_ffmpeg_cmd(self) -> List[str]:
-        if not self.codec:
-            raise ValueError(f"Missing codec! Supported codecs are {SUPPORTED_CODECS}")
+        cmd = ["ffmpeg", "-loglevel", "info", "-hide_banner"]
 
         # common args
-        cmd = ["ffmpeg", "-loglevel", "info", "-hide_banner"]
         common_args = [
             "-y",
             "-xerror",
@@ -160,6 +152,7 @@ class BasicRenderer:
             "-framerate",
             str(min(self.source_sequence.frames).fps),
         ]
+        cmd.extend(common_args)
 
         # input args
         input_path: str = (
@@ -171,24 +164,21 @@ class BasicRenderer:
         # TODO: i want to be able to get the first ImageInfo easier
         timecode = min(self.source_sequence.frames).timecode
         input_args.extend(["-timecode", timecode])
+        cmd.extend(input_args)
 
-        # output and codec args
-        output_path = Path(self.staging_dir, self.container_name)
-        output_args = [output_path.as_posix()]
+        # codec args
         codec_args = self._codec.get_ffmpeg_args()
+        cmd.extend(codec_args)
 
-        # chain all args
-        # NOTE: ffmpegs output arg is the last one
-        chain = [common_args, input_args, codec_args, output_args]
-        for args in chain:
-            cmd.extend(args)
+        # output args
+        # NOTE: ffmpegs output arg needs to be the last one
+        output_path = Path(self._staging_dir, self.container_name)
+        output_args = [output_path.as_posix()]
+        cmd.extend(output_args)
 
         return cmd
 
     def render(self, debug=False) -> SequenceInfo:
-        if not self.color_proc and not self.repo_proc:
-            raise ValueError("Missing both valid Processors!")
-        self.setup_staging_dir()
         cmd = self.get_oiiotool_cmd(debug)
         ffmpeg_cmd = self.get_ffmpeg_cmd()
 
@@ -197,24 +187,30 @@ class BasicRenderer:
         result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode != 0:
             log.error(result.stderr)
-            raise ValueError("Failed to render sequence!")
         if debug:
             log.info(result.stdout)
 
         # get rendered sequence info
-        result = SequenceInfo.scan(Path(self.staging_dir, self.name))[0]
+        result = SequenceInfo.scan(Path(self._staging_dir))[0]
         log.info(f"Rendered sequence info >>> {result}")
 
         # run ffmpeg command
-        if self.codec:
-            log.info("ffmpeg cmd >>> {}".format(" ".join(ffmpeg_cmd)))
-            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True)
-            # NOTE: ffmpeg outputs to stderr
-            stderr = result.stderr.encode("utf-8").decode()
-            if result.returncode != 0:
-                log.error(stderr)
-                raise ValueError("Failed to render video container!")
-            if debug:
-                log.info(stderr)
+        log.info("ffmpeg cmd >>> {}".format(" ".join(ffmpeg_cmd)))
+        result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True)
+        # NOTE: ffmpeg outputs to stderr
+        stderr = result.stderr.encode("utf-8").decode()
+        if result.returncode != 0:
+            log.error(stderr)
+        if debug:
+            log.info(stderr)
+
+        # copy renders to output directory
+        for item in self._staging_dir.iterdir():
+            if item.is_file():
+                log.debug(f"Copying {item} to {self._output_dir}")
+                shutil.copy2(item, self._output_dir)
+
+        # cleanup
+        shutil.rmtree(self._staging_dir)
 
         return result
