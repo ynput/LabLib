@@ -27,9 +27,6 @@ class Codec:
     name: str = field(default_factory=str, init=True, repr=True)
 
     def __post_init__(self) -> None:
-        if not self.name:
-            log.warning("Codec not provided, using default codec DNxHR-SQ")
-            self.name = "DNxHR-SQ"
         if self.name not in SUPPORTED_CODECS:
             raise ValueError(
                 f"{self.name} is not found in supported codecs.\n{SUPPORTED_CODECS = }"
@@ -103,8 +100,6 @@ class BasicRenderer:
 
         self._staging_dir = Path(tempfile.mkdtemp())
 
-        self._codec = Codec(name=self.codec)
-
     def get_oiiotool_cmd(self, debug=False) -> List[str]:
         # TODO: we should add OIIOTOOL required version into pyproject.toml
         #       since we are using treaded version of OIIOTOOL
@@ -167,8 +162,9 @@ class BasicRenderer:
         cmd.extend(input_args)
 
         # codec args
-        codec_args = self._codec.get_ffmpeg_args()
-        cmd.extend(codec_args)
+        if self.codec:
+            codec_args = Codec(name=self.codec).get_ffmpeg_args()
+            cmd.extend(codec_args)
 
         # output args
         # NOTE: ffmpegs output arg needs to be the last one
