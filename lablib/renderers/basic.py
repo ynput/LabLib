@@ -63,12 +63,10 @@ class Codec:
 @dataclass
 class BasicRenderer:
     # processors
-    repo_proc: OIIORepositionProcessor = field(
-        default=None, default_factory=OIIORepositionProcessor
-    )
-    color_proc: OCIOConfigFileProcessor = field(
-        default=None, default_factory=OCIOConfigFileProcessor
-    )
+    # NOTE: can't use default_factory currently since
+    #       color_proc requires a Context
+    repo_proc: OIIORepositionProcessor = field(default=None)
+    color_proc: OCIOConfigFileProcessor = field(default=None)
 
     # files and directories
     # NOTE: name is used for the output ffolder name of file sequence
