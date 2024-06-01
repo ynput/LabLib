@@ -173,7 +173,7 @@ class BasicRenderer:
 
         return cmd
 
-    def render(self, debug=False) -> SequenceInfo:
+    def render(self, debug=False) -> None:
         cmd = self.get_oiiotool_cmd(debug)
         ffmpeg_cmd = self.get_ffmpeg_cmd()
 
