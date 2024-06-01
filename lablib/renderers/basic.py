@@ -211,5 +211,3 @@ class BasicRenderer:
 
         # cleanup
         shutil.rmtree(self._staging_dir)
-
-        return result
