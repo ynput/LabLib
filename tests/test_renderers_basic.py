@@ -18,6 +18,7 @@ def test_BasicRenderer():
         "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
         "output_dir": "test_results",
         "codec": "ProRes422-HQ",
+        # "keep_only_container": True,
     }
     rend = BasicRenderer(**rend_data)
     log.info(f"renderer = {rend}")

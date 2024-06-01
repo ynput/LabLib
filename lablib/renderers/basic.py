@@ -81,6 +81,8 @@ class BasicRenderer:
     audio: str = field(init=False, repr=False)
     threads: int = field(default=4, repr=False)
 
+    # cleanup
+    keep_only_container: bool = field(default=False, repr=False)
 
     def __post_init__(self) -> None:
         if not self.source_sequence:
@@ -202,7 +204,9 @@ class BasicRenderer:
         # copy renders to output directory
         for item in self._staging_dir.iterdir():
             if item.is_file():
-                log.debug(f"Copying {item} to {self._output_dir}")
+                if item.suffix not in [".mov", ".mp4"] and self.keep_only_container:
+                    continue
+                log.info(f"Copying {item} to {self._output_dir}")
                 shutil.copy2(item, self._output_dir)
 
         # cleanup
