@@ -67,20 +67,20 @@ class Codec:
 @dataclass
 class BasicRenderer:
     # processors
-    repo_proc: OIIORepositionProcessor = field(default=None, init=True, repr=False)
-    color_proc: OCIOConfigFileProcessor = field(default=None, init=True, repr=False)
+    repo_proc: OIIORepositionProcessor = field(default=None, repr=False)
+    color_proc: OCIOConfigFileProcessor = field(default=None, repr=False)
 
     # files and directories
-    output_dir: str = field(default_factory=str, init=True, repr=True)
-    source_sequence: SequenceInfo = field(default=None, init=True, repr=True)
-    container_name: str = field(default="lablib.mov", init=True, repr=True)
+    output_dir: str = field(default_factory=str)
+    source_sequence: SequenceInfo = field(default=None)
+    container_name: str = field(default="lablib.mov")
 
     # rendering options
-    threads: int = field(default=4, init=True, repr=False)
-    codec: str = field(default_factory=str, init=True, repr=True)
-    audio: str = field(default_factory=str, init=False, repr=False)
-    fps: int = field(default=None, init=False, repr=False)
-    fps: int = None
+    fps: int = field(init=False, repr=False)
+    codec: str = field(default_factory=str)
+    audio: str = field(init=False, repr=False)
+    threads: int = field(default=4, repr=False)
+
 
     def __post_init__(self) -> None:
         if not self.source_sequence:
