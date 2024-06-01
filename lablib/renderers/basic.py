@@ -78,7 +78,7 @@ class BasicRenderer:
     # rendering options
     fps: int = field(init=False, repr=False)
     codec: str = field(default_factory=str)
-    audio: str = field(init=False, repr=False)
+    audio: str = field(default_factory=str, repr=False)
     threads: int = field(default=4, repr=False)
 
     # cleanup
@@ -158,9 +158,16 @@ class BasicRenderer:
             .as_posix()
         )
         input_args = ["-i", input_path]
-        timecode = min(self.source_sequence.frames).timecode
-        input_args.extend(["-timecode", timecode])
+        if self.audio:
+            audio_path: str = Path(self.audio).resolve().as_posix()
+            input_args.extend(["-i", audio_path])
+            audio_args = ["-map", "0:v", "-map", "1:a"]
+            input_args.extend(audio_args)
         cmd.extend(input_args)
+
+        # timecode args
+        timecode = min(self.source_sequence.frames).timecode
+        cmd.extend(["-timecode", timecode])
 
         # codec args
         if self.codec:
