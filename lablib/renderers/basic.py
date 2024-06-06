@@ -67,8 +67,8 @@ class Codec:
 @dataclass
 class BasicRenderer:
     # processors
-    repo_proc: OIIORepositionProcessor = field(default=None, repr=False)
-    color_proc: OCIOConfigFileProcessor = field(default=None, repr=False)
+    repo_proc: OIIORepositionProcessor = field(default=None, repr=True)
+    color_proc: OCIOConfigFileProcessor = field(default=None, repr=True)
 
     # files and directories
     output_dir: str = field(default_factory=str)
