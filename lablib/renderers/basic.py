@@ -129,8 +129,9 @@ class BasicRenderer:
             self.color_proc.create_config()
             cmd.extend(self.color_proc.get_oiiotool_cmd())
 
-        dest_path = self.source_sequence.hash_string
-        cmd.extend(["-o", (self._staging_dir / dest_path).as_posix()])
+        output_path = (self._staging_dir / self.source_sequence.hash_string).resolve()
+        self._oiio_out = output_path  # for ffmpeg input
+        cmd.extend(["-o", output_path.as_posix()])
 
         return cmd
 
@@ -153,12 +154,13 @@ class BasicRenderer:
         cmd.extend(common_args)
 
         # input args
-        input_path: str = (
-            Path(self.source_sequence.path, self.source_sequence.format_string)
-            .resolve()
-            .as_posix()
-        )
-        input_args = ["-i", input_path]
+        input_path = Path(
+            self.source_sequence.path, self.source_sequence.format_string
+        ).resolve()
+        if hasattr(self, "_oiio_out"):
+            si = SequenceInfo.scan(self._oiio_out.parent)[0]
+            input_path = Path(si.path, si.format_string).resolve()
+        input_args = ["-i", input_path.as_posix()]
         if self.audio:
             audio_path: str = Path(self.audio).resolve().as_posix()
             input_args.extend(["-i", audio_path])
