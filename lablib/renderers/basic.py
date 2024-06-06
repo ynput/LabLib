@@ -107,12 +107,13 @@ class BasicRenderer:
         #       since we are using treaded version of OIIOTOOL
         # ? does the python module install the binaries and adds them to PATH
         # maybe define LABLIB_* env vars for the paths and use them in the commands
+        input_path = Path(
+            self.source_sequence.path, self.source_sequence.hash_string
+        ).resolve()
         cmd = [  # inits the command with defaults
             "oiiotool",
             "-i",
-            Path(self.source_sequence.path, self.source_sequence.hash_string)
-            .resolve()
-            .as_posix(),
+            input_path.as_posix(),
             "--threads",
             str(self.threads),
         ]
