@@ -186,22 +186,17 @@ class BasicRenderer:
         return cmd
 
     def render(self, debug=False) -> None:
-        cmd = self.get_oiiotool_cmd(debug)
-        ffmpeg_cmd = self.get_ffmpeg_cmd()
-
         # run oiiotool command
+        cmd = self.get_oiiotool_cmd(debug)
         log.info("oiiotool cmd >>> {}".format(" ".join(cmd)))
         result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode != 0:
             log.error(result.stderr)
         if debug:
-            log.info(result.stdout)
-
-        # get rendered sequence info
-        result = SequenceInfo.scan(Path(self._staging_dir))[0]
-        log.info(f"Rendered sequence info >>> {result}")
+            log.info(f"oiio cmd out:\n{result.stdout}")
 
         # run ffmpeg command
+        ffmpeg_cmd = self.get_ffmpeg_cmd()
         log.info("ffmpeg cmd >>> {}".format(" ".join(ffmpeg_cmd)))
         result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True)
         # NOTE: ffmpeg outputs to stderr
