@@ -11,16 +11,30 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def test_BasicRenderer():
-    rend_data = {
-        # "color_proc": None,
+test_data = [
+    {
+        "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
+        "output_dir": "test_results",
+    },
+    {
         "repo_proc": OIIORepositionProcessor(),
         "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
         "output_dir": "test_results",
         "codec": "ProRes422-HQ",
-        # "audio": "resources/public/plateMain/v002/audio.m4a",
-        # "keep_only_container": True,
-    }
-    rend = BasicRenderer(**rend_data)
+        "fps": 25,
+        "keep_only_container": True,
+    },
+]
+
+
+@pytest.mark.parametrize(
+    "test_index, test_data",
+    enumerate(test_data),
+)
+def test_BasicRenderer(test_index, test_data):
+    rend = BasicRenderer(**test_data)
+    log.info(f"{test_index = }")
     log.info(f"renderer = {rend}")
     rend.render(debug=True)
+
+    # TODO: assertions
