@@ -1,23 +1,44 @@
+import json
 import logging
+from pathlib import Path
 
 import pytest
 
 from lablib.lib import SequenceInfo
 
-from lablib.processors import OIIORepositionProcessor
+from lablib.processors import (
+    OIIORepositionProcessor,
+    AYONHieroEffectsFileProcessor,
+    OCIOConfigFileProcessor,
+)
 from lablib.renderers import BasicRenderer
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
+mock_data = json.loads(Path("resources/public/mock_data.json").read_text())
+
+effect_processor = AYONHieroEffectsFileProcessor(
+    Path("resources/public/effectPlateMain/v000/BLD_010_0010_effectPlateMain_v000.json")
+)
+effect_processor.load()
+ocio_config_processor = OCIOConfigFileProcessor(
+    operators=effect_processor.color_operators,
+    staging_dir=Path("test_results").resolve().as_posix(),
+    context=mock_data["asset"],
+    family=mock_data["project"]["code"],
+    views=["sRGB", "Rec.709", "Log", "Raw"],
+    environment_variables={
+        "CONTEXT": "BLD_010_0010",
+        "PROJECT_ROOT": "C:/CODE/LabLib/resources",
+    },
+)
+ocio_config_processor.create_config()
 
 test_data = [
     {
-        "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
-        "output_dir": "test_results",
-    },
-    {
-        "repo_proc": OIIORepositionProcessor(),
+        # "processor": ocio_config_processor,   # can't read generated config.ocio
+        "processor": OIIORepositionProcessor(effect_processor.repo_operators),
         "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
         "output_dir": "test_results",
         "codec": "ProRes422-HQ",
@@ -25,6 +46,7 @@ test_data = [
         "keep_only_container": True,
     },
 ]
+log.info(f"{test_data = }")
 
 
 @pytest.mark.parametrize(
