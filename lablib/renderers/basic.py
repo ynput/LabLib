@@ -68,7 +68,6 @@ class BasicRenderer:
     color_proc = None
 
     # rendering options
-    fps: int = 25
     threads: int = 4
 
     # cleanup
@@ -147,11 +146,11 @@ class BasicRenderer:
             "-start_number",
             str(self.source_sequence.start_frame),
             "-r",
-            str(min(self.source_sequence.frames).fps),
+            str(self.fps),
             "-thread_queue_size",
             "4096",
             "-framerate",
-            str(min(self.source_sequence.frames).fps),
+            str(self.fps),
         ]
         cmd.extend(common_args)
 
@@ -239,6 +238,16 @@ class BasicRenderer:
     @codec.setter
     def codec(self, value: str) -> None:
         self._codec = Codec(name=value)
+
+    @property
+    def fps(self) -> int:
+        if not hasattr(self, "_fps"):
+            return min(self.source_sequence.frames).fps
+        return self._fps
+
+    @fps.setter
+    def fps(self, value: int) -> None:
+        self._fps = value
 
     @property
     def audio(self) -> str:
