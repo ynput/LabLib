@@ -5,14 +5,10 @@ import logging
 import subprocess
 import shutil
 import tempfile
-from typing import List
+from typing import List, Union
 
 from pathlib import Path
 
-from ..processors import (
-    OCIOConfigFileProcessor,
-    OIIORepositionProcessor,
-)
 from ..lib import SequenceInfo
 
 log = logging.getLogger(__name__)
@@ -64,43 +60,49 @@ class Codec:
         return args
 
 
-@dataclass
 class BasicRenderer:
-    # processors
-    repo_proc: OIIORepositionProcessor = field(default=None, repr=True)
-    color_proc: OCIOConfigFileProcessor = field(default=None, repr=True)
+    name: str = "lablib.mov"
 
-    # files and directories
-    output_dir: str = field(default_factory=str)
-    source_sequence: SequenceInfo = field(default=None)
-    container_name: str = field(default="lablib.mov")
+    # processors
+    repo_proc = None
+    color_proc = None
 
     # rendering options
-    fps: int = field(init=False, repr=False)
-    codec: str = field(default_factory=str)
-    audio: str = field(default_factory=str, repr=False)
-    threads: int = field(default=4, repr=False)
+    fps: int = 25
+    threads: int = 4
 
     # cleanup
-    keep_only_container: bool = field(default=False, repr=False)
+    keep_only_container: bool = False
 
-    def __post_init__(self) -> None:
-        if not self.source_sequence:
-            raise ValueError("Missing source sequence!")
-        if not any([self.color_proc, self.repo_proc]):
-            raise ValueError("Missing valid Processor!")
-        if not self.output_dir:
-            log.warning("Rendering to $HOME/lablib_render")
-            self._output_dir = (Path.home() / "lablib_render").resolve()
-            if not self.output_dir.exists():
-                self.output_dir.mkdir()
+    def __init__(
+        self,
+        source_sequence: SequenceInfo,
+        output_dir: Union[Path, str],
+        **kwargs,
+    ) -> None:
+        self.source_sequence = source_sequence
+        self.output_dir = output_dir
 
-        self._output_dir = Path(self.output_dir).resolve()
-        if not self._output_dir.is_dir():
-            self._output_dir.mkdir()
-            log.info(f"Output directory {self._output_dir} created!")
+        for k, v in kwargs.items():
+            if not hasattr(self.__class__, k):
+                raise ValueError(f"Unknown attribute {k}")
+            setattr(self, k, v)
 
-        self._staging_dir = Path(tempfile.mkdtemp())
+        if not kwargs.get("staging_dir"):
+            self._staging_dir = Path(tempfile.mkdtemp())
+
+    def __repr__(self) -> str:
+        exposed_props = ["source_sequence", "output_dir"]
+        props = ""
+        for prop in exposed_props:
+            props = props + f"{prop}={getattr(self, prop)}, "
+
+        optional_props = ["codec", "audio"]
+        for prop in optional_props:
+            if hasattr(self, prop):
+                props = props + f"{prop}={getattr(self, prop)}, "
+
+        return f"{self.__class__.__name__}({props})"
 
     def get_oiiotool_cmd(self, debug=False) -> List[str]:
         # TODO: we should add OIIOTOOL required version into pyproject.toml
@@ -179,7 +181,7 @@ class BasicRenderer:
 
         # output args
         # NOTE: ffmpegs output arg needs to be the last one
-        output_path = Path(self._staging_dir, self.container_name)
+        output_path = Path(self._staging_dir, self.name)
         output_args = [output_path.as_posix()]
         cmd.extend(output_args)
 
@@ -196,23 +198,54 @@ class BasicRenderer:
             log.info(f"oiio cmd out:\n{result.stdout}")
 
         # run ffmpeg command
-        ffmpeg_cmd = self.get_ffmpeg_cmd()
-        log.info("ffmpeg cmd >>> {}".format(" ".join(ffmpeg_cmd)))
-        result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True)
-        # NOTE: ffmpeg outputs to stderr
-        stderr = result.stderr.encode("utf-8").decode()
-        if result.returncode != 0:
-            log.error(stderr)
-        if debug:
-            log.info(stderr)
+        if self.codec:
+            ffmpeg_cmd = self.get_ffmpeg_cmd()
+            log.info("ffmpeg cmd >>> {}".format(" ".join(ffmpeg_cmd)))
+            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True)
+            # NOTE: ffmpeg outputs to stderr
+            stderr = result.stderr.encode("utf-8").decode()
+            if result.returncode != 0:
+                log.error(stderr)
+            if debug:
+                log.info(stderr)
 
         # copy renders to output directory
         for item in self._staging_dir.iterdir():
             if item.is_file():
-                if item.suffix not in [".mov", ".mp4"] and self.keep_only_container:
+                if item.suffix in [".exr"] and self.keep_only_container:
+                    continue
+                if item.suffix not in [".mov", ".mp4", ".exr"]:
                     continue
                 log.info(f"Copying {item} to {self._output_dir}")
                 shutil.copy2(item, self._output_dir)
 
         # cleanup
         shutil.rmtree(self._staging_dir)
+
+    @property
+    def output_dir(self) -> Path:
+        return self._output_dir.as_posix()
+
+    @output_dir.setter
+    def output_dir(self, value: Union[Path, str]) -> None:
+        self._output_dir = Path(value).resolve()
+
+    @property
+    def codec(self) -> str:
+        if not hasattr(self, "_codec"):
+            return None
+        return self._codec.name
+
+    @codec.setter
+    def codec(self, value: str) -> None:
+        self._codec = Codec(name=value)
+
+    @property
+    def audio(self) -> str:
+        if not hasattr(self, "_audio"):
+            return None
+        return self._audio.as_posix()
+
+    @audio.setter
+    def audio(self, value: str) -> None:
+        self._audio = Path(value).resolve()
