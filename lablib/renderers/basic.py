@@ -5,7 +5,7 @@ import logging
 import subprocess
 import shutil
 import tempfile
-from typing import List, Union
+from typing import Any, List, Union
 
 from pathlib import Path
 
@@ -63,10 +63,6 @@ class Codec:
 class BasicRenderer:
     name: str = "lablib.mov"
 
-    # processors
-    repo_proc = None
-    color_proc = None
-
     # rendering options
     threads: int = 4
 
@@ -96,12 +92,12 @@ class BasicRenderer:
         for prop in exposed_props:
             props = props + f"{prop}={getattr(self, prop)}, "
 
-        optional_props = ["codec", "audio"]
+        optional_props = ["codec", "audio", "processor"]
         for prop in optional_props:
             if hasattr(self, prop):
                 props = props + f"{prop}={getattr(self, prop)}, "
 
-        return f"{self.__class__.__name__}({props})"
+        return f"{self.__class__.__name__}({props[:-2]})"
 
     def get_oiiotool_cmd(self, debug=False) -> List[str]:
         # TODO: we should add OIIOTOOL required version into pyproject.toml
@@ -124,11 +120,8 @@ class BasicRenderer:
             cmd.extend(["--debug", "-v"])
 
         # add processor args
-        if self.repo_proc:
-            cmd.extend(self.repo_proc.get_oiiotool_cmd())
-        if self.color_proc:
-            self.color_proc.create_config()
-            cmd.extend(self.color_proc.get_oiiotool_cmd())
+        if self.processor:
+            cmd.extend(self.processor.get_oiiotool_cmd())
 
         output_path = (self._staging_dir / self.source_sequence.hash_string).resolve()
         self._oiio_out = output_path  # for ffmpeg input
@@ -228,6 +221,16 @@ class BasicRenderer:
     @output_dir.setter
     def output_dir(self, value: Union[Path, str]) -> None:
         self._output_dir = Path(value).resolve()
+
+    @property
+    def processor(self) -> Any:
+        if not hasattr(self, "_processor"):
+            return None
+        return self._processor
+    
+    @processor.setter
+    def processor(self, value: Any) -> None:
+        self._processor = value
 
     @property
     def codec(self) -> str:
