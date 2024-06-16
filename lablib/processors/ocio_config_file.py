@@ -19,7 +19,7 @@ class OCIOConfigFileProcessor:
     _vars: Dict[str, str] = {}
     _views: List[str] = []
     _config_path: Path  # OCIO Config file
-    _ocio_config: OCIO.Config   # OCIO Config object
+    _ocio_config: OCIO.Config  # OCIO Config object
     _ocio_transforms: List = []
     _ocio_search_paths: List[str]
     _ocio_config_name: str = "config.ocio"
@@ -174,13 +174,8 @@ class OCIOConfigFileProcessor:
                 continue
 
             # TODO: this should be probably somewhere else
-            if (
-                hasattr(ocio_transform, "getCCCId")
-                and ocio_transform.getCCCId()
-            ):
-                ocio_transform.setCCCId(
-                    self._swap_variables(ocio_transform.getCCCId())
-                )
+            if hasattr(ocio_transform, "getCCCId") and ocio_transform.getCCCId():
+                ocio_transform.setCCCId(self._swap_variables(ocio_transform.getCCCId()))
 
             search_path = Path(ocio_transform.getSrc())
             if not search_path.exists():
@@ -188,8 +183,7 @@ class OCIOConfigFileProcessor:
 
             # Change the src path to the name of the search path
             # and replace any found variables
-            ocio_transform.setSrc(
-                self._swap_variables(search_path.name))
+            ocio_transform.setSrc(self._swap_variables(search_path.name))
 
     def _swap_variables(self, text: str) -> str:
         new_text = text
@@ -201,7 +195,6 @@ class OCIOConfigFileProcessor:
         self._ocio_config = OCIO.Config.CreateFromFile(filepath)
 
     def process_config(self) -> None:
-
         for k, v in self._vars.items():
             self._ocio_config.addEnvironmentVar(k, v)
 
@@ -214,13 +207,10 @@ class OCIOConfigFileProcessor:
         colorspace.setName(self.context)
         colorspace.setFamily(self.family)
         colorspace.setTransform(
-            group_transform,
-            OCIO.ColorSpaceDirection.COLORSPACE_DIR_FROM_REFERENCE
+            group_transform, OCIO.ColorSpaceDirection.COLORSPACE_DIR_FROM_REFERENCE
         )
         look = OCIO.Look(
-            name=self.context,
-            processSpace=self.working_space,
-            transform=look_transform
+            name=self.context, processSpace=self.working_space, transform=look_transform
         )
         self._ocio_config.addColorSpace(colorspace)
         self._ocio_config.addLook(look)
@@ -236,9 +226,7 @@ class OCIOConfigFileProcessor:
         else:
             views_value = ",".join(self._views)
 
-        self._ocio_config.setActiveViews(
-            f"{self.context},{views_value}"
-        )
+        self._ocio_config.setActiveViews(f"{self.context},{views_value}")
         self._ocio_config.validate()
 
     def write_config(self, dest: str = None) -> str:
@@ -278,9 +266,6 @@ class OCIOConfigFileProcessor:
         return [
             "--colorconfig",
             self._dest_path,
-            (
-                f"--ociolook:from=\"{self.working_space}\""
-                f":to=\"{self.working_space}\""
-            ),
+            f"--ociolook:from={self.working_space}:to={self.working_space}",
             self.context,
         ]
