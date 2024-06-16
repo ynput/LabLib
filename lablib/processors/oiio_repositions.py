@@ -16,7 +16,7 @@ class OIIORepositionProcessor:
 
     def __init__(
         self,
-        operators: List[Any],
+        operators: List[Any] = [],
         src_width: int = 0,
         dst_width: int = 0,
         src_height: int = 0,
