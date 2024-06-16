@@ -71,7 +71,7 @@ class AYONHieroEffectsFileProcessor(object):
             if "color" in class_obj.__class__.__module__:
                 self._color_ops.extend(class_obj.to_ocio_obj())
             else:
-                self._repo_ops.append(class_obj.to_oiio_args())
+                self._repo_ops.append(class_obj)
 
     def _sanitize_file_path(self, node_value: dict, all_relative_files: dict) -> None:
 
