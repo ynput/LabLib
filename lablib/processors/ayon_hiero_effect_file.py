@@ -16,8 +16,7 @@ log.setLevel(logging.DEBUG)
 class AYONHieroEffectsFileProcessor(object):
     filepath: Path = None
 
-    _wrapper_class_members = dict(
-        inspect.getmembers(operators, inspect.isclass))
+    _wrapper_class_members = dict(inspect.getmembers(operators, inspect.isclass))
     _color_ops: List = []
     _repo_ops: List = []
 
@@ -33,13 +32,11 @@ class AYONHieroEffectsFileProcessor(object):
         return self._repo_ops
 
     def _load(self) -> None:
-
         effect_file_path = self.filepath.resolve().as_posix()
 
         # get all relative files recursively so we can make sure files in
         # transforms are having correct path
-        all_relative_files = {
-            f.name: f for f in Path(self.filepath.parent).rglob("*")}
+        all_relative_files = {f.name: f for f in Path(self.filepath.parent).rglob("*")}
 
         with open(effect_file_path, "r") as f:
             ops_data = json.load(f)
@@ -50,7 +47,6 @@ class AYONHieroEffectsFileProcessor(object):
         all_ops.sort(key=lambda op: op["subTrackIndex"])
 
         for value in all_ops:
-
             class_name = value["class"]
 
             if class_name not in self._wrapper_class_members.keys():
@@ -74,7 +70,6 @@ class AYONHieroEffectsFileProcessor(object):
                 self._repo_ops.append(class_obj)
 
     def _sanitize_file_path(self, node_value: dict, all_relative_files: dict) -> None:
-
         filepath = Path(node_value["file"])
         if filepath.exists():
             node_value["file"] = filepath.as_posix()
