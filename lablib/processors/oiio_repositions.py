@@ -3,8 +3,6 @@ from __future__ import annotations
 import inspect
 import logging
 from typing import Any, List
-from dataclasses import dataclass, field
-
 
 from ..operators import repositions
 
@@ -13,18 +11,32 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-@dataclass
 class OIIORepositionProcessor:
-    operators: List[Any] = field(default_factory=list)
-
-    # this is basically a Reformat operator
-    src_width: int = 0
-    dst_width: int = 0
-    src_height: int = 0
-    dst_height: int = 0
-    fit: str = False
-
     _wrapper_class_members = dict(inspect.getmembers(repositions, inspect.isclass))
+
+    def __init__(
+        self,
+        operators: List[Any],
+        src_width: int = 0,
+        dst_width: int = 0,
+        src_height: int = 0,
+        dst_height: int = 0,
+        fit: str = False,
+    ) -> None:
+        self.operators = operators
+        self.src_width = src_width
+        self.dst_width = dst_width
+        self.src_height = src_height
+        self.dst_height = dst_height
+        self.fit = fit
+
+    def __repr__(self) -> str:
+        exposed_props = ["operators", "dst_width", "dst_height", "fit"]
+        props = ""
+        for prop in exposed_props:
+            props = props + f"{prop}={getattr(self, prop)}, "
+
+        return f"{self.__class__.__name__}({props[:-2]})"
 
     def get_oiiotool_cmd(self) -> List:
         result = []
