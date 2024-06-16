@@ -65,7 +65,7 @@ class AYONHieroEffectsFileProcessor(object):
 
             # separate color ops from repo ops
             if "color" in class_obj.__class__.__module__:
-                self._color_ops.extend(class_obj)
+                self._color_ops.append(class_obj)
             else:
                 self._repo_ops.append(class_obj)
 
