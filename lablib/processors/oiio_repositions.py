@@ -12,23 +12,19 @@ log.setLevel(logging.DEBUG)
 
 
 class OIIORepositionProcessor:
+    operators: List[Any] = []
+    src_width: int = 0
+    dst_width: int = 0
+    src_height: int = 0
+    dst_height: int = 0
+    fit: str = None
+
     _wrapper_class_members = dict(inspect.getmembers(repositions, inspect.isclass))
 
-    def __init__(
-        self,
-        operators: List[Any] = [],
-        src_width: int = 0,
-        dst_width: int = 0,
-        src_height: int = 0,
-        dst_height: int = 0,
-        fit: str = None,
-    ) -> None:
-        self.operators = operators
-        self.src_width = src_width
-        self.dst_width = dst_width
-        self.src_height = src_height
-        self.dst_height = dst_height
-        self.fit = fit
+    def __init__(self, **kwargs) -> None:
+        for k, v in kwargs.items():
+            if hasattr(self, k):
+                setattr(self, k, v)
 
     def __repr__(self) -> str:
         exposed_props = ["operators", "dst_width", "dst_height", "fit"]

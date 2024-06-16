@@ -41,7 +41,7 @@ test_data = [
     {
         # "processor": ocio_config_processor,   # can't read generated config.ocio
         "processor": OIIORepositionProcessor(
-            effect_processor.repo_operators,
+            operators=effect_processor.repo_operators,
             dst_width=1920,
             dst_height=1080,
         ),
