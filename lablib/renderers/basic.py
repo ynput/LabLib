@@ -47,7 +47,6 @@ class Codec:
                 "-vendor", "apl0",
                 "-pix_fmt", "yuva444p10le",
                 "-vtag", "ap4h",
-                "-vtag", "hvc1",
             ]
         if self.name == "DNxHR-SQ":
             args = [
