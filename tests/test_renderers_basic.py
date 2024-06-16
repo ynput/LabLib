@@ -51,6 +51,15 @@ test_data = [
         "fps": 25,
         "keep_only_container": False,
     },
+    # test full hiero effect processor
+    {
+        "processor": effect_processor,
+        "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
+        "output_dir": "test_results/effectPlateMain/v000",
+        "codec": "ProRes422-HQ",
+        "fps": 25,
+        "keep_only_container": False,
+    },
     # test with ayon ociolookfile
     {
         "processor": AYONOCIOLookFileProcessor(

@@ -6,6 +6,7 @@ import inspect
 
 from typing import List, Dict
 from pathlib import Path
+import PyOpenColorIO as OCIO
 
 from .. import operators
 
@@ -94,3 +95,16 @@ class AYONHieroEffectsFileProcessor(object):
     def load(self) -> None:
         self.clear_operators()
         self._load()
+
+    def get_oiiotool_cmd(self) -> List[str]:
+        args = []
+        for op in self.color_operators:
+            if isinstance(op, OCIO.FileTransform):
+                lut = Path(op.getSrc()).resolve()
+                args.extend(["--ociofiletransform", f"{lut.as_posix()}"])
+            if isinstance(op, OCIO.ColorSpaceTransform):
+                args.extend(["--colorconvert", op.getSrc(), op.getDst()])
+        for op in self.repo_operators:
+            args.extend(op.to_oiio_args())
+
+        return args
