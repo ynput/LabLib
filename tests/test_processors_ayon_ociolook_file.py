@@ -25,8 +25,8 @@ class TestAYONOCIOLookFileProcessor:
         log.debug(f"{look_processor = }")
         look_processor.load()
 
-        log.debug(look_processor.color_operators)
+        log.debug(look_processor.operator)
         assert look_processor.filepath == Path(path)
         # 5 because CDLTransform is converted into CDLTransform and
         # FileTransform
-        assert len(look_processor.color_operators) == length
+        assert len(look_processor.operator.to_ocio_obj()) == length
