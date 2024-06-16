@@ -29,7 +29,6 @@ class AYONHieroEffectsFileProcessor(object):
         for op in self._color_ops:
             ops.extend(op.to_ocio_obj())
         return ops
-        return self._color_ops
 
     @property
     def repo_operators(self) -> Dict:
