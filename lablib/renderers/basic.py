@@ -202,6 +202,8 @@ class BasicRenderer:
                 log.info(stderr)
 
         # copy renders to output directory
+        if not self._output_dir.exists():
+            self._output_dir.mkdir(parents=True)
         for item in self._staging_dir.iterdir():
             if item.is_file():
                 if item.suffix in [".exr"] and self.keep_only_container:
@@ -227,7 +229,7 @@ class BasicRenderer:
         if not hasattr(self, "_processor"):
             return None
         return self._processor
-    
+
     @processor.setter
     def processor(self, value: Any) -> None:
         self._processor = value
