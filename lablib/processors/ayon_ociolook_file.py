@@ -15,26 +15,15 @@ log.setLevel(logging.DEBUG)
 
 
 class AYONOCIOLookFileProcessor(object):
-    filepath: Path = None
-
-    _color_ops: List = []
+    filepath: Path
+    operator: AYONOCIOLookProduct
 
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
         self.load()
 
-    @property
-    def color_operators(self) -> List:
-        return self._color_ops
-
-    @color_operators.setter
-    def color_operators(self, value: Any[List, str]) -> None:
-        if isinstance(value, list):
-            self._color_ops.extend(value)
-        elif isinstance(value, str):
-            self._color_ops.append(value)
-
-    def _load(self) -> None:
+    def load(self) -> None:
+        self.operator = None  # clear operator
         ociolook_file_path = self.filepath.resolve().as_posix()
 
         # get all relative files recursively so we can make sure files in
@@ -57,9 +46,17 @@ class AYONOCIOLookFileProcessor(object):
         for item in ops_data["data"]["ocioLookItems"]:
             self._sanitize_file_path(item, all_relative_files)
 
-        class_obj = AYONOCIOLookProduct.from_node_data(ops_data["data"])
+        self.operator = AYONOCIOLookProduct.from_node_data(ops_data["data"])
 
-        self.color_operators = class_obj.to_ocio_obj()
+    def get_oiiotool_cmd(self) -> List[str]:
+        args = []
+        for xfm in self.color_operators:
+            if isinstance(xfm, OCIO.FileTransform):
+                lut = Path(xfm.getSrc()).resolve()
+                args.extend(["--ociofiletransform", f"{lut.as_posix()}"])
+            if isinstance(xfm, OCIO.ColorSpaceTransform):
+                args.extend(["--colorconvert", xfm.getSrc(), xfm.getDst()])
+        return args
 
     def _sanitize_file_path(self, repre_data: dict, all_relative_files: dict) -> None:  # noqa: E501
         extension = repre_data["ext"]
@@ -71,20 +68,3 @@ class AYONOCIOLookFileProcessor(object):
 
         if not repre_data.get("file"):
             log.warning(f"File not found: {repre_data['name']}.{repre_data['ext']}.")
-
-    def _clear_operators(self) -> None:
-        self._color_ops = []
-
-    def load(self) -> None:
-        self._clear_operators()
-        self._load()
-
-    def get_oiiotool_cmd(self) -> List[str]:
-        args = []
-        for xfm in self.color_operators:
-            if isinstance(xfm, OCIO.FileTransform):
-                lut = Path(xfm.getSrc()).resolve()
-                args.extend(["--ociofiletransform", f"{lut.as_posix()}"])
-            if isinstance(xfm, OCIO.ColorSpaceTransform):
-                args.extend(["--colorconvert", xfm.getSrc(), xfm.getDst()])
-        return args
