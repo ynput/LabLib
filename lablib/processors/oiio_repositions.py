@@ -21,7 +21,7 @@ class OIIORepositionProcessor:
         dst_width: int = 0,
         src_height: int = 0,
         dst_height: int = 0,
-        fit: str = "letterbox",
+        fit: str = None,
     ) -> None:
         self.operators = operators
         self.src_width = src_width
