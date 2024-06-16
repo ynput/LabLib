@@ -5,6 +5,8 @@ import logging
 
 from typing import List, Any
 from pathlib import Path
+import PyOpenColorIO as OCIO
+
 
 from ..operators import AYONOCIOLookProduct
 
@@ -19,6 +21,7 @@ class AYONOCIOLookFileProcessor(object):
 
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
+        self.load()
 
     @property
     def color_operators(self) -> List:
@@ -79,3 +82,13 @@ class AYONOCIOLookFileProcessor(object):
     def load(self) -> None:
         self._clear_operators()
         self._load()
+
+    def get_oiiotool_cmd(self) -> List[str]:
+        args = []
+        for xfm in self.color_operators:
+            if isinstance(xfm, OCIO.FileTransform):
+                lut = Path(xfm.getSrc()).resolve()
+                args.extend(["--ociofiletransform", f"{lut.as_posix()}"])
+            if isinstance(xfm, OCIO.ColorSpaceTransform):
+                args.extend(["--colorconvert", xfm.getSrc(), xfm.getDst()])
+        return args

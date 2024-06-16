@@ -10,6 +10,7 @@ from lablib.processors import (
     OIIORepositionProcessor,
     AYONHieroEffectsFileProcessor,
     OCIOConfigFileProcessor,
+    AYONOCIOLookFileProcessor,
 )
 from lablib.renderers import BasicRenderer
 
@@ -36,6 +37,7 @@ ocio_config_processor = OCIOConfigFileProcessor(
 ocio_config_processor.create_config()
 
 test_data = [
+    # test reformat with hiero effectsfile only repositions
     {
         # "processor": ocio_config_processor,   # can't read generated config.ocio
         "processor": OIIORepositionProcessor(
@@ -43,9 +45,19 @@ test_data = [
             dst_width=1920,
             dst_height=1080,
         ),
-        # "processor": effect_processor,
         "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
-        "output_dir": "test_results",
+        "output_dir": "test_results/effectPlateMain/v000/onlyRepositions",
+        "codec": "ProRes422-HQ",
+        "fps": 25,
+        "keep_only_container": False,
+    },
+    # test with ayon ociolookfile
+    {
+        "processor": AYONOCIOLookFileProcessor(
+            Path("resources/public/ociolookMain/v005/jp03_john_ociolookMain_v005.json")
+        ),
+        "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
+        "output_dir": "test_results/ociolookMain/v005",
         "codec": "ProRes422-HQ",
         "fps": 25,
         "keep_only_container": False,
