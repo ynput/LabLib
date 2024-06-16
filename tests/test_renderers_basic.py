@@ -38,12 +38,17 @@ ocio_config_processor.create_config()
 test_data = [
     {
         # "processor": ocio_config_processor,   # can't read generated config.ocio
-        "processor": OIIORepositionProcessor(effect_processor.repo_operators),
+        "processor": OIIORepositionProcessor(
+            effect_processor.repo_operators,
+            dst_width=1920,
+            dst_height=1080,
+        ),
+        # "processor": effect_processor,
         "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
         "output_dir": "test_results",
         "codec": "ProRes422-HQ",
         "fps": 25,
-        "keep_only_container": True,
+        "keep_only_container": False,
     },
 ]
 log.info(f"{test_data = }")
