@@ -200,18 +200,7 @@ class OCIOConfigFileProcessor:
 
         self._ocio_config.setDescription(self._description)
 
-        # NOTE: This is a temporary fix to ensure ocio objects are passed to OCIO.GroupTransform
-        xfms = []
-        log.debug(f"{self._ocio_transforms = }")
-        for xfm in self._ocio_transforms:
-            objs = xfm.to_ocio_obj()
-            if isinstance(objs, list):
-                for o in objs:
-                    xfms.append(o)
-            else:
-                xfms.append(objs)
-        log.debug(f"{xfms = }")
-        group_transform = OCIO.GroupTransform(transforms=xfms)
+        group_transform = OCIO.GroupTransform(transforms=self._ocio_transforms)
 
         look_transform = OCIO.ColorSpaceTransform(
             src=self.working_space, dst=self.context
