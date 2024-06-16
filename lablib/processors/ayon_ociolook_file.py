@@ -50,7 +50,7 @@ class AYONOCIOLookFileProcessor(object):
 
     def get_oiiotool_cmd(self) -> List[str]:
         args = []
-        for xfm in self.color_operators:
+        for xfm in self.operator.to_ocio_obj():
             if isinstance(xfm, OCIO.FileTransform):
                 lut = Path(xfm.getSrc()).resolve()
                 args.extend(["--ociofiletransform", f"{lut.as_posix()}"])
