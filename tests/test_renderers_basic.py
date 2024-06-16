@@ -37,16 +37,16 @@ ocio_config_processor = OCIOConfigFileProcessor(
 ocio_config_processor.create_config()
 
 test_data = [
-    # test reformat with hiero effectsfile only repositions
+    # test reposition processor
     {
         # "processor": ocio_config_processor,   # can't read generated config.ocio
         "processor": OIIORepositionProcessor(
-            operators=effect_processor.repo_operators,
             dst_width=1920,
             dst_height=1080,
+            fit="letterbox",
         ),
         "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
-        "output_dir": "test_results/effectPlateMain/v000/onlyRepositions",
+        "output_dir": "test_results/reformat_1080p/letterbox",
         "codec": "ProRes422-HQ",
         "fps": 25,
         "keep_only_container": False,
