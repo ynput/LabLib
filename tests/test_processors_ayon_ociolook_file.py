@@ -8,7 +8,6 @@ log = logging.getLogger(__name__)
 
 
 class TestAYONOCIOLookFileProcessor:
-
     @pytest.mark.parametrize(
         "path,length",
         [
@@ -16,15 +15,13 @@ class TestAYONOCIOLookFileProcessor:
                 (
                     "resources/public/ociolookMain/v005/"
                     "jp03_john_ociolookMain_v005.json"
-                ), 3
+                ),
+                3,
             )
         ],
     )
     def test_EffectsFileProcessor(self, path, length):
-
-        look_processor = AYONOCIOLookFileProcessor(
-            Path(path)
-        )
+        look_processor = AYONOCIOLookFileProcessor(Path(path))
         log.debug(f"{look_processor = }")
         look_processor.load()
 
