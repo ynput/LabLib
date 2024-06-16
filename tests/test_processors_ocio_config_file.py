@@ -3,17 +3,13 @@ import logging
 from pathlib import Path
 import pytest
 
-from lablib import (
-    OCIOConfigFileProcessor,
-    AYONHieroEffectsFileProcessor
-)
+from lablib import OCIOConfigFileProcessor, AYONHieroEffectsFileProcessor
 
 
 log = logging.getLogger(__name__)
 
 
 class TestConfigExportProcessor:
-
     @pytest.fixture()
     def effect_processor(self):
         path = Path(
@@ -25,11 +21,10 @@ class TestConfigExportProcessor:
         effect_processor.load()
         yield effect_processor
 
-
-    @pytest.mark.parametrize(
-        "mock_data_path", ["resources/public/mock_data.json"])
+    @pytest.mark.parametrize("mock_data_path", ["resources/public/mock_data.json"])
     def test_OCIOConfigFileProcessor(
-        self, mock_data_path,
+        self,
+        mock_data_path,
         effect_processor,
         test_staging_dir,
     ):
@@ -60,7 +55,7 @@ class TestConfigExportProcessor:
         assert color_cmd == [
             "--colorconfig",
             f"{staging_dir_path}/config.ocio",
-            '--ociolook:from="ACES - ACEScg":to="ACES - ACEScg"',
+            "--ociolook:from=ACES - ACEScg:to=ACES - ACEScg",
             "BLD_010_0010",
         ]
         assert ocio_config_processor._dest_path == f"{staging_dir_path}/config.ocio"  # noqa: E501
