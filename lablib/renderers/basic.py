@@ -134,7 +134,7 @@ class BasicRenderer:
         **kwargs,
     ) -> None:
         self.source_sequence = source_sequence
-        self.output_dir = output_dir
+        self.output_dir = Path(output_dir).resolve()
 
         for k, v in kwargs.items():
             if not hasattr(self.__class__, k):
@@ -264,27 +264,19 @@ class BasicRenderer:
                 log.info(stderr)
 
         # copy renders to output directory
-        if not self._output_dir.exists():
-            self._output_dir.mkdir(parents=True)
+        if not self.output_dir.exists():
+            self.output_dir.mkdir(parents=True)
         for item in self._staging_dir.iterdir():
             if item.is_file():
                 if item.suffix in [".exr"] and self.keep_only_container:
                     continue
                 if item.suffix not in [".mov", ".mp4", ".exr"]:
                     continue
-                log.info(f"Copying {item} to {self._output_dir}")
-                shutil.copy2(item, self._output_dir)
+                log.info(f"Copying {item} to {self.output_dir}")
+                shutil.copy2(item, self.output_dir)
 
         # cleanup
         shutil.rmtree(self._staging_dir)
-
-    @property
-    def output_dir(self) -> Path:
-        return self._output_dir.as_posix()
-
-    @output_dir.setter
-    def output_dir(self, value: Union[Path, str]) -> None:
-        self._output_dir = Path(value).resolve()
 
     @property
     def processor(self) -> Any:
