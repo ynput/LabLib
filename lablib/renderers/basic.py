@@ -82,36 +82,32 @@ class Burnin:
 
             x, y = None, None
             if burnin.get("position"):
+                # NOTE: i can't get the top row to perfectly align in y o.O padding fixes it but still...
                 if burnin["position"] == "top_left":
                     x = 0
-                    y = self.padding
-                    flag += f":x={x}:y={y}:xalign=left"
+                    y = self.size
+                    flag += f":x={x}:y={y}:xalign=left:yalign=bottom"
                 if burnin["position"] == "top_center":
                     x = f"{width_token}/2"
-                    # x = 0
-                    y = self.padding
-                    flag += f":x={x}:y={y}:xalign=center"
+                    y = self.size
+                    flag += f":x={x}:y={y}:xalign=center:yalign=bottom"
                 if burnin["position"] == "top_right":
-                    # x = f"{width_token}-{self.padding}"  # maybe subtract
-                    x = width_token  # maybe subtract
-                    y = self.padding
-                    # flag += f":x={x}:y={y}:xalign=right"
-                    flag += f":x={x}:y={y}:xalign=right"
-
+                    x = width_token
+                    y = self.size
+                    flag += f":x={x}:y={y}:xalign=right:yalign=bottom"
                 if burnin["position"] == "bottom_left":
-                    x = self.padding
-                    y = f"{height_token}-{self.padding}"
+                    x = 0
+                    y = height_token
                     flag += f":x={x}:y={y}:xalign=left"
                 if burnin["position"] == "bottom_center":
                     x = f"{width_token}/2"
-                    y = f"{height_token}-{self.padding}"
+                    y = height_token
                     flag += f":x={x}:y={y}:xalign=center"
                 if burnin["position"] == "bottom_right":
-                    x = f"{width_token}-{self.padding}"
-                    y = f"{height_token}-{self.padding}"
+                    x = width_token
+                    y = height_token
                     flag += f":x={x}:y={y}:xalign=right"
 
-            # flag = f"--text:size={self.size}:color=1,0,0:{position}"
             args.extend([flag, burnin["text"]])
 
         return args
