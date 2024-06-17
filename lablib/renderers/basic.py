@@ -83,6 +83,9 @@ class Burnin:
             if burnin.get("position"):
                 if "top" in burnin["position"]:
                     # NOTE: i can't get the top row to perfectly align in y o.O padding fixes it but still...
+                    #       also when using different fonts it's not consistent
+                    # NOTE: fonts would also need to always be relative, at least on windows
+                    #       can't get oiiotool to read a colon as a flag option as in --text:font="Z:/"
                     _offset = 11
 
                 if burnin["position"] == "top_left":
