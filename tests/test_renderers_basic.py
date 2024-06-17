@@ -71,6 +71,44 @@ test_data = [
         "fps": 25,
         "keep_only_container": False,
     },
+    # test burnins
+    {
+        "burnins": {
+            "size": 64,
+            "color": "white",
+            "data": [
+                {
+                    "text": "topleft",
+                    "position": "top_left",
+                },
+                {
+                    "text": "topcenter",
+                    "position": "top_center",
+                },
+                {
+                    "text": "topright",
+                    "position": "top_right",
+                },
+                {
+                    "text": "bottom_left",
+                    "position": "bottom_left",
+                },
+                {
+                    "text": "bottom_center",
+                    "position": "bottom_center",
+                },
+                {
+                    "text": "bottom_right",
+                    "position": "bottom_right",
+                },
+            ],
+        },
+        "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
+        "output_dir": "test_results/burnins",
+        "codec": "ProRes422-HQ",
+        "fps": 25,
+        "keep_only_container": False,
+    },
 ]
 log.info(f"{test_data = }")
 

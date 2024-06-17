@@ -5,7 +5,7 @@ import logging
 import subprocess
 import shutil
 import tempfile
-from typing import Any, List, Union
+from typing import Any, Dict, List, Union
 
 from pathlib import Path
 
@@ -55,6 +55,64 @@ class Codec:
                 "-pix_fmt", "yuv422p",
             ]
         # fmt: on
+
+        return args
+
+
+@dataclass
+class Burnin:
+    size: int = field(default=64)
+    color: str = field(default="red")
+    padding: int = field(default=30)
+
+    data: Dict[str, str] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if not self.data:
+            raise ValueError("Burnin data is empty")
+
+    def get_oiiotool_args(self) -> List[str]:
+        args = []
+        width_token = r"{TOP.width}"
+        height_token = r"{TOP.height}"
+        self.padding = self.size  # + 30
+        for burnin in self.data:
+            log.debug(f"{burnin = }")
+            flag = f"--text:size={self.size}:color=1,0,0"
+
+            x, y = None, None
+            if burnin.get("position"):
+                if burnin["position"] == "top_left":
+                    x = 0
+                    y = self.padding
+                    flag += f":x={x}:y={y}:xalign=left"
+                if burnin["position"] == "top_center":
+                    x = f"{width_token}/2"
+                    # x = 0
+                    y = self.padding
+                    flag += f":x={x}:y={y}:xalign=center"
+                if burnin["position"] == "top_right":
+                    # x = f"{width_token}-{self.padding}"  # maybe subtract
+                    x = width_token  # maybe subtract
+                    y = self.padding
+                    # flag += f":x={x}:y={y}:xalign=right"
+                    flag += f":x={x}:y={y}:xalign=right"
+
+                if burnin["position"] == "bottom_left":
+                    x = self.padding
+                    y = f"{height_token}-{self.padding}"
+                    flag += f":x={x}:y={y}:xalign=left"
+                if burnin["position"] == "bottom_center":
+                    x = f"{width_token}/2"
+                    y = f"{height_token}-{self.padding}"
+                    flag += f":x={x}:y={y}:xalign=center"
+                if burnin["position"] == "bottom_right":
+                    x = f"{width_token}-{self.padding}"
+                    y = f"{height_token}-{self.padding}"
+                    flag += f":x={x}:y={y}:xalign=right"
+
+            # flag = f"--text:size={self.size}:color=1,0,0:{position}"
+            args.extend([flag, burnin["text"]])
 
         return args
 
@@ -121,6 +179,10 @@ class BasicRenderer:
         # add processor args
         if self.processor:
             cmd.extend(self.processor.get_oiiotool_cmd())
+
+        if self.burnins:
+            log.debug(f"{self.burnins = }")
+            cmd.extend(self.burnins.get_oiiotool_args())
 
         output_path = (self._staging_dir / self.source_sequence.hash_string).resolve()
         self._oiio_out = output_path  # for ffmpeg input
@@ -262,3 +324,13 @@ class BasicRenderer:
     @audio.setter
     def audio(self, value: str) -> None:
         self._audio = Path(value).resolve()
+
+    @property
+    def burnins(self) -> Burnin:
+        if not hasattr(self, "_burnins"):
+            return None
+        return self._burnins
+
+    @burnins.setter
+    def burnins(self, values: dict) -> None:
+        self._burnins = Burnin(**values)
