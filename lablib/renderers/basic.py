@@ -75,25 +75,27 @@ class Burnin:
         args = []
         width_token = r"{TOP.width}"
         height_token = r"{TOP.height}"
-        self.padding = self.size  # + 30
         for burnin in self.data:
             log.debug(f"{burnin = }")
             flag = f"--text:size={self.size}:color=1,0,0"
 
             x, y = None, None
             if burnin.get("position"):
-                # NOTE: i can't get the top row to perfectly align in y o.O padding fixes it but still...
+                if "top" in burnin["position"]:
+                    # NOTE: i can't get the top row to perfectly align in y o.O padding fixes it but still...
+                    _offset = 11
+
                 if burnin["position"] == "top_left":
                     x = 0
-                    y = self.size
+                    y = self.size + _offset
                     flag += f":x={x}:y={y}:xalign=left:yalign=bottom"
                 if burnin["position"] == "top_center":
                     x = f"{width_token}/2"
-                    y = self.size
+                    y = self.size + _offset
                     flag += f":x={x}:y={y}:xalign=center:yalign=bottom"
                 if burnin["position"] == "top_right":
                     x = width_token
-                    y = self.size
+                    y = self.size + _offset
                     flag += f":x={x}:y={y}:xalign=right:yalign=bottom"
                 if burnin["position"] == "bottom_left":
                     x = 0
