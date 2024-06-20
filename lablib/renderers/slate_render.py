@@ -8,7 +8,7 @@ from typing import List
 from pathlib import Path
 
 from ..lib.utils import call_iinfo, offset_timecode
-from ..processors import SlateHtmlProcessor
+from ..generators import SlateHtmlProcessor
 from ..lib import SequenceInfo
 
 

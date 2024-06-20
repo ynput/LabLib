@@ -7,10 +7,8 @@ from typing import List
 
 from pathlib import Path
 
-from ..processors import (
-    OCIOConfigFileProcessor,
-    OIIORepositionProcessor,
-)
+from ..generators import OCIOConfigFileProcessor
+from ..processors import OIIORepositionProcessor
 from ..lib import SequenceInfo
 
 
