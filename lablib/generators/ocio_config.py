@@ -8,8 +8,6 @@ from pathlib import Path
 
 import PyOpenColorIO as OCIO
 
-from attr import has
-
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 

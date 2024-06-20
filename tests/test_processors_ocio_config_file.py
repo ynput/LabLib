@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class TestConfigExportProcessor:
+    # TODO: test for ocio v2 configs
 
     @pytest.fixture()
     def effect_processor(self):

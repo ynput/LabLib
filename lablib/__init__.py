@@ -1,8 +1,11 @@
 from .processors import (
-    OCIOConfigFileProcessor,
     AYONHieroEffectsFileProcessor,
     AYONOCIOLookFileProcessor,
     OIIORepositionProcessor,
+)
+
+from .generators import (
+    OCIOConfigFileProcessor,
     SlateHtmlProcessor,
 )
 
@@ -22,7 +25,7 @@ __all__ = [
 ]
 
 
-__version__ = "0.1.0-dev.1"
+__version__ = "0.1.0-dev.2"
 __author__ = "YNPUT, s.r.o. <team@ynput.io>"
 __title__ = "LabLib"
 __homepage__ = "https://github.com/ynput/lablib"
