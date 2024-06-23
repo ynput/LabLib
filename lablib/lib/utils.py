@@ -14,19 +14,59 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def __call_cmd(cmd: List[str], timeout=0, retries=0) -> Optional[str]:
-    out, err, proc = None, None, None
+def __get_lablib_env() -> None:
+    _parts = Path(__file__).parts[:-3]
+    vendor_root = Path(*_parts, "vendor")
+    env = os.environ.copy()
 
-    for retry in range(retries):
+    if oiio_root := env.get("LABLIB_OIIO"):
+        log.debug(f"Using oiiotool from {oiio_root}")
+    else:
+        log.warning("LABLIB_OIIO environment variable not set. Using default.")
+        oiio_root = Path(vendor_root, "oiio", "windows")
+
+    if ffmpeg_root := env.get("LABLIB_FFMPEG"):
+        log.debug(f"Using ffmpeg from {ffmpeg_root}")
+    else:
+        log.warning("LABLIB_FFMPEG environment variable not set. Using default.")
+        ffmpeg_root = Path(
+            vendor_root, "ffmpeg", "ffmpeg-7.0.1-full_build-shared", "bin"
+        )
+
+    paths = [Path(p) for p in env["PATH"].split(";")]
+    if oiio_root not in paths:
+        paths.insert(0, oiio_root)
+        log.debug(f"Insert into $PATH {oiio_root = }")
+    if ffmpeg_root not in paths:
+        log.debug(f"Insert into $PATH {ffmpeg_root = }")
+        paths.insert(0, ffmpeg_root)
+
+    env["PATH"] = ";".join([str(p) for p in paths])
+    log.debug(f"{env['PATH'] = }")
+    return env
+
+
+def call_cmd(cmd: List[str], timeout=None, retries=0) -> Optional[str]:
+    out, err, proc = None, None, None
+    env = __get_lablib_env()
+
+    for retry in range(retries + 1):
         try:
-            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            proc = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                shell=True,
+                env=env,
+                text=True,
+            )
             out, err = proc.communicate(timeout=timeout)
         except subprocess.TimeoutExpired:
             log.warning(f"{cmd[0]} timed out: retry {retry+1}/{retries}")
             proc.kill()
             continue
 
-    return out
+    return out, err
 
 
 def call_iinfo(filepath: str | Path) -> dict:
@@ -35,11 +75,10 @@ def call_iinfo(filepath: str | Path) -> dict:
     abspath = str(filepath.resolve())
 
     cmd = ["oiiotool", "--info", "-v", abspath]
-    cmd_out = __call_cmd(cmd, timeout=3, retries=3)
+    cmd_out, _ = call_cmd(cmd, timeout=3, retries=3)
 
     result = {}
-    for line in cmd_out.strip().splitlines():
-        line = line.decode("utf-8")
+    for line in cmd_out.splitlines():
         log.debug(f"oiiotool {line = }")
         if abspath in line and line.find(abspath) < 2:
             vars = line.split(": ")[1].split(",")
@@ -85,11 +124,10 @@ def call_ffprobe(filepath: str | Path) -> dict:
         "default=noprint_wrappers=1",
         abspath,
     ]
-    cmd_out = __call_cmd(cmd, timeout=3, retries=3)
+    cmd_out, _ = call_cmd(cmd, timeout=3, retries=3)
 
     result = {}
-    for line in cmd_out.strip().splitlines():
-        line = line.decode("utf-8")
+    for line in cmd_out.splitlines():
         log.debug(f"ffprobe {line = }")
         vars = line.split("=")
         if "width" in vars[0]:

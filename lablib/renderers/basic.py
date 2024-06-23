@@ -2,14 +2,13 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import logging
-import subprocess
 import shutil
 import tempfile
 from typing import Any, Dict, List, Optional, Set, Union
 
 from pathlib import Path
 
-from ..lib import SequenceInfo
+from ..lib import SequenceInfo, utils
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -161,15 +160,11 @@ class BasicRenderer:
         return f"{self.__class__.__name__}({props[:-2]})"
 
     def get_oiiotool_cmd(self, debug=False) -> List[str]:
-        # TODO: we should add OIIOTOOL required version into pyproject.toml
-        #       since we are using treaded version of OIIOTOOL
-        # ? does the python module install the binaries and adds them to PATH
-        # maybe define LABLIB_* env vars for the paths and use them in the commands
         input_path = Path(
             self.source_sequence.path, self.source_sequence.hash_string
         ).resolve()
         cmd = [  # inits the command with defaults
-            "oiiotool",
+            "oiiotool.exe",
             "-i",
             input_path.as_posix(),
             "--threads",
@@ -248,23 +243,23 @@ class BasicRenderer:
         # run oiiotool command
         cmd = self.get_oiiotool_cmd(debug)
         log.info("oiiotool cmd >>> {}".format(" ".join(cmd)))
-        result = subprocess.run(cmd, capture_output=True, text=True)
-        if result.returncode != 0:
-            log.error(result.stderr)
+        oiio_out, oiio_err = utils.call_cmd(cmd)
         if debug:
-            log.info(f"oiio cmd out:\n{result.stdout}")
+            for line in oiio_out.splitlines():
+                log.info(f"oiio out: {line}")
+            for line in oiio_err.splitlines():
+                log.info(f"oiio err: {line}")
 
         # run ffmpeg command
         if self.codec:
             ffmpeg_cmd = self.get_ffmpeg_cmd()
             log.info("ffmpeg cmd >>> {}".format(" ".join(ffmpeg_cmd)))
-            result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True)
-            # NOTE: ffmpeg outputs to stderr
-            stderr = result.stderr.encode("utf-8").decode()
-            if result.returncode != 0:
-                log.error(stderr)
+            # NOTE: ffmpeg only outputs to stderr
+            _, ffmpeg_err = utils.call_cmd(ffmpeg_cmd)
+
             if debug:
-                log.info(stderr)
+                for line in ffmpeg_err.splitlines():
+                    log.info(f"ffmpeg out: {line}")
 
         # copy renders to output directory
         if not self.output_dir.exists():
