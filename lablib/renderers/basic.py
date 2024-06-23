@@ -65,11 +65,10 @@ class Burnin:
 
     size: int = field(default=64)
     padding: int = field(default=30)
-    color: Set[float] = field(default=(1,1,1))
+    color: Set[float] = field(default=(1, 1, 1))
 
     font: Optional[str] = field(default=None)
     outline: Optional[int] = field(default=None)
-
 
     def __post_init__(self) -> None:
         if not self.data:
@@ -77,7 +76,6 @@ class Burnin:
 
         if self.font:
             self._font = Path(self.font).resolve()
-
 
     def get_oiiotool_args(self) -> List[str]:
         args = []
