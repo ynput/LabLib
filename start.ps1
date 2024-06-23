@@ -92,6 +92,37 @@ function set_env {
     }
 }
 
+function get_dependencies {
+    $vendor_root = "$repo_root\vendor"
+    if (-not (Test-Path -Path $vendor_root)) {
+        New-Item -ItemType Directory -Path $vendor_root
+    }
+
+    # ensure OpenImageIO
+    if (-not (Test-Path "$vendor_root\oiio\windows\oiiotool.exe")) {
+        $oiio_url = "https://www.patreon.com/file?h=63609827&i=10247677"
+        $oiio_zip = "$vendor_root\oiiotools2.3.10.zip"    
+        Invoke-WebRequest -Uri $oiio_url -OutFile $oiio_zip
+        Expand-Archive -Path $oiio_zip -DestinationPath "$vendor_root\oiio\windows"
+    }
+    
+    # ensure OpenColorIO Config
+    if (-not (Test-Path "$vendor_root\ocioconfig")) {
+        $ocio_url = "https://github.com/colour-science/OpenColorIO-Configs/releases/download/v1.2/OpenColorIO-Config-ACES-1.2.zip"
+        $ocio_zip = "$vendor_root\OpenColorIO-Config-ACES-1.2.zip"    
+        Invoke-WebRequest -Uri $ocio_url -OutFile $ocio_zip
+        Expand-Archive -Path $ocio_zip -DestinationPath "$vendor_root\ocioconfig"
+    }
+
+    # ensure FFMPEG
+    if (-not (Test-Path "$vendor_root\ffmpeg")) {
+        $ffmpeg_url = "https://github.com/GyanD/codexffmpeg/releases/download/7.0.1/ffmpeg-7.0.1-full_build-shared.zip"
+        $ffmpeg_zip = "$vendor_root\ffmpeg-7.0.1-full_build-shared.zip"    
+        Invoke-WebRequest -Uri $ffmpeg_url -OutFile $ffmpeg_zip
+        Expand-Archive -Path $ffmpeg_zip -DestinationPath "$vendor_root\ffmpeg"
+    }
+}
+
 function main {
     if ($FunctionName -eq $null)
     {
@@ -109,7 +140,10 @@ function main {
     } elseif ($FunctionName -eq "setenv") {
         Change-Cwd
         set_env
-    } else {
+    } elseif ($FunctionName -eq "getdependencies") {
+        Change-Cwd
+        get_dependencies
+    }else {
         Write-Host "Unknown function \"$FunctionName\""
         Default-Func
     }
