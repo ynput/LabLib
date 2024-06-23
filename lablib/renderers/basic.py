@@ -5,7 +5,7 @@ import logging
 import subprocess
 import shutil
 import tempfile
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pathlib import Path
 
@@ -64,6 +64,7 @@ class Burnin:
     size: int = field(default=64)
     color: str = field(default="red")
     padding: int = field(default=30)
+    font: Optional[str] = field(default=None)
 
     data: Dict[str, str] = field(default_factory=dict)
 
@@ -71,15 +72,20 @@ class Burnin:
         if not self.data:
             raise ValueError("Burnin data is empty")
 
+        if self.font:
+            self._font = Path(self.font).resolve()
+
+
     def get_oiiotool_args(self) -> List[str]:
         args = []
         width_token = r"{TOP.width}"
         height_token = r"{TOP.height}"
         for burnin in self.data:
-            log.debug(f"{burnin = }")
-            flag = f"--text:size={self.size}:color=1,0,0"
+            if self.font:
+                flag = f'--text:size={self.size}:color=1,0,0:font="{self._font.as_posix()}"'
+            else:
+                flag = f"--text:size={self.size}:color=1,0,0"
 
-            x, y = None, None
             if burnin.get("position"):
                 if burnin["position"] == "top_left":
                     x = 0
