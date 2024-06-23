@@ -75,7 +75,7 @@ test_data = [
         "burnins": {
             "size": 64,
             "color": (0.5, 0.5, 0.5),  # grey
-            "font": "vendor/bahnschrift.ttf",
+            "font": "vendor/font/ttf/source-code-pro-latin-700-normal.ttf",
             "outline": 1,
             "data": [
                 {

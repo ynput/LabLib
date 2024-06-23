@@ -121,6 +121,14 @@ function get_dependencies {
         Invoke-WebRequest -Uri $ffmpeg_url -OutFile $ffmpeg_zip
         Expand-Archive -Path $ffmpeg_zip -DestinationPath "$vendor_root\ffmpeg"
     }
+
+    # ensure Source Code Pro font
+    if (-not (Test-Path "$vendor_root\font")) {
+        $font_url = "https://api.fontsource.org/v1/download/source-code-pro"
+        $font_zip = "$vendor_root\source-code-pro.zip"    
+        Invoke-WebRequest -Uri $font_url -OutFile $font_zip
+        Expand-Archive -Path $font_zip -DestinationPath "$vendor_root\font"
+    }
 }
 
 function main {
