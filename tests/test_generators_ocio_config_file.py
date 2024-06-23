@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from lablib import (
-    OCIOConfigFileProcessor,
+    OCIOConfigFileGenerator,
     AYONHieroEffectsFileProcessor
 )
 
@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class TestConfigExportProcessor:
+    # TODO: test for ocio v2 configs
 
     @pytest.fixture()
     def effect_processor(self):
@@ -28,7 +29,7 @@ class TestConfigExportProcessor:
 
     @pytest.mark.parametrize(
         "mock_data_path", ["resources/public/mock_data.json"])
-    def test_OCIOConfigFileProcessor(
+    def test_OCIOConfigFileGenerator(
         self, mock_data_path,
         effect_processor,
         test_staging_dir,
@@ -40,7 +41,7 @@ class TestConfigExportProcessor:
             working_data = json.loads(f.read())
 
         # Compute color transformations
-        ocio_config_processor = OCIOConfigFileProcessor(
+        ocio_config_processor = OCIOConfigFileGenerator(
             operators=effect_processor.color_operators,
             staging_dir=test_staging_dir,
             context=working_data["asset"],
