@@ -8,13 +8,11 @@ from pathlib import Path
 
 import PyOpenColorIO as OCIO
 
-from attr import has
-
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class OCIOConfigFileProcessor:
+class OCIOConfigFileGenerator:
     _description: str
     _vars: Dict[str, str] = {}
     _views: List[str] = []

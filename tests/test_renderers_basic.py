@@ -9,9 +9,9 @@ from lablib.lib import SequenceInfo
 from lablib.processors import (
     OIIORepositionProcessor,
     AYONHieroEffectsFileProcessor,
-    OCIOConfigFileProcessor,
     AYONOCIOLookFileProcessor,
 )
+from lablib.generators import OCIOConfigFileGenerator
 from lablib.renderers import BasicRenderer
 
 log = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ effect_processor = AYONHieroEffectsFileProcessor(
     Path("resources/public/effectPlateMain/v000/BLD_010_0010_effectPlateMain_v000.json")
 )
 effect_processor.load()
-ocio_config_processor = OCIOConfigFileProcessor(
+ocio_config_generator = OCIOConfigFileGenerator(
     operators=effect_processor.color_operators,
     staging_dir=Path("test_results").resolve().as_posix(),
     context=mock_data["asset"],
@@ -34,12 +34,12 @@ ocio_config_processor = OCIOConfigFileProcessor(
         "PROJECT_ROOT": "C:/CODE/LabLib/resources",
     },
 )
-ocio_config_processor.create_config()
+ocio_config_generator.create_config()
 
 test_data = [
     # test reposition processor
     {
-        # "processor": ocio_config_processor,   # can't read generated config.ocio
+        # "processor": ocio_config_generator,   # can't read generated config.ocio
         "processor": OIIORepositionProcessor(
             dst_width=1920,
             dst_height=1080,

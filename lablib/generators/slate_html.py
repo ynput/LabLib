@@ -13,7 +13,7 @@ from ..lib import utils
 
 
 @dataclass
-class SlateHtmlProcessor:
+class SlateHtmlGenerator:
     data: Dict = field(default_factory=dict)
     width: int = 1920
     height: int = 1080
