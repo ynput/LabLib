@@ -5,7 +5,7 @@ import logging
 import subprocess
 import shutil
 import tempfile
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 from pathlib import Path
 
@@ -61,12 +61,15 @@ class Codec:
 
 @dataclass
 class Burnin:
-    size: int = field(default=64)
-    color: str = field(default="red")
-    padding: int = field(default=30)
-    font: Optional[str] = field(default=None)
-
     data: Dict[str, str] = field(default_factory=dict)
+
+    size: int = field(default=64)
+    padding: int = field(default=30)
+    color: Set[float] = field(default=(1,1,1))
+
+    font: Optional[str] = field(default=None)
+    outline: Optional[int] = field(default=None)
+
 
     def __post_init__(self) -> None:
         if not self.data:
@@ -80,11 +83,14 @@ class Burnin:
         args = []
         width_token = r"{TOP.width}"
         height_token = r"{TOP.height}"
+        _color = ",".join([str(c) for c in self.color])
         for burnin in self.data:
+            flag = f"--text:size={self.size}:color={_color}"
+            if self.outline:
+                _relative_size = int(self.size * 0.05 * self.outline)
+                flag += f":shadow={_relative_size}"
             if self.font:
-                flag = f'--text:size={self.size}:color=1,0,0:font="{self._font.as_posix()}"'
-            else:
-                flag = f"--text:size={self.size}:color=1,0,0"
+                flag += f':font="{self._font.as_posix()}"'
 
             if burnin.get("position"):
                 if burnin["position"] == "top_left":

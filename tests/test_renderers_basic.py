@@ -75,10 +75,12 @@ test_data = [
     {
         "burnins": {
             "size": 64,
-            "color": "white",
+            "color": (0.5, 0.5, 0.5), # grey
+            "font": "vendor/bahnschrift.ttf",
+            "outline": 1,
             "data": [
                 {
-                    "text": "topleft",
+                    "text": "TOP_LEFT",
                     "position": "top_left",
                 },
                 {
