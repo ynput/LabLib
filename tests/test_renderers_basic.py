@@ -39,7 +39,6 @@ ocio_config_generator.create_config()
 test_data = [
     # test reposition processor
     {
-        # "processor": ocio_config_generator,   # can't read generated config.ocio
         "processor": OIIORepositionProcessor(
             dst_width=1920,
             dst_height=1080,
@@ -75,7 +74,7 @@ test_data = [
     {
         "burnins": {
             "size": 64,
-            "color": (0.5, 0.5, 0.5), # grey
+            "color": (0.5, 0.5, 0.5),  # grey
             "font": "vendor/bahnschrift.ttf",
             "outline": 1,
             "data": [
