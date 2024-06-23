@@ -1,7 +1,7 @@
-from .ocio_config import OCIOConfigFileProcessor
-from .slate_html import SlateHtmlProcessor
+from .ocio_config import OCIOConfigFileGenerator
+from .slate_html import SlateHtmlGenerator
 
 __all__ = [
-    "OCIOConfigFileProcessor",
-    "SlateHtmlProcessor",
+    "OCIOConfigFileGenerator",
+    "SlateHtmlGenerator",
 ]

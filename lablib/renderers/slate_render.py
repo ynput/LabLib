@@ -8,13 +8,13 @@ from typing import List
 from pathlib import Path
 
 from ..lib.utils import call_iinfo, offset_timecode
-from ..generators import SlateHtmlProcessor
+from ..generators import SlateHtmlGenerator
 from ..lib import SequenceInfo
 
 
 @dataclass
 class SlateRenderer:
-    slate_proc: SlateHtmlProcessor = None
+    slate_proc: SlateHtmlGenerator = None
     source_sequence: SequenceInfo = None
     dest: str = None
 
@@ -28,7 +28,7 @@ class SlateRenderer:
         if self.dest:
             self.set_destination(self.dest)
 
-    def set_slate_processor(self, processor: SlateHtmlProcessor) -> None:
+    def set_slate_processor(self, processor: SlateHtmlGenerator) -> None:
         self.slate_proc = processor
 
     def set_debug(self, debug: bool) -> None:
@@ -52,7 +52,7 @@ class SlateRenderer:
         )
         self.slate_proc.create_base_slate()
         if not self.slate_proc:
-            raise ValueError("Missing valid SlateHtmlProcessor!")
+            raise ValueError("Missing valid SlateHtmlGenerator!")
         cmd = ["oiiotool"]
         cmd.extend(self.slate_proc.get_oiiotool_cmd())
         cmd.extend(

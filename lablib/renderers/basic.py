@@ -7,14 +7,14 @@ from typing import List
 
 from pathlib import Path
 
-from ..generators import OCIOConfigFileProcessor
+from ..generators import OCIOConfigFileGenerator
 from ..processors import OIIORepositionProcessor
 from ..lib import SequenceInfo
 
 
 @dataclass
 class BasicRenderer:
-    color_proc: OCIOConfigFileProcessor = None
+    color_proc: OCIOConfigFileGenerator = None
     repo_proc: OIIORepositionProcessor = None
     source_sequence: SequenceInfo = None
     staging_dir: str = None
@@ -34,7 +34,7 @@ class BasicRenderer:
             shutil.rmtree(render_staging_dir.as_posix(), ignore_errors=True)
             render_staging_dir.mkdir(parents=True, exist_ok=True)
 
-    def set_color_processor(self, processor: OCIOConfigFileProcessor) -> None:
+    def set_color_processor(self, processor: OCIOConfigFileGenerator) -> None:
         self.color_proc = processor
 
     def set_repo_processor(self, processor: OIIORepositionProcessor) -> None:
