@@ -111,6 +111,16 @@ test_data = [
         "fps": 25,
         "keep_only_container": False,
     },
+    # test ocio config generator
+    {
+        # TODO: i think we need an OCIOLookTransformProcessor that handles oiio args and OCIOConfigFileGenerator
+        "processor": ocio_config_generator,
+        "source_sequence": SequenceInfo.scan("resources/public/plateMain/v002")[0],
+        "output_dir": "test_results/ociolook",
+        "codec": "ProRes422-HQ",
+        "fps": 25,
+        "keep_only_container": False,
+    },
 ]
 log.info(f"{test_data = }")
 
