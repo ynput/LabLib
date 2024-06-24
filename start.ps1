@@ -100,7 +100,7 @@ function get_dependencies {
     # ensure OpenImageIO
     if (-not (Test-Path "$vendor_root\oiio\windows\oiiotool.exe")) {
         $oiio_url = "https://www.patreon.com/file?h=63609827&i=10247677"
-        $oiio_zip = "$vendor_root\oiiotools2.3.10.zip"    
+        $oiio_zip = "$vendor_root\oiiotools2.3.10.zip"
         Invoke-WebRequest -Uri $oiio_url -OutFile $oiio_zip
         Expand-Archive -Path $oiio_zip -DestinationPath "$vendor_root\oiio\windows"
     }
@@ -108,7 +108,7 @@ function get_dependencies {
     # ensure OpenColorIO Config
     if (-not (Test-Path "$vendor_root\ocioconfig")) {
         $ocio_url = "https://github.com/colour-science/OpenColorIO-Configs/releases/download/v1.2/OpenColorIO-Config-ACES-1.2.zip"
-        $ocio_zip = "$vendor_root\OpenColorIO-Config-ACES-1.2.zip"    
+        $ocio_zip = "$vendor_root\OpenColorIO-Config-ACES-1.2.zip"
         Invoke-WebRequest -Uri $ocio_url -OutFile $ocio_zip
         Expand-Archive -Path $ocio_zip -DestinationPath "$vendor_root\ocioconfig"
     }
@@ -116,7 +116,7 @@ function get_dependencies {
     # ensure FFMPEG
     if (-not (Test-Path "$vendor_root\ffmpeg")) {
         $ffmpeg_url = "https://github.com/GyanD/codexffmpeg/releases/download/7.0.1/ffmpeg-7.0.1-full_build-shared.zip"
-        $ffmpeg_zip = "$vendor_root\ffmpeg-7.0.1-full_build-shared.zip"    
+        $ffmpeg_zip = "$vendor_root\ffmpeg-7.0.1-full_build-shared.zip"
         Invoke-WebRequest -Uri $ffmpeg_url -OutFile $ffmpeg_zip
         Expand-Archive -Path $ffmpeg_zip -DestinationPath "$vendor_root\ffmpeg"
     }
@@ -124,7 +124,7 @@ function get_dependencies {
     # ensure Source Code Pro font
     if (-not (Test-Path "$vendor_root\font")) {
         $font_url = "https://api.fontsource.org/v1/download/source-code-pro"
-        $font_zip = "$vendor_root\source-code-pro.zip"    
+        $font_zip = "$vendor_root\source-code-pro.zip"
         Invoke-WebRequest -Uri $font_url -OutFile $font_zip
         Expand-Archive -Path $font_zip -DestinationPath "$vendor_root\font"
     }
