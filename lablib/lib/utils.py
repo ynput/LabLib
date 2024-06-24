@@ -30,7 +30,7 @@ def __get_lablib_env() -> None:
     else:
         log.info("LABLIB_FFMPEG environment variable not set. Using default.")
         ffmpeg_root = Path(
-            vendor_root, "ffmpeg", "ffmpeg-7.0.1-full_build-shared", "bin"
+            vendor_root, "ffmpeg", "windows", "ffmpeg-7.0.1-full_build-shared", "bin"
         )
 
     paths = [Path(p) for p in env["PATH"].split(";")]
