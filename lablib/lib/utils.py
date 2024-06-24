@@ -22,13 +22,13 @@ def __get_lablib_env() -> None:
     if oiio_root := env.get("LABLIB_OIIO"):
         log.debug(f"Using oiiotool from {oiio_root}")
     else:
-        log.warning("LABLIB_OIIO environment variable not set. Using default.")
+        log.info("LABLIB_OIIO environment variable not set. Using default.")
         oiio_root = Path(vendor_root, "oiio", "windows")
 
     if ffmpeg_root := env.get("LABLIB_FFMPEG"):
         log.debug(f"Using ffmpeg from {ffmpeg_root}")
     else:
-        log.warning("LABLIB_FFMPEG environment variable not set. Using default.")
+        log.info("LABLIB_FFMPEG environment variable not set. Using default.")
         ffmpeg_root = Path(
             vendor_root, "ffmpeg", "ffmpeg-7.0.1-full_build-shared", "bin"
         )
