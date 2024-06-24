@@ -75,9 +75,7 @@ function install {
 function set_env {
     # set all env vars in .env file
     if (-not (Test-Path "$($repo_root)\.env")) {
-        Write-Host "!!! ", ".env file must be prepared!" -ForegroundColor red
-        Exit-WithCode 1
-    } else {
+        Write-Host "!!! ", "Setting environment variables from .env!" -ForegroundColor red
         $content = Get-Content -Path "$($repo_root)\.env" -Encoding UTF8 -Raw
         foreach($line in $content.split()) {
             if ($line){
