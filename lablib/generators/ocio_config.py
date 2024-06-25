@@ -59,7 +59,9 @@ class OCIOConfigFileGenerator:
 
         # Set OCIO config path and with validation
         if config_path is None:
-            if OCIO_env_path := os.environ.get("OCIO", None):
+            env = get_vendored_env()
+
+            if OCIO_env_path := env.get("OCIO", None):
                 config_path = Path(OCIO_env_path)
             else:
                 raise ValueError("OCIO environment variable not set!")

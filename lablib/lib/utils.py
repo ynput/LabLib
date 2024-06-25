@@ -14,10 +14,24 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def __get_lablib_env() -> None:
+def get_vendored_env() -> None:
     _parts = Path(__file__).parts[:-3]
     vendor_root = Path(*_parts, "vendor")
+
     env = os.environ.copy()
+    if ocio_path := env.get("OCIO"):
+        log.debug(f"Using OCIO from {ocio_path}")
+    else:
+        log.warning("OCIO environment variable not set. Using default.")
+        ocio_path = Path(
+            vendor_root,
+            "ocioconfig",
+            "OpenColorIO-Config-ACES-1.2",
+            "aces_1.2",
+            "config.ocio"
+        )
+        env["OCIO"] = str(ocio_path)
+        log.debug(f"{env['OCIO'] = }")
 
     if oiio_root := env.get("LABLIB_OIIO"):
         log.debug(f"Using oiiotool from {oiio_root}")
@@ -48,7 +62,7 @@ def __get_lablib_env() -> None:
 
 def call_cmd(cmd: List[str], timeout=None, retries=0) -> Optional[str]:
     out, err, proc = None, None, None
-    env = __get_lablib_env()
+    env = get_vendored_env()
 
     for retry in range(retries + 1):
         try:
