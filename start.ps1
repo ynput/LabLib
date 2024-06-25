@@ -87,8 +87,8 @@ function set_env {
                 Set-Item "env:$varName" $value
             }
         }
-        $env:PYTHONPATH=$repo_root
     }
+    $env:PYTHONPATH=$repo_root
 }
 
 function get_dependencies {
