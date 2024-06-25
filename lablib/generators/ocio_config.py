@@ -7,6 +7,7 @@ from typing import List, Union, Dict
 from pathlib import Path
 
 import PyOpenColorIO as OCIO
+from ..lib import get_vendored_env
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
