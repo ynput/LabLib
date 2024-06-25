@@ -16,12 +16,12 @@ function Default-Func {
     Write-Host ""
     Write-Host "LabLib library"
     Write-Host ""
-    Write-Host "Usage: ./start.ps1 [target]"
+    Write-Host "Usage: ./start.ps1 [command]"
     Write-Host ""
-    Write-Host "Runtime targets:"
+    Write-Host "Runtime commands:"
     Write-Host "  install                       Install Poetry and update venv by lock file."
-    Write-Host "  set-env                        Set all env vars in .env file."
-    Write-Host "  get-dependencies               Download and extract all dependencies into vendor folder."
+    Write-Host "  set-env                       Set all env vars in .env file."
+    Write-Host "  get-dependencies              Download and extract all dependencies into vendor folder."
     Write-Host ""
 }
 
@@ -114,11 +114,11 @@ function get_dependencies {
     }
 
     # ensure FFMPEG
-    if (-not (Test-Path "$vendor_root\ffmpeg")) {
+    if (-not (Test-Path "$vendor_root\ffmpeg\windows")) {
         $ffmpeg_url = "https://github.com/GyanD/codexffmpeg/releases/download/7.0.1/ffmpeg-7.0.1-full_build-shared.zip"
         $ffmpeg_zip = "$vendor_root\ffmpeg-7.0.1-full_build-shared.zip"
         Invoke-WebRequest -Uri $ffmpeg_url -OutFile $ffmpeg_zip
-        Expand-Archive -Path $ffmpeg_zip -DestinationPath "$vendor_root\ffmpeg"
+        Expand-Archive -Path $ffmpeg_zip -DestinationPath "$vendor_root\ffmpeg\windows"
     }
 
     # ensure Source Code Pro font
