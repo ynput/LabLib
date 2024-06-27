@@ -166,6 +166,15 @@ class SequenceInfo:
         return max(self.frames).frame_number
 
     @property
+    def format_string(self) -> str:
+        frame: ImageInfo = min(self.frames)
+        ext: str = frame.extension
+        basename = frame.name.split(".")[0]
+
+        result = f"{basename}.%0{self.padding}d{ext}"
+        return result
+
+    @property
     def hash_string(self) -> str:
         frame: ImageInfo = min(self.frames)
         ext: str = frame.extension
