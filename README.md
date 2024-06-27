@@ -32,3 +32,7 @@ It's encouraged to use the provided PowerShell script to install and download th
 
 ### Testing
 You can run the full suite with `.\start.ps1 test` or to run custom `pytest` commands make sure to be in the cloned repository's directory and run `poetry run pytest [ARGS]`.
+
+
+## Contributing
+The best way to contribute to LabLib currently is to write extensive test cases for all modules. But also sharing your thoughts and ideas on the [Discussions Page](https://github.com/ynput/LabLib/discussions) really helps to keep this project going 💞
