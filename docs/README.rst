@@ -1,8 +1,6 @@
 LabLib
 ======
 
-|image1|
-
 Generate intermediate sequences for VFX processing using OIIO and
 FFMPEG!
 
@@ -14,6 +12,9 @@ Create a custom OCIO config file for direct use. - Create OIIO and
 FFMPEG matrix values to be used in filters for repositioning. - Create
 correctly formed OIIO commandline strings automatically. - Render out
 frames with Color and Repositioning baked in using oiiotool
+
+**DISCLAIMER** This is still a wip, and it’s currently missing a lot of
+functionality. Use at your own risk!
 
 Instructions
 ------------
@@ -34,31 +35,53 @@ section of commandline flags to be passed to oiio.
 **Renderers** take care of returning the fully formed commanline command
 and executing it.
 
-Installation
-------------
+Please see the sample ``tests/test_run.py`` for an usage example.
 
-LabLib requires ``python-3.9`` and uses ``poetry`` for managing its
-dependencies.
-
-It’s encouraged to use the provided PowerShell script to install and
-download the binaries for
-`oiiotool <https://www.patreon.com/posts/openimageio-oiio-63609827>`__,
-`ffmpeg <https://github.com/GyanD/codexffmpeg/releases/tag/7.0.1>`__,
-the `OCIO Color
-Configs <https://github.com/colour-science/OpenColorIO-Configs/releases/tag/v1.2>`__
-and the font `Source Code
-Pro <https://fontsource.org/fonts/source-code-pro>`__ which is used in
-tests.
-
--  clone this repo
--  ``.\start.ps1 install``
--  ``.\start.ps1 get-dependencies``
+--------------
 
 Testing
-~~~~~~~
+-------
 
-You can run the full suite with ``.\start.ps1 test`` or to run custom
-``pytest`` commands make sure to be in the cloned repository’s directory
-and run ``poetry run pytest [ARGS]``.
+Please see ``tests/test_run.py`` globals for dependent binary locations.
 
-.. |image1| image:: https://img.shields.io/badge/os-windows-blue
+-  ``poetry install``
+-  ``poetry run pytest``
+
+Features (Planned and Done)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  ☒ Repo Processor
+-  ☒ Color Processor
+-  ☒ Slate Processor
+-  ☐ Burnins Processor
+-  ☐ FFMPEG final compression to format
+-  ☐ Settings and presets from json
+-  ☐ Commandline parser
+-  ☐ QT gui (will probably never happen)
+
+Dev Features
+~~~~~~~~~~~~
+
+-  ☒ Type Hints
+-  ☐ Docstrings
+-  ☐ Documentation
+-  ☐ Tests (probably will never happen)
+
+--------------
+
+Required Dependencies
+~~~~~~~~~~~~~~~~~~~~~
+
+-  Python >= 3.7 (but keep in mind that otio and ocio wheels need to be
+   built for >= 3.11)
+-  `Download
+   OIIO <https://www.patreon.com/posts/openimageio-oiio-53939451>`__
+-  `Download FFMPEG <https://www.ffmpeg.org/download.html>`__
+-  `Download OCIO
+   Configs <https://github.com/imageworks/OpenColorIO-Configs>`__
+-  Install PyOpenColorIO: ``pip install opencolorio``
+-  Install OpenTimelineIO: ``pip install opentimelineio``
+-  Install Selenium: ``pip install selenium``
+
+or even better just ``pip install requirements.txt`` in your own virtual
+environment!
