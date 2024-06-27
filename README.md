@@ -22,9 +22,9 @@ The core functionality relies on using **Processors** and **Operators** to compu
 **Renderers** take care of returning the fully formed commanline command and executing it.
 
 ## Installation
-LabLib requires `python-3.9` and uses `poetry` for managing it's dependencies.
+LabLib requires `python-3.9` and uses `poetry` for managing its dependencies.
 
-It's encouraged to use to provided PowerShell script to install and download the binaries for [oiiotool](https://www.patreon.com/posts/openimageio-oiio-63609827), [ffmpeg](https://github.com/GyanD/codexffmpeg/releases/tag/7.0.1), the [OCIO Color Configs](https://github.com/colour-science/OpenColorIO-Configs/releases/tag/v1.2) and the font [Source Code Pro](https://fontsource.org/fonts/source-code-pro) which is used in tests.
+It's encouraged to use the provided PowerShell script to install and download the binaries for [oiiotool](https://www.patreon.com/posts/openimageio-oiio-63609827), [ffmpeg](https://github.com/GyanD/codexffmpeg/releases/tag/7.0.1), the [OCIO Color Configs](https://github.com/colour-science/OpenColorIO-Configs/releases/tag/v1.2) and the font [Source Code Pro](https://fontsource.org/fonts/source-code-pro) which is used in tests.
 
 - clone this repo
 - `.\start.ps1 install`
