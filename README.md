@@ -1,4 +1,5 @@
 # LabLib
+![](https://img.shields.io/badge/os-windows-blue)
 
 Generate intermediate sequences for VFX processing using OIIO and FFMPEG!
 
