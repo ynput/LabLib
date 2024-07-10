@@ -1,3 +1,5 @@
+"""Module providing classes for handling image metadata and sequences."""
+
 from __future__ import annotations
 
 import re
@@ -29,7 +31,36 @@ log.setLevel(logging.DEBUG)
 
 @dataclass
 class ImageInfo:
-    """ImageInfo class for reading image metadata."""
+    """ImageInfo class for reading image metadata.
+
+    Args:
+        path Any[Path, str]: Path to the image file.
+
+    Kwargs:
+        width int: Image width.
+        height int: Image height.
+        origin_x int: Origin x position.
+        origin_y int: Origin y position.
+        display_width int: Display width.
+        display_height int: Display height.
+        par float: Pixel aspect ratio.
+        channels int: Number of channels.
+        fps float: Frames per second.
+        timecode str: Timecode.
+
+    All kwargs are optional and will be set from its `update` function or the defaults if they couldn't be found.
+    The defaults are:
+        width = 1920
+        height = 1080
+        channels = 3
+        fps = 24.0
+        par = 1.0
+        timecode = "00:00:00:00"
+        origin_x = 0
+        origin_y = 0
+        display_width = 1920
+        display_height = 1080
+    """
 
     path: Path = field(default_factory=Path)
 
@@ -48,6 +79,12 @@ class ImageInfo:
     # fmt: on
 
     def __post_init__(self):
+        """Post init function for ImageInfo class.
+        Checks if path is set and calls update.
+
+        Raises:
+            ValueError if path is not set.
+        """
         if not self.path:
             raise ValueError("ImageInfo needs to be initialized with a path")
         self.update()
@@ -59,10 +96,11 @@ class ImageInfo:
         return self.frame_number < other.frame_number
 
     def update(self, force_ffprobe=False):
-        """Update image info from iinfo and ffprobe values.
-        NOTE: force_ffprobe overrides iinfo values with ffprobe values.
-              It's used since they report different framerates for testing exr
-              files.
+        """Updates metadata by calling iinfo and ffprobe.
+
+        Kwargs:
+            force_ffprobe bool: If True, ffprobe values will override iinfo values if they're found.
+                                It's used since ffprobe reported different framerates for exrs during testing.
         """
         iinfo_res = utils.call_iinfo(self.path)
         ffprobe_res = utils.call_ffprobe(self.path)
@@ -76,10 +114,19 @@ class ImageInfo:
 
     @property
     def filename(self) -> str:
+        """Property for the image file name including extension.
+
+        :returns: str
+        """
         return self.path.name
 
     @property
     def rational_time(self) -> opentime.RationalTime:
+        """Property for OTIO rational time from timecode string field.
+
+        :raises: Exception if no timecode and fps found.
+        :returns: opentime.RationalTime
+        """
         if not all([self.timecode, self.fps]):
             raise Exception("no timecode and fps found")
 
@@ -87,6 +134,14 @@ class ImageInfo:
 
     @property
     def frame_number(self) -> int:
+        """Property for frame number from the filename by using regex lookup.
+
+        The regex could use a little love to be more robust.
+        Filename should be something like `filename.0001.exr`.
+
+        :raises: Exception if regex lookup wasn't successful.
+        :returns: int
+        """
         if not self.filename:
             raise Exception("needs filename for querying frame number")
         matches = re.findall(r"\.(\d+)\.", self.filename)
@@ -99,19 +154,45 @@ class ImageInfo:
 
     @property
     def extension(self) -> str:
+        """Property for the file extension.
+
+        :returns: str
+        """
         return self.path.suffix
 
     @property
     def name(self) -> str:
+        """Property for the file name with extension.
+
+        I use this in SequenceInfo but could become obsolete in favor for `filename`.
+
+        :returns: str
+        """
         return f"{self.path.stem}{self.path.suffix}"
 
     @property
     def filepath(self) -> str:
+        """Property for the file path as posix string.
+
+        Can be used if a string is needed.
+
+        :returns: str
+        """
+
         return self.path.resolve().as_posix()
 
 
 @dataclass
 class SequenceInfo:
+    """Class for handling image sequences by using instances of `ImageInfo`.
+
+    If you want to scan a directory for image sequences, you can use the `scan` classmethod.
+
+    Args:
+        path Any[Path, str]: Path to the image sequence directory.
+        imageinfos List[ImageInfo]: List of all files as `ImageInfo` to be used.
+    """
+
     path: Path = field(default_factory=Path)
     imageinfos: List[ImageInfo] = field(default_factory=list)
 
@@ -123,6 +204,15 @@ class SequenceInfo:
 
     @classmethod
     def scan(cls, directory: str | Path) -> List[SequenceInfo]:
+        """Classmethod for scanning a directory for image sequences.
+
+        Currently only supports EXR files. Needs to be extended and tested for other formats.
+
+        Args:
+            directory Any[str, Path]: Path to the directory to be scanned.
+
+        :returns: List[SequenceInfo]
+        """
         log.info(f"Scanning {directory}")
         if not isinstance(directory, Path):
             directory = Path(directory)
@@ -155,18 +245,34 @@ class SequenceInfo:
 
     @property
     def frames(self) -> List[int]:
+        """Property for getting a list of all frame numbers in the sequence.
+
+        :returns: List[int]
+        """
         return self.imageinfos
 
     @property
     def start_frame(self) -> int:
+        """Property for the lowest frame number in the sequence.
+
+        :returns: int
+        """
         return min(self.frames).frame_number
 
     @property
     def end_frame(self) -> int:
+        """Property for the highest frame number in the sequence.
+
+        :returns: int
+        """
         return max(self.frames).frame_number
 
     @property
     def format_string(self) -> str:
+        """Property for ffmpeg formatted string.
+
+        :returns: str
+        """
         frame: ImageInfo = min(self.frames)
         ext: str = frame.extension
         basename = frame.name.split(".")[0]
@@ -176,6 +282,10 @@ class SequenceInfo:
 
     @property
     def hash_string(self) -> str:
+        """Property for oiio formatted string.
+
+        :returns: str
+        """
         frame: ImageInfo = min(self.frames)
         ext: str = frame.extension
         basename = frame.name.split(".")[0]
@@ -185,6 +295,7 @@ class SequenceInfo:
 
     @property
     def format_string(self) -> str:
+        """TODO: That's a duplicate so let's run tests and remove it."""
         frame: ImageInfo = min(self.frames)
         ext: str = frame.extension
         basename = frame.name.split(".")[0]
@@ -194,12 +305,22 @@ class SequenceInfo:
 
     @property
     def padding(self) -> int:
+        """Property for the sequence padding used.
+
+        :returns: int
+        """
         frame = min(self.frames)
         result = len(str(frame.frame_number))
         return result
 
     @property
     def frames_missing(self) -> bool:
+        """Property for checking if any frames are missing in the sequence.
+
+        Could be extended to return a list of missing frames.
+
+        :returns: bool
+        """
         start = min(self.frames).frame_number
         end = max(self.frames).frame_number
         expected: int = len(range(start, end)) + 1
@@ -207,16 +328,32 @@ class SequenceInfo:
 
     @property
     def width(self) -> int:
+        """Property for the sequence width based on the first found frame.
+
+        :returns: int
+        """
         return self.imageinfos[0].width
 
     @property
     def display_width(self) -> int:
+        """Property for the sequence display_width based on the first found frame.
+
+        :returns: int
+        """
         return self.imageinfos[0].display_width
 
     @property
     def height(self) -> int:
+        """Property for the sequence height based on the first found frame.
+
+        :returns: int
+        """
         return self.imageinfos[0].height
 
     @property
     def display_height(self) -> int:
+        """Property for the sequence display_height based on the first found frame.
+
+        :returns: int
+        """
         return self.imageinfos[0].display_height
