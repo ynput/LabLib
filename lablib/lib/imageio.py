@@ -31,25 +31,11 @@ log.setLevel(logging.DEBUG)
 
 @dataclass
 class ImageInfo:
-    """ImageInfo class for reading image metadata.
+    """A dataclass for reading image metadata.
 
-    Args:
-        path Any[Path, str]: Path to the image file.
-
-    Kwargs:
-        width int: Image width.
-        height int: Image height.
-        origin_x int: Origin x position.
-        origin_y int: Origin y position.
-        display_width int: Display width.
-        display_height int: Display height.
-        par float: Pixel aspect ratio.
-        channels int: Number of channels.
-        fps float: Frames per second.
-        timecode str: Timecode.
-
-    All kwargs are optional and will be set from its `update` function or the defaults if they couldn't be found.
+    All kwargs are optional and will be set from its ``update`` function or the defaults if they couldn't be found.
     The defaults are:
+    ::
         width = 1920
         height = 1080
         channels = 3
@@ -60,6 +46,29 @@ class ImageInfo:
         origin_y = 0
         display_width = 1920
         display_height = 1080
+
+    :param path: Path to the image file.
+    :type path: Path
+    :param width: Image width.
+    :type width: Optional[int]
+    :param height: Image height.
+    :type height: Optional[int]
+    :param origin_x: Origin x position.
+    :type origin_x: Optional[int]
+    :param origin_y: Origin y position.
+    :type origin_y: Optional[int]
+    :param display_width: Display width.
+    :type display_width: Optional[int]
+    :param display_height: Display height.
+    :type display_height: Optional[int]
+    :param par: Pixel aspect ratio.
+    :type par: Optional[float]
+    :param channels: Number of channels.
+    :type channels: Optional[int]
+    :param fps: Frames per second.
+    :type fps: Optional[float]
+    :param timecode: Timecode.
+    :type timecode: Optional[str]
     """
 
     path: Path = field(default_factory=Path)

@@ -1,3 +1,5 @@
+"""Utility functions for the lablib library."""
+
 from __future__ import annotations
 import os
 import math
@@ -15,6 +17,14 @@ log.setLevel(logging.DEBUG)
 
 
 def get_vendored_env() -> None:
+    """Get a prepared copy of the current environment.
+
+    It checks for the presence of ``$OCIO``, ``$LABLIB_OIIO`` and ``$LABLIB_FFMPEG`` and adds them to ``$PATH``.
+    If these environment variables are not set, it assumes vendored files to be present in ``./vendor``.
+    Run ``.\start.ps1 get-dependencies`` to download the vendored files.
+
+    :returns: Dict[str, Any]
+    """
     _parts = Path(__file__).parts[:-3]
     vendor_root = Path(*_parts, "vendor")
 
@@ -28,7 +38,7 @@ def get_vendored_env() -> None:
             "ocioconfig",
             "OpenColorIO-Config-ACES-1.2",
             "aces_1.2",
-            "config.ocio"
+            "config.ocio",
         )
         env["OCIO"] = str(ocio_path)
         log.debug(f"{env['OCIO'] = }")
@@ -61,6 +71,11 @@ def get_vendored_env() -> None:
 
 
 def call_cmd(cmd: List[str], timeout=None, retries=0) -> Optional[str]:
+    """Run a syscall and return the output and error.
+
+    :param cmd: The command to run.
+    :type cmd: List[str]
+    """
     out, err, proc = None, None, None
     env = get_vendored_env()
 
@@ -84,6 +99,11 @@ def call_cmd(cmd: List[str], timeout=None, retries=0) -> Optional[str]:
 
 
 def call_iinfo(filepath: str | Path) -> dict:
+    """Get image information using OpenImageIO's iinfo.
+
+    :param filepath: The path to the image file.
+    :type filepath: Any[str, Path]
+    """
     if isinstance(filepath, str):
         filepath = Path(filepath)
     abspath = str(filepath.resolve())
@@ -123,6 +143,7 @@ def call_iinfo(filepath: str | Path) -> dict:
 
 
 def call_ffprobe(filepath: str | Path) -> dict:
+    """Get video information using FFmpeg's ffprobe."""
     if isinstance(filepath, str):
         filepath = Path(filepath)
     abspath = str(filepath.resolve())
