@@ -66,7 +66,7 @@ class Transform:
     def from_node_data(cls, data):
         """Create a Transform object from node data.
 
-        Attributes:
+        Args:
             data (dict): The node data.
 
         Returns:
@@ -115,7 +115,7 @@ class Crop:
     def from_node_data(cls, data):
         """Create ``Crop`` from node data.
 
-        Attributes:
+        Args:
             data (dict): The node data.
         """
         return cls(box=data.get("box", [0, 0, 1920, 1080]))
@@ -150,7 +150,7 @@ class Mirror2:
     def from_node_data(cls, data):
         """Create ``Mirror2`` from node data.
 
-        Attributes:
+        Args:
             data (dict): The node data.
         """
         return cls(flop=data.get("flop", False), flip=data.get("flip", False))

@@ -394,7 +394,7 @@ class BasicRenderer:
         """:obj:`Codec`: The code to use.
 
         Please check the supported codecs.
-        The passed value will be looked up against them.
+        The passed `str` will be looked up against them.
         """
         if not hasattr(self, "_codec"):
             return None

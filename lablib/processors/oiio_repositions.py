@@ -16,8 +16,9 @@ log.setLevel(logging.DEBUG)
 class OIIORepositionProcessor:
     """Processor for repositioning images.
 
-    You can use this processor without operators only specifying ``dst_width`` or ``dst_height``.
-    This way OIIORepositionProcessor will act as a basic reformat.
+    Note:
+        You can use this processor without operators only specifying ``dst_width`` or ``dst_height``.
+        This way ``OIIORepositionProcessor`` will act as a basic reformat.
 
     Attributes:
         operators (List): The list of repositioning operators.

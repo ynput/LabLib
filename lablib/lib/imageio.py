@@ -197,7 +197,7 @@ class SequenceInfo:
 
     If you want to scan a directory for image sequences, you can use the `scan` classmethod.
 
-    Args:
+    Attributes:
         path Any[Path, str]: Path to the image sequence directory.
         imageinfos List[ImageInfo]: List of all files as `ImageInfo` to be used.
     """
@@ -215,9 +215,10 @@ class SequenceInfo:
     def scan(cls, directory: str | Path) -> List[SequenceInfo]:
         """Classmethod for scanning a directory for image sequences.
 
-        Currently only supports EXR files. Needs to be extended and tested for other formats.
+        Note:
+            Currently only supports EXR files. Needs to be extended and tested for other formats.
 
-        Attributes:
+        Args:
             directory (Any[str, Path]): Path to the directory to be scanned.
 
         Returns:
