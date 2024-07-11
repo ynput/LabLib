@@ -35,6 +35,7 @@ class Transform:
     Returns:
         List[str]: The arguments for the OIIO command.
     """
+
     translate: List[float] = field(default_factory=lambda: [0.0, 0.0])
     rotate: float = 0.0
     # needs to be treated as a list of floats but can be single float
@@ -89,10 +90,21 @@ class Transform:
 
 @dataclass
 class Crop:
+    """Operator for cropping images.
+
+    Attributes:
+        box (List[int]): The crop box.
+    """
+
     box: List[int] = field(default_factory=lambda: [0, 0, 1920, 1080])
     # NOTE: could also be called with width, height, x, y
 
     def to_oiio_args(self):
+        """Convert ``Crop`` to OIIO arguments.
+
+        Returns:
+            List[int]: The crop box.
+        """
         return [
             "--crop",
             # using xmin,ymin,xmax,ymax
@@ -101,15 +113,32 @@ class Crop:
 
     @classmethod
     def from_node_data(cls, data):
+        """Create ``Crop`` from node data.
+
+        Attributes:
+            data (dict): The node data.
+        """
         return cls(box=data.get("box", [0, 0, 1920, 1080]))
 
 
 @dataclass
 class Mirror2:
+    """Operator for mirroring images.
+
+    Attributes:
+        flop (bool): Mirror vertically.
+        flip (bool): Mirror horizontally.
+    """
+
     flop: bool = False
     flip: bool = False
 
     def to_oiio_args(self):
+        """Convert ``Mirror2`` to OIIO arguments.
+
+        Returns:
+            List[str]: Arguments for OIIO.
+        """
         args = []
         if self.flop:
             args.append("--flop")
@@ -119,11 +148,31 @@ class Mirror2:
 
     @classmethod
     def from_node_data(cls, data):
+        """Create ``Mirror2`` from node data.
+
+        Attributes:
+            data (dict): The node data.
+        """
         return cls(flop=data.get("flop", False), flip=data.get("flip", False))
 
 
 @dataclass
 class CornerPin2D:
+    """Operator for corner pinning images.
+
+    This operator is not yet tested or used in the codebase.
+
+    Attributes:
+        from1 (List[float]): The first corner of the source image.
+        from2 (List[float]): The second corner of the source image.
+        from3 (List[float]): The third corner of the source image.
+        from4 (List[float]): The fourth corner of the source image.
+        to1 (List[float]): The first corner of the destination image.
+        to2 (List[float]): The second corner of the destination image.
+        to3 (List[float]): The third corner of the destination image.
+        to4 (List[float]): The fourth corner of the destination image.
+    """
+
     from1: List[float] = field(default_factory=lambda: [0.0, 0.0])
     from2: List[float] = field(default_factory=lambda: [0.0, 0.0])
     from3: List[float] = field(default_factory=lambda: [0.0, 0.0])
@@ -134,6 +183,11 @@ class CornerPin2D:
     to4: List[float] = field(default_factory=lambda: [0.0, 0.0])
 
     def to_oiio_args(self):
+        """Convert ``CornerPin2D`` to OIIO arguments.
+
+        Returns:
+            List[str]: Arguments for OIIO.
+        """
         # TODO: use matrix operation from utils.py
         return []
 
