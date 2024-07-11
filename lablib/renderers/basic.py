@@ -166,6 +166,36 @@ class Burnin:
 
 
 class BasicRenderer:
+    """Basic renderer for image sequences.
+
+    Also support single image rendering but needs to support more formats.
+    PSDs would be really nice to have.
+
+    Attributes:
+        source_sequence (SequenceInfo): The source sequence to render.
+        output_dir (Union[Path, str]): The output directory.
+        name (str): The name of the output file.
+        threads (int): The number of threads to use for rendering.
+        keep_only_container (bool): Keep only the container file.
+
+
+    Examples:
+    .. code-block:: python
+        rend = BasicRenderer(
+            processor=OIIORepositionProcessor(
+                dst_width=1920,
+                dst_height=1080,
+                fit="letterbox",
+            ),
+            source_sequence=SequenceInfo.scan("resources/public/plateMain/v002")[0],
+            output_dir="test_results/reformat_1080p/letterbox",
+            codec="ProRes422-HQ",
+            fps=25,
+            keep_only_container=False,
+        )
+        rend.render(debug=True)
+    """
+
     name: str = "lablib.mov"
 
     # rendering options
@@ -205,6 +235,11 @@ class BasicRenderer:
         return f"{self.__class__.__name__}({props[:-2]})"
 
     def get_oiiotool_cmd(self, debug=False) -> List[str]:
+        """Get arguments for rendering with OIIO.
+
+        Returns:
+            List[str]: The OIIO arguments.
+        """
         input_path = Path(
             self.source_sequence.path, self.source_sequence.hash_string
         ).resolve()
@@ -235,6 +270,11 @@ class BasicRenderer:
         return cmd
 
     def get_ffmpeg_cmd(self) -> List[str]:
+        """Get arguments for rendering with ffmpeg.
+
+        Returns:
+            List[str]: The ffmpeg arguments.
+        """
         cmd = ["ffmpeg", "-loglevel", "info", "-hide_banner"]
 
         # common args
@@ -285,6 +325,17 @@ class BasicRenderer:
         return cmd
 
     def render(self, debug=False) -> None:
+        """Render the sequence with the given options.
+
+        This always tries to render into a local temporary EXR sequence first and then converts it to the desired codec.
+        These will then be attempted to be copied to the output directory.
+        In any case, the temporary directory will be cleaned up afterwards.
+
+        If you're only interested in the video file you can set ``keep_only_container=True``.
+
+        Args:
+            debug (bool): Whether to increase log verbosity.
+        """
         # run oiiotool command
         cmd = self.get_oiiotool_cmd(debug)
         log.info("oiiotool cmd >>> {}".format(" ".join(cmd)))
@@ -323,6 +374,7 @@ class BasicRenderer:
 
     @property
     def processor(self) -> Any:
+        """:obj:`Processor`: The processor to use for rendering."""
         if not hasattr(self, "_processor"):
             return None
         return self._processor
@@ -333,6 +385,11 @@ class BasicRenderer:
 
     @property
     def codec(self) -> str:
+        """:obj:`Codec`: The code to use.
+
+        Please check the supported codecs.
+        The passed value will be looked up against them.
+        """
         if not hasattr(self, "_codec"):
             return None
         return self._codec.name
@@ -343,6 +400,11 @@ class BasicRenderer:
 
     @property
     def fps(self) -> int:
+        """:obj:`int`: The frames per second to use.
+
+        Note:
+            This should be a float. But currently only 24 and 25 are tested.
+        """
         if not hasattr(self, "_fps"):
             return min(self.source_sequence.frames).fps
         return self._fps
@@ -353,6 +415,10 @@ class BasicRenderer:
 
     @property
     def audio(self) -> str:
+        """:obj:`str`: The path to an audio file to be used.
+
+        The passed string will be resolved to an absolute path object.
+        """
         if not hasattr(self, "_audio"):
             return None
         return self._audio.as_posix()
@@ -363,6 +429,14 @@ class BasicRenderer:
 
     @property
     def burnins(self) -> Burnin:
+        """:obj:`Burnin`: The burnins to use.
+
+        Please check the Burnin class for formatting.
+        Currently you can only pass in a dict formatted accordingly.
+
+        Note:
+            Should also accept passing a ``Burnin`` directly.
+        """
         if not hasattr(self, "_burnins"):
             return None
         return self._burnins
