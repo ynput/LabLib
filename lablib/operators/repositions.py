@@ -193,6 +193,11 @@ class CornerPin2D:
 
     @classmethod
     def from_node_data(cls, data):
+        """Create ``CornerPin2D`` from node data.
+
+        Args:
+            data (dict): The node data.
+        """
         return cls(
             from1=data.get("from1", [0.0, 0.0]),
             from2=data.get("from2", [0.0, 0.0]),
