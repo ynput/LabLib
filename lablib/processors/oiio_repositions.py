@@ -1,3 +1,5 @@
+"""Processors providing positional effect arguments for OIIO."""
+
 from __future__ import annotations
 
 import inspect
@@ -12,6 +14,20 @@ log.setLevel(logging.DEBUG)
 
 
 class OIIORepositionProcessor:
+    """Processor for repositioning images.
+
+    You can use this processor without operators only specifying ``dst_width`` or ``dst_height``.
+    This way OIIORepositionProcessor will act as a basic reformat.
+
+    Attributes:
+        operators (List): The list of repositioning operators.
+        src_width (int): The source image width.
+        dst_width (int): The destination image width.
+        src_height (int): The source image height.
+        dst_height (int): The destination image height.
+        fit (str): The fit mode for the image.
+    """
+
     operators: List[Any] = []
     src_width: int = 0
     dst_width: int = 0
@@ -35,6 +51,11 @@ class OIIORepositionProcessor:
         return f"{self.__class__.__name__}({props[:-2]})"
 
     def get_oiiotool_cmd(self) -> List:
+        """Get the OIIO arguments for repositioning images.
+
+        Returns:
+            List[str]: The OIIO arguments.
+        """
         result = []
         for op in self.operators:
             result.extend(op.to_oiio_args())
