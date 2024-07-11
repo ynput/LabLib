@@ -12,6 +12,29 @@ from lablib.lib.utils import (
 
 @dataclass
 class Transform:
+    """Transform operator for repositioning images.
+
+    This operator is used to apply transformations to images.
+    The transformations are applied in the following order:
+        translate, rotate, scale, center, invert, skewX, skewY.
+
+    The skew_order parameter determines the order in which the skewX and skewY
+    transformations are applied.
+
+    Attributes:
+        translate (List[float]): The translation vector.
+        rotate (float): The rotation angle in degrees.
+        scale (List[float]): The scaling vector.
+        center (List[float]): The center of the transformation.
+        invert (bool): Invert the transformation.
+        skewX (float): The skew in the X direction.
+        skewY (float): The skew in the Y direction.
+        skew_order (str): The order in which the skewX and skewY
+            transformations are applied.
+
+    Returns:
+        List[str]: The arguments for the OIIO command.
+    """
     translate: List[float] = field(default_factory=lambda: [0.0, 0.0])
     rotate: float = 0.0
     # needs to be treated as a list of floats but can be single float
@@ -23,6 +46,11 @@ class Transform:
     skew_order: str = "XY"
 
     def to_oiio_args(self):
+        """Convert the Transform object to OIIO arguments.
+
+        Returns:
+            List[str]: The arguments for the OIIO command.
+        """
         matrix = calculate_matrix(
             t=self.translate, r=self.rotate, s=self.scale, c=self.center
         )
@@ -35,6 +63,14 @@ class Transform:
 
     @classmethod
     def from_node_data(cls, data):
+        """Create a Transform object from node data.
+
+        Attributes:
+            data (dict): The node data.
+
+        Returns:
+            Transform: The Transform object.
+        """
         scale = data.get("scale", [0.0, 0.0])
         if isinstance(scale, (int, float)):
             scale = [scale, scale]
