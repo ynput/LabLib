@@ -217,8 +217,8 @@ class SequenceInfo:
 
         Currently only supports EXR files. Needs to be extended and tested for other formats.
 
-        Args:
-            directory Any[str, Path]: Path to the directory to be scanned.
+        Attributes:
+            directory (Any[str, Path]): Path to the directory to be scanned.
 
         Returns:
             List[SequenceInfo]: List of all found image sequences
