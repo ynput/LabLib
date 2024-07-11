@@ -19,6 +19,15 @@ SUPPORTED_CODECS = ["ProRes422-HQ", "ProRes4444-XQ", "DNxHR-SQ"]
 
 @dataclass
 class Codec:
+    """Utility class for abstracting ffmpeg codec arguments.
+
+    Currently this only supports 2 flavors of ProRes and 1 of DNxHR but could deserve more.
+    Supported codecs are: ``ProRes422-HQ``, ``ProRes4444-XQ``, ``DNxHR-SQ``
+
+    Attributes:
+        name (str): The name of the codec.
+    """
+
     name: str = field(default_factory=str, init=True, repr=True)
 
     def __post_init__(self) -> None:
@@ -28,6 +37,11 @@ class Codec:
             )
 
     def get_ffmpeg_args(self) -> List[str]:
+        """Get the ffmpeg arguments for the codec.
+
+        Returns:
+            List[str]: The ffmpeg arguments
+        """
         args = []
         # fmt: off
         # TODO: i should probably abstract the cmdargs
@@ -60,6 +74,32 @@ class Codec:
 
 @dataclass
 class Burnin:
+    """Utility class for handling burnins with OIIO.
+
+    The data attribute is a structure dict containing the text to be drawn and its positioning.
+    An example for an entry showing all positioning options would be:
+    ::
+        {
+            "text": "YOUR_TEXT_HERE",
+            "position": [
+                "top_left"
+                "top_center"
+                "top_right"
+                "bottom_left"
+                "bottom_center"
+                "bottom_right"
+            ],
+        },
+
+    Attributes:
+        data (Dict[str, str]): The text to be drawn and its positioning.
+        size (int): The size of the text.
+        padding (int): The padding around the text.
+        color (Set[float]): The color of the text.
+        font (Optional[str]): The font to use.
+        outline (Optional[int]): The outline size.
+    """
+
     data: Dict[str, str] = field(default_factory=dict)
 
     size: int = field(default=64)
@@ -77,6 +117,11 @@ class Burnin:
             self._font = Path(self.font).resolve()
 
     def get_oiiotool_args(self) -> List[str]:
+        """Get the OIIO arguments.
+
+        Returns:
+            List[str]: The OIIO arguments.
+        """
         args = []
         width_token = r"{TOP.width}"
         height_token = r"{TOP.height}"
