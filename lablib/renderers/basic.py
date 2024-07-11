@@ -168,19 +168,15 @@ class Burnin:
 class BasicRenderer:
     """Basic renderer for image sequences.
 
-    Also support single image rendering but needs to support more formats.
-    PSDs would be really nice to have.
+    Note:
+        Also supports single image rendering but needs to support more formats.
+        PSDs would be really nice to have.
 
-    Attributes:
-        source_sequence (SequenceInfo): The source sequence to render.
-        output_dir (Union[Path, str]): The output directory.
-        name (str): The name of the output file.
-        threads (int): The number of threads to use for rendering.
-        keep_only_container (bool): Keep only the container file.
+    Example usage:
 
-
-    Examples:
     .. code-block:: python
+
+        # an example for rendering a sequence into a ProRes with a basic reformat to 1080p
         rend = BasicRenderer(
             processor=OIIORepositionProcessor(
                 dst_width=1920,
@@ -194,6 +190,16 @@ class BasicRenderer:
             keep_only_container=False,
         )
         rend.render(debug=True)
+
+
+    Attributes:
+        source_sequence (SequenceInfo): The source sequence to render.
+        output_dir (Union[Path, str]): The output directory.
+        name (str): The name of the output file.
+        threads (int): The number of threads to use for rendering.
+        keep_only_container (bool): Keep only the container file.
+
+
     """
 
     name: str = "lablib.mov"
