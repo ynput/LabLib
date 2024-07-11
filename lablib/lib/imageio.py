@@ -220,7 +220,9 @@ class SequenceInfo:
         Args:
             directory Any[str, Path]: Path to the directory to be scanned.
 
-        :returns: List[SequenceInfo]
+        Returns:
+            List[SequenceInfo]: List of all found image sequences
+                as `SequenceInfo`.
         """
         log.info(f"Scanning {directory}")
         if not isinstance(directory, Path):
@@ -256,7 +258,8 @@ class SequenceInfo:
     def frames(self) -> List[int]:
         """Property for getting a list of all frame numbers in the sequence.
 
-        :returns: List[int]
+        Returns:
+            List[int]: List of all frame numbers in the sequence.
         """
         return self.imageinfos
 
@@ -264,7 +267,8 @@ class SequenceInfo:
     def start_frame(self) -> int:
         """Property for the lowest frame number in the sequence.
 
-        :returns: int
+        Returns:
+            int: The lowest frame number in the sequence.
         """
         return min(self.frames).frame_number
 
