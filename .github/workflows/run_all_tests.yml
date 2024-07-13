@@ -28,7 +28,6 @@ jobs:
           key: ${{ runner.os }}-vendor
 
       - name: install LabLib
-        if: steps.restore-poetry.outputs.cache-hit != 'true'
         run: |
           .\start.ps1 install
 
