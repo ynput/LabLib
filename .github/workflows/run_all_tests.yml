@@ -1,4 +1,4 @@
-name: documentation
+name: run all tests
 
 on:
   push:
