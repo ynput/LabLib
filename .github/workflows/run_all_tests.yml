@@ -1,0 +1,27 @@
+name: documentation
+
+on:
+  push:
+    branches: ["ci/run-full-test-suite"]
+
+jobs:
+  full_test_suite:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - uses: abatilo/actions-poetry@v2
+
+      - name: install LabLib
+        run: |
+          .\start.ps1 install
+
+      - name: get dependencies
+        run: |
+          .\start.ps1 get-dependencies
+
+      - name: run all tests
+        run: |
+          .\start.ps1 test
