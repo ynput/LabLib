@@ -17,6 +17,8 @@ jobs:
           python-version: "3.9"
       - uses: abatilo/actions-poetry@v2
       - uses: conda-incubator/setup-miniconda@v3.0.4
+        with:
+          auto-activate-base: true
       - name: Install dependencies
         run: |
           poetry install
