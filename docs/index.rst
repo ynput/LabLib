@@ -3,7 +3,7 @@ Welcome to LabLib's documentation!
 .. toctree::
    :maxdepth: 3
 
-   README <README>
+   📚 README <README>
    modules
 
 
