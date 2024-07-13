@@ -23,6 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install
+          conda install pandoc
       - name: Convert Readme to rst
         run: |
           conda install pandoc
