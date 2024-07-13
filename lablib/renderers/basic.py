@@ -172,24 +172,23 @@ class BasicRenderer:
         Also supports single image rendering but needs to support more formats.
         PSDs would be really nice to have.
 
-    Example usage:
+    Hint:
+        .. code-block:: python
 
-    .. code-block:: python
-
-        # an example for rendering a sequence into a ProRes with a basic reformat to 1080p
-        rend = BasicRenderer(
-            processor=OIIORepositionProcessor(
-                dst_width=1920,
-                dst_height=1080,
-                fit="letterbox",
-            ),
-            source_sequence=SequenceInfo.scan("resources/public/plateMain/v002")[0],
-            output_dir="test_results/reformat_1080p/letterbox",
-            codec="ProRes422-HQ",
-            fps=25,
-            keep_only_container=False,
-        )
-        rend.render(debug=True)
+            # an example for rendering a sequence into a ProRes with a basic reformat to 1080p
+            rend = BasicRenderer(
+                processor=OIIORepositionProcessor(
+                    dst_width=1920,
+                    dst_height=1080,
+                    fit="letterbox",
+                ),
+                source_sequence=SequenceInfo.scan("resources/public/plateMain/v002")[0],
+                output_dir="test_results/reformat_1080p/letterbox",
+                codec="ProRes422-HQ",
+                fps=25,
+                keep_only_container=False,
+            )
+            rend.render(debug=True)
 
 
     Attributes:
