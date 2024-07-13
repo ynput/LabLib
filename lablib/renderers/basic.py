@@ -21,8 +21,9 @@ SUPPORTED_CODECS = ["ProRes422-HQ", "ProRes4444-XQ", "DNxHR-SQ"]
 class Codec:
     """Utility class for abstracting ffmpeg codec arguments.
 
-    Currently this only supports 2 flavors of ProRes and 1 of DNxHR but could deserve more.
-    Supported codecs are: ``ProRes422-HQ``, ``ProRes4444-XQ``, ``DNxHR-SQ``
+    :Important:
+        Currently this only supports 2 flavors of ProRes and 1 of DNxHR but could deserve more.
+        Supported codecs are: ``ProRes422-HQ``, ``ProRes4444-XQ``, ``DNxHR-SQ``
 
     Attributes:
         name (str): The name of the codec.
@@ -39,12 +40,15 @@ class Codec:
     def get_ffmpeg_args(self) -> List[str]:
         """Get the ffmpeg arguments for the codec.
 
+        TODO:
+            Should the arguments be treated more generally?
+            Maybe like it's handled in the server settings of ``Extract Review``.
+
         Returns:
             List[str]: The ffmpeg arguments
         """
         args = []
         # fmt: off
-        # TODO: i should probably abstract the cmdargs
         if self.name == "ProRes422-HQ":
             args = [
                 "-vcodec", "prores_ks",
@@ -197,8 +201,6 @@ class BasicRenderer:
         name (str): The name of the output file.
         threads (int): The number of threads to use for rendering.
         keep_only_container (bool): Keep only the container file.
-
-
     """
 
     name: str = "lablib.mov"
@@ -332,11 +334,13 @@ class BasicRenderer:
     def render(self, debug=False) -> None:
         """Render the sequence with the given options.
 
-        This always tries to render into a local temporary EXR sequence first and then converts it to the desired codec.
-        These will then be attempted to be copied to the output directory.
-        In any case, the temporary directory will be cleaned up afterwards.
+        Important:
+            This always tries to render into a local temporary EXR sequence first and then converts it to the desired codec.
+            These will then be attempted to be copied to the output directory.
+            In any case, the temporary directory will be cleaned up afterwards.
 
-        If you're only interested in the video file you can set ``keep_only_container=True``.
+        Hint:
+            If you're only interested in the video file you can set ``BasicRenderer(*args, keep_only_container=True)``.
 
         Args:
             debug (bool): Whether to increase log verbosity.
@@ -392,8 +396,9 @@ class BasicRenderer:
     def codec(self) -> str:
         """:obj:`Codec`: The code to use.
 
-        Please check the supported codecs.
-        The passed `str` will be looked up against them.
+        Attention:
+            Please check the supported codecs.
+            The passed `str` will be looked up against them.
         """
         if not hasattr(self, "_codec"):
             return None
@@ -407,7 +412,7 @@ class BasicRenderer:
     def fps(self) -> int:
         """:obj:`int`: The frames per second to use.
 
-        Note:
+        TODO:
             This should be a float. But currently only 24 and 25 are tested.
         """
         if not hasattr(self, "_fps"):
@@ -439,7 +444,7 @@ class BasicRenderer:
         Please check the Burnin class for formatting.
         Currently you can only pass in a dict formatted accordingly.
 
-        Note:
+        TODO:
             Should also accept passing a ``Burnin`` directly.
         """
         if not hasattr(self, "_burnins"):
