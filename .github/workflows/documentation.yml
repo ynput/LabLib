@@ -26,7 +26,7 @@ jobs:
           conda install pandoc
       - name: Convert Readme to rst
         run: |
-          conda install pandoc
+          conda info
           pandoc ./README.md -o ./docs/README.rst
       - name: Sphinx build
         run: |
