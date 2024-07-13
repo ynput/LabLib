@@ -24,9 +24,11 @@ def get_interpolation(interpolation: str) -> int:
         return OCIO.Interpolation.INTERP_CUBIC
     return OCIO.Interpolation.INTERP_DEFAULT
 
+
 @dataclass
 class OCIOFileTransform:
-    """Foundry Hiero Timeline soft effect node class """
+    """Foundry Hiero Timeline soft effect node class"""
+
     file: str = ""
     cccid: str = ""
     direction: int = 0
@@ -54,7 +56,7 @@ class OCIOFileTransform:
             file=data.get("file", ""),
             cccid=data.get("cccid", ""),
             direction=data.get("direction", 0),
-            interpolation=data.get("interpolation", "linear")
+            interpolation=data.get("interpolation", "linear"),
         )
 
 
@@ -161,39 +163,43 @@ class AYONOCIOLookProduct:
     it can be covered into FileTransform and ColorSpaceTransform during
     `to_ocio_obj` method.
 
-    Example of input data:
-    {
-        "ocioLookItems": [
+    .. admonition:: Example of input data
+
+        .. code-block::
+
             {
-                "name": "LUTfile",
-                "file: "path/to/lut.cube", # currently created via processor
-                "ext": "cube",
-                "input_colorspace": {
-                    "colorspace": "Output - sRGB",
-                    "name": "color_picking",
+                "ocioLookItems": [
+                    {
+                        "name": "LUTfile",
+                        "file: "path/to/lut.cube", # currently created via processor
+                        "ext": "cube",
+                        "input_colorspace": {
+                            "colorspace": "Output - sRGB",
+                            "name": "color_picking",
+                            "type": "roles"
+                        },
+                        "output_colorspace": {
+                            "colorspace": "ACES - ACEScc",
+                            "name": "color_timing",
+                            "type": "roles"
+                        },
+                        "direction": "forward",
+                        "interpolation": "tetrahedral",
+                        "config_data": {
+                            "path": "path/to/config.ocio",
+                            "template": "{BUILTIN_OCIO_ROOT}/aces_1.2/config.ocio",
+                            "colorspace": "compositing_linear"
+                        },
+                    },
+                ],
+                "ocioLookWorkingSpace": {
+                    "colorspace": "ACES - ACEScg",
+                    "name": "compositing_linear",
                     "type": "roles"
                 },
-                "output_colorspace": {
-                    "colorspace": "ACES - ACEScc",
-                    "name": "color_timing",
-                    "type": "roles"
-                },
-                "direction": "forward",
-                "interpolation": "tetrahedral",
-                "config_data": {
-                    "path": "path/to/config.ocio",
-                    "template": "{BUILTIN_OCIO_ROOT}/aces_1.2/config.ocio",
-                    "colorspace": "compositing_linear"
-                }
-            }
-        ],
-        "ocioLookWorkingSpace": {
-            "colorspace": "ACES - ACEScg",
-            "name": "compositing_linear",
-            "type": "roles"
-        }
-    }
+            },
     """
+
     ocioLookItems: List[dict] = field(default_factory=list)
     ocioLookWorkingSpace: dict = field(default_factory=dict)
 
