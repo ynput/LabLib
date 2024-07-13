@@ -22,6 +22,7 @@ jobs:
           poetry install
           conda install pandoc
       - name: Convert Readme to rst
+        shell: bash -el {0}
         run: |
           conda info
           pandoc ./README.md -o ./docs/README.rst
