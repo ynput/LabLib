@@ -141,8 +141,9 @@ class ImageInfo:
     def frame_number(self) -> int:
         """Property for frame number from the filename by using regex lookup.
 
-        The regex could use a little love to be more robust.
-        Filename should be something like `filename.0001.exr`.
+        Note:
+            The regex could use a little love to be more robust.
+            Filename should be something like `filename.0001.exr`.
 
         :raises: Exception if regex lookup wasn't successful.
         :returns: int
@@ -169,7 +170,9 @@ class ImageInfo:
     def name(self) -> str:
         """Property for the file name with extension.
 
-        I use this in SequenceInfo but could become obsolete in favor for `filename`.
+        TODO:
+            I use this in SequenceInfo but could become obsolete in favor for `filename`.
+            Should this be rewritten?
 
         :returns: str
         """
@@ -191,7 +194,8 @@ class ImageInfo:
 class SequenceInfo:
     """Class for handling image sequences by using instances of `ImageInfo`.
 
-    If you want to scan a directory for image sequences, you can use the `scan` classmethod.
+    Hint:
+        If you want to scan a directory for image sequences, you can use the ``scan`` classmethod.
 
     Attributes:
         path Any[Path, str]: Path to the image sequence directory.
@@ -211,7 +215,7 @@ class SequenceInfo:
     def scan(cls, directory: str | Path) -> List[SequenceInfo]:
         """Classmethod for scanning a directory for image sequences.
 
-        Note:
+        Attention:
             Currently only supports EXR files. Needs to be extended and tested for other formats.
 
         Args:

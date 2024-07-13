@@ -15,11 +15,12 @@ class Transform:
     """Transform operator for repositioning images.
 
     This operator is used to apply transformations to images.
-    The transformations are applied in the following order:
-        translate, rotate, scale, center, invert, skewX, skewY.
 
-    The skew_order parameter determines the order in which the skewX and skewY
-    transformations are applied.
+    Note:
+        The transformations are applied in the following order:
+        ``translate, rotate, scale, center, invert, skewX, skewY``.
+
+        The :obj:`Transform.skew_order` parameter determines the order in which the skewX and skewY transformations are applied.
 
     Attributes:
         translate (List[float]): The translation vector.
