@@ -14,18 +14,18 @@ jobs:
           python-version: "3.9"
 
       - name: restore poetry cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         id: restore-poetry
         with:
           path: .poetry
           key: ${{ runner.os }}-poetry
 
       - name: restore vendor cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         id: restore-vendor
         with:
-          path: .poetry
-          key: ${{ runner.os }}-poetry
+          path: vendor
+          key: ${{ runner.os }}-vendor
 
       - name: install LabLib
         if: steps.restore-poetry.outputs.cache-hit != 'true'
