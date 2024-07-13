@@ -395,7 +395,7 @@ class BasicRenderer:
 
     @property
     def codec(self) -> str:
-        """:obj:`Codec`: The code to use.
+        """:obj:`Codec`: The codec to use.
 
         Attention:
             Please check the supported codecs.
