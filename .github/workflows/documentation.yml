@@ -20,11 +20,13 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install
+      - name: Install pandoc
+        shell: bash -el {0}
+        run: |
           conda install pandoc
       - name: Convert Readme to rst
         shell: bash -el {0}
         run: |
-          conda info
           pandoc ./README.md -o ./docs/README.rst
       - name: Sphinx build
         run: |
