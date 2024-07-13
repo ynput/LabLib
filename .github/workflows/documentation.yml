@@ -21,7 +21,7 @@ jobs:
           poetry install
       - name: Sphinx build
         run: |
-          sphinx-build ./docs ./docs/_build
+          poetry run sphinx-build ./docs ./docs/_build
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
