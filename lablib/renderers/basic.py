@@ -21,7 +21,7 @@ SUPPORTED_CODECS = ["ProRes422-HQ", "ProRes4444-XQ", "DNxHR-SQ"]
 class Codec:
     """Utility class for abstracting ffmpeg codec arguments.
 
-    :Important:
+    Important:
         Currently this only supports 2 flavors of ProRes and 1 of DNxHR but could deserve more.
         Supported codecs are: ``ProRes422-HQ``, ``ProRes4444-XQ``, ``DNxHR-SQ``
 
@@ -80,20 +80,21 @@ class Codec:
 class Burnin:
     """Utility class for handling burnins with OIIO.
 
-    The data attribute is a structure dict containing the text to be drawn and its positioning.
-    An example for an entry showing all positioning options would be:
-    ::
-        {
-            "text": "YOUR_TEXT_HERE",
-            "position": [
-                "top_left"
-                "top_center"
-                "top_right"
-                "bottom_left"
-                "bottom_center"
-                "bottom_right"
-            ],
-        },
+    Hint:
+        The data attribute is a structured dict containing the text to be drawn and its positioning.
+        An example for an entry showing all positioning options would be:
+        ::
+            {
+                "text": "YOUR_TEXT_HERE",
+                "position": [
+                    "top_left"
+                    "top_center"
+                    "top_right"
+                    "bottom_left"
+                    "bottom_center"
+                    "bottom_right"
+                ],
+            },
 
     Attributes:
         data (Dict[str, str]): The text to be drawn and its positioning.
