@@ -1,4 +1,5 @@
 # LabLib
+![](https://img.shields.io/badge/os-windows-blue)
 
 Generate intermediate sequences for VFX processing using OIIO and FFMPEG!
 
@@ -10,9 +11,6 @@ This module aims to help by providing helper classes and functions to:
 - Create correctly formed OIIO commandline strings automatically.
 - Render out frames with Color and Repositioning baked in using oiiotool
 
-**DISCLAIMER**
-This is still a wip, and it's currently missing a lot of functionality.
-Use at your own risk!
 
 ## Instructions
 The core functionality relies on using **Processors** and **Operators** to compute the correct commandline parameters.
