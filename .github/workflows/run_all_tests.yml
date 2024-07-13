@@ -20,6 +20,13 @@ jobs:
           path: .poetry
           key: ${{ runner.os }}-poetry
 
+      - name: restore poetry lock file
+        uses: actions/cache@v4
+        id: restore-poetry-lockfile
+        with:
+          path: poetry.lock
+          key: ${{ runner.os }}-poetry-lockfile
+
       - name: restore vendor cache
         uses: actions/cache@v4
         id: restore-vendor
@@ -54,4 +61,12 @@ jobs:
         id: cache-poetry
         with:
           path: .poetry
+          key: ${{ runner.os }}-poetry
+
+      - name: save poetry lock file
+        if: steps.restore-poetry-lockfile.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        id: cache-poetry-lockfile
+        with:
+          path: poetry.lock
           key: ${{ runner.os }}-poetry
