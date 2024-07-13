@@ -20,6 +20,7 @@ sphinx-autoapi = "^2.0.1"
 sphinxcontrib-napoleon = "^0.7"
 revitron-sphinx-theme = { git = "https://github.com/revitron/revitron-sphinx-theme.git", branch = "master" }
 furo = "^2024.5.6"
+pandoc = "^2.3"
 
 [tool.poetry.extras]
 docs = ["Sphinx", "sphinxcontrib-napoleon"]

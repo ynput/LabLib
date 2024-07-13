@@ -1,8 +1,6 @@
 LabLib
 ======
 
-|image1|
-
 Generate intermediate sequences for VFX processing using OIIO and
 FFMPEG!
 
@@ -14,6 +12,9 @@ Create a custom OCIO config file for direct use. - Create OIIO and
 FFMPEG matrix values to be used in filters for repositioning. - Create
 correctly formed OIIO commandline strings automatically. - Render out
 frames with Color and Repositioning baked in using oiiotool
+
+**DISCLAIMER** This is still a wip, and it’s currently missing a lot of
+functionality. Use at your own risk!
 
 Instructions
 ------------
@@ -61,4 +62,10 @@ You can run the full suite with ``.\start.ps1 test`` or to run custom
 ``pytest`` commands make sure to be in the cloned repository’s directory
 and run ``poetry run pytest [ARGS]``.
 
-.. |image1| image:: https://img.shields.io/badge/os-windows-blue
+Contributing
+------------
+
+The best way to contribute to LabLib currently is to write extensive
+test cases for all modules. But also sharing your thoughts and ideas on
+the `Discussions Page <https://github.com/ynput/LabLib/discussions>`__
+really helps to keep this project going 💞

@@ -19,6 +19,9 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install
+      - name: Convert Readme to rst
+        run: |
+          poetry run pandoc ./README.md -o ./docs/README.rst
       - name: Sphinx build
         run: |
           poetry run sphinx-build ./docs ./docs/_build
