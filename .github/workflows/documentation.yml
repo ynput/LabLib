@@ -17,17 +17,12 @@ jobs:
           python-version: "3.9"
       - uses: abatilo/actions-poetry@v2
       - uses: conda-incubator/setup-miniconda@v3.0.4
-        with:
-          auto-activate-base: true
-          activate-environment: ""
       - name: Install dependencies
         run: |
           poetry install
           conda install pandoc
       - name: Convert Readme to rst
         run: |
-          conda init bash
-          conda activate base
           conda info
           pandoc ./README.md -o ./docs/README.rst
       - name: Sphinx build
