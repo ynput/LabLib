@@ -37,9 +37,9 @@ jobs:
         run: |
           .\start.ps1 get-dependencies
 
-      # - name: run all tests
-      #   run: |
-      #     .\start.ps1 test
+      - name: run all tests
+        run: |
+          .\start.ps1 test
 
       - name: save vendor dependencies cache
         if: steps.restore-vendor.outputs.cache-hit != 'true'
