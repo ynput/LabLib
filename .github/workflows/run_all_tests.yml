@@ -13,11 +13,27 @@ jobs:
         with:
           python-version: "3.9"
 
+      - name: restore poetry cache
+        uses: actions/cache@v2
+        id: restore-poetry
+        with:
+          path: .poetry
+          key: ${{ runner.os }}-poetry
+
+      - name: restore vendor cache
+        uses: actions/cache@v2
+        id: restore-vendor
+        with:
+          path: .poetry
+          key: ${{ runner.os }}-poetry
+
       - name: install LabLib
+        if: steps.restore-poetry.outputs.cache-hit != 'true'
         run: |
           .\start.ps1 install
 
       - name: get dependencies
+        if: steps.restore-vendor.outputs.cache-hit != 'true'
         run: |
           .\start.ps1 get-dependencies
 
@@ -26,6 +42,7 @@ jobs:
       #     .\start.ps1 test
 
       - name: save vendor dependencies cache
+        if: steps.restore-vendor.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         id: cache-vendor
         with:
@@ -33,6 +50,7 @@ jobs:
           key: ${{ runner.os }}-vendor
 
       - name: save poetry cache
+        if: steps.restore-poetry.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         id: cache-poetry
         with:
