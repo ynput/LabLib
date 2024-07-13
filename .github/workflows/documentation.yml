@@ -26,6 +26,7 @@ jobs:
           conda install pandoc
       - name: Convert Readme to rst
         run: |
+          conda init bash
           conda activate base
           conda info
           pandoc ./README.md -o ./docs/README.rst
