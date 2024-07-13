@@ -34,41 +34,37 @@ class ImageInfo:
     """A dataclass for reading image metadata.
 
     All kwargs are optional and will be set from its ``update`` function or the defaults if they couldn't be found.
-    The defaults are:
-    ::
-        width = 1920
-        height = 1080
-        channels = 3
-        fps = 24.0
-        par = 1.0
-        timecode = "00:00:00:00"
-        origin_x = 0
-        origin_y = 0
-        display_width = 1920
-        display_height = 1080
 
-    :param path: Path to the image file.
-    :type path: Path
-    :param width: Image width.
-    :type width: Optional[int]
-    :param height: Image height.
-    :type height: Optional[int]
-    :param origin_x: Origin x position.
-    :type origin_x: Optional[int]
-    :param origin_y: Origin y position.
-    :type origin_y: Optional[int]
-    :param display_width: Display width.
-    :type display_width: Optional[int]
-    :param display_height: Display height.
-    :type display_height: Optional[int]
-    :param par: Pixel aspect ratio.
-    :type par: Optional[float]
-    :param channels: Number of channels.
-    :type channels: Optional[int]
-    :param fps: Frames per second.
-    :type fps: Optional[float]
-    :param timecode: Timecode.
-    :type timecode: Optional[str]
+    .. admonition:: Example with Defaults
+
+        .. code-block:: python
+
+            image = ImageInfo(
+                path=Path("path/to/image.exr"),
+                width = 1920
+                height = 1080
+                channels = 3
+                fps = 24.0
+                par = 1.0
+                timecode = "00:00:00:00"
+                origin_x = 0
+                origin_y = 0
+                display_width = 1920
+                display_height = 1080
+            )
+
+    Attributes:
+        path(Path): Path to the image file.
+        width(Optional[int]): Image width.
+        height(Optional[int]): Image height.
+        origin_x(Optional[int]): Origin x position.
+        origin_y(Optional[int]): Origin y position.
+        display_width(Optional[int]): Display width.
+        display_height(Optional[int]): Display height.
+        par(Optional[float]): Pixel aspect ratio.
+        channels(Optional[int]): Number of channels.
+        fps(Optional[float]): Frames per second.
+        timecode(Optional[str]): Timecode.
     """
 
     path: Path = field(default_factory=Path)
