@@ -80,10 +80,10 @@ class Codec:
 class Burnin:
     """Utility class for handling burnins with OIIO.
 
-    Hint:
-        The data attribute is a structured dict containing the text to be drawn and its positioning.
-        An example for an entry showing all positioning options would be:
-        ::
+    .. admonition:: Example ``data`` attribute structure
+
+        .. code-block:: json
+
             {
                 "text": "YOUR_TEXT_HERE",
                 "position": [
@@ -443,8 +443,9 @@ class BasicRenderer:
     def burnins(self) -> Burnin:
         """:obj:`Burnin`: The burnins to use.
 
-        Please check the Burnin class for formatting.
-        Currently you can only pass in a dict formatted accordingly.
+        Attention:
+            Please check the Burnin class for formatting.
+            Currently you can only pass in a dict formatted accordingly.
 
         TODO:
             Should also accept passing a ``Burnin`` directly.
