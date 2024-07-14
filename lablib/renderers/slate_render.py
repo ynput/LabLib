@@ -14,7 +14,7 @@ from ..lib import SequenceInfo
 
 @dataclass
 class SlateRenderer:
-    """SlateRenderer class for rendering slates.
+    """Class for rendering slates.
 
     Attention:
         This class is functional but not yet tested.
