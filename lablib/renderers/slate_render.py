@@ -14,6 +14,15 @@ from ..lib import SequenceInfo
 
 @dataclass
 class SlateRenderer:
+    """SlateRenderer class for rendering slates.
+
+    Attention:
+        This class is functional but not yet tested.
+
+    TODO:
+        This should be refactored into a plain python class
+    """
+
     slate_proc: SlateHtmlGenerator = None
     source_sequence: SequenceInfo = None
     dest: str = None
@@ -36,8 +45,7 @@ class SlateRenderer:
 
     def set_source_sequence(self, source_sequence: SequenceInfo) -> None:
         self.source_sequence = source_sequence
-        head, frame, tail = source_sequence._get_file_splits(
-            source_sequence.frames[0])
+        head, frame, tail = source_sequence._get_file_splits(source_sequence.frames[0])
         self.dest = f"{head}{str(int(frame) - 1).zfill(source_sequence.padding)}{tail}"  # noqa
 
     def set_destination(self, dest: str) -> None:
