@@ -3,36 +3,11 @@
 
 This page contains auto-generated documentation for all exposed modules.
 
-lib
----
+.. toctree::
+   :maxdepth: 2
 
-.. automodule:: lablib.lib
-   :members:
-
-
-operators
----------
-
-.. automodule:: lablib.operators
-   :members:
-
-
-generators
-----------
-
-.. automodule:: lablib.generators
-   :members:
-
-
-processors
-----------
-
-.. automodule:: lablib.processors
-   :members:
-
-
-renderers
----------
-
-.. automodule:: lablib.renderers
-   :members:
+   lib
+   operators
+   generators
+   processors
+   renderers
