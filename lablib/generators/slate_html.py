@@ -14,6 +14,24 @@ from ..lib import utils
 
 @dataclass
 class SlateHtmlGenerator:
+    """Class to generate a slate from a template.
+
+    Attention:
+        This class is functional but not yet tested.
+
+    TODO:
+        This should be refactored into a plain python class
+
+    Attributes:
+        data: A dictionary containing the data to be formatted in the template.
+        width: The width of the slate.
+        height: The height of the slate.
+        staging_dir: The directory where the slate will be staged.
+        slate_template_path: The path to the template.
+        source_files: A list of source files.
+        is_source_linear: A boolean to set whether the source files are linear.
+    """
+
     data: Dict = field(default_factory=dict)
     width: int = 1920
     height: int = 1080
