@@ -14,6 +14,22 @@ log.setLevel(logging.DEBUG)
 
 
 class OCIOConfigFileGenerator:
+    """Class for generating and manipulating OCIO Config files.
+
+    Arguments:
+        context (str): The context of the OCIO Config file.
+        config_path (str): The path to the OCIO Config file.
+
+    Attributes:
+        family (str): The family of the OCIO Config file.
+        operators (List[OCIO.Transform]): A list of OCIO Transform objects.
+        working_space (str): The working space of the OCIO Config file.
+        views (List[str]): A list of views.
+        description (str): The description of the OCIO Config file.
+        staging_dir (str): The staging directory of the OCIO Config file.
+        environment_variables (Dict): A dictionary of environment variables.
+    """
+
     _description: str
     _vars: Dict[str, str] = {}
     _views: List[str] = []
@@ -92,30 +108,60 @@ class OCIOConfigFileGenerator:
             self.set_vars(**environment_variables)
 
     def set_ocio_config_name(self, name: str) -> None:
+        """Set the name of the OCIO Config file."""
         self._ocio_config_name = name
 
     def set_views(self, *args: Union[str, List[str]]) -> None:
+        """Set the views for the OCIO Config file.
+
+        Attention:
+            This will clear any existing views.
+        """
         self.clear_views()
         self.append_views(*args)
 
     def set_operators(self, *args) -> None:
+        """Set operators.
+
+        Attention:
+            This will clear any existing operators.
+
+        Arguments:
+            *args: A list of :obj:`lablib.operators` objects.
+        """
         self.clear_operators()
         self.append_operators(*args)
 
     def set_vars(self, **kwargs) -> None:
+        """Set the environment variables for the OCIO Config file.
+
+        Attention:
+            This will clear any existing environment variables.
+
+        Arguments:
+            **kwargs: A key/value map of environment variables.
+        """
         self.clear_vars()
         self.append_vars(**kwargs)
 
     def clear_operators(self) -> None:
+        """Clear the operators."""
         self._operators = []
 
     def clear_views(self):
+        """Clear the views."""
         self._views = []
 
     def clear_vars(self):
+        """Clear the environment variables."""
         self._vars = {}
 
     def append_operators(self, *args) -> None:
+        """Append operators.
+
+        Arguments:
+            *args: A list of :obj:`lablib.operators` objects.
+        """
         for arg in args:
             if isinstance(arg, list):
                 self.append_operators(*arg)
@@ -123,6 +169,11 @@ class OCIOConfigFileGenerator:
                 self._operators.append(arg)
 
     def append_views(self, *args: Union[str, List[str]]) -> None:
+        """Append views.
+
+        Arguments:
+            *args: A list of views.
+        """
         for arg in args:
             if isinstance(arg, list):
                 self.append_views(*arg)
@@ -130,12 +181,19 @@ class OCIOConfigFileGenerator:
                 self._views.append(arg)
 
     def append_vars(self, **kwargs) -> None:
+        """Append environment variables.
+
+        Arguments:
+            **kwargs: A key/value map of environment variables.
+        """
         self._vars.update(kwargs)
 
     def get_config_path(self) -> str:
+        """Return the path to the OCIO Config file."""
         return self._dest_path
 
     def get_description_from_config(self) -> str:
+        """Return the description from the OCIO Config file."""
         return self._ocio_config.getDescription()
 
     def _get_search_paths_from_config(self) -> List[str]:
@@ -199,10 +257,15 @@ class OCIOConfigFileGenerator:
         return new_text
 
     def load_config_from_file(self, filepath: str) -> None:
+        """Load an OCIO Config file from a file.
+
+        Arguments:
+            filepath (str): The path to the OCIO Config file.
+        """
         self._ocio_config = OCIO.Config.CreateFromFile(filepath)
 
     def process_config(self) -> None:
-
+        """Process the OCIO Config file."""
         for k, v in self._vars.items():
             self._ocio_config.addEnvironmentVar(k, v)
 
@@ -243,6 +306,11 @@ class OCIOConfigFileGenerator:
         self._ocio_config.validate()
 
     def write_config(self, dest: str = None) -> str:
+        """Write the OCIO Config object to file.
+
+        Arguments:
+            dest (str): The destination path to write the OCIO Config file.
+        """
         search_paths = [f"  - {path}" for path in self._search_paths]
 
         config_lines = []
@@ -260,6 +328,7 @@ class OCIOConfigFileGenerator:
         return final_config
 
     def create_config(self, dest: str = None) -> None:
+        """Create an OCIO Config file."""
         if not dest:
             dest = Path(self.staging_dir, self._ocio_config_name)
         dest = Path(dest).resolve().as_posix()
@@ -276,6 +345,7 @@ class OCIOConfigFileGenerator:
         return dest
 
     def get_oiiotool_cmd(self) -> List:
+        """Return arguments for the oiiotool command."""
         return [
             "--colorconfig",
             self._dest_path,
