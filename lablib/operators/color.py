@@ -161,7 +161,7 @@ class AYONOCIOLookProduct:
 
     This class will hold all the necessary data for the ocioLook product, so
     it can be covered into FileTransform and ColorSpaceTransform during
-    `to_ocio_obj` method.
+    ``to_ocio_obj`` method.
 
     .. admonition:: Example of input data
 
