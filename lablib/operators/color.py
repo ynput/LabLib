@@ -46,7 +46,7 @@ class OCIOFileTransform:
     direction: int = 0
     interpolation: str = "linear"
 
-    def to_ocio_obj(self):
+    def to_ocio_obj(self) -> List[OCIO.FileTransform]:
         """Converts the object to native OCIO object.
 
         Returns:
@@ -68,7 +68,7 @@ class OCIOFileTransform:
         ]
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "OCIOFileTransform":
         """Create :obj:`OCIOFileTransform` from node data.
 
         Note:
@@ -104,6 +104,7 @@ class OCIOColorSpace:
     out_colorspace: str = "ACES - ACEScg"
 
     def to_ocio_obj(self):
+        # -> List[OCIO.ColorSpaceTransform]:
         """Returns native OCIO ColorSpaceTransform object.
 
         Returns:
@@ -117,7 +118,7 @@ class OCIOColorSpace:
         ]
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "OCIOColorSpace":
         """Create :obj:`OCIOColorSpace` from node data.
 
         Arguments:
@@ -161,6 +162,7 @@ class OCIOCDLTransform:
     interpolation: str = "linear"
 
     def to_ocio_obj(self):
+        # -> List[Union[OCIO.FileTransform, OCIO.CDLTransform]]:
         """Returns native OCIO CDLTransform object.
 
         Returns:
@@ -198,7 +200,7 @@ class OCIOCDLTransform:
         return effects
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "OCIOCDLTransform":
         """Create :obj:`OCIOCDLTransform` from node data.
 
         Arguments:
@@ -281,6 +283,7 @@ class AYONOCIOLookProduct:
     ocioLookWorkingSpace: dict = field(default_factory=dict)
 
     def to_ocio_obj(self):
+        # -> List[Union[OCIO.ColorSpaceTransform, OCIO.FileTransform]]:
         """Converts to list of native OCIO objects.
 
         Returns:
@@ -329,7 +332,7 @@ class AYONOCIOLookProduct:
         return all_transformations
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "AYONOCIOLookProduct":
         """Create :obj:`AYONOCIOLookProduct` from node data.
 
         Arguments:
