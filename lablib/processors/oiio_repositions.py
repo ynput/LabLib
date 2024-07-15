@@ -51,7 +51,7 @@ class OIIORepositionProcessor:
 
         return f"{self.__class__.__name__}({props[:-2]})"
 
-    def get_oiiotool_cmd(self) -> List:
+    def get_oiiotool_cmd(self) -> List[str]:
         """Get the OIIO arguments for repositioning images.
 
         Returns:
