@@ -14,8 +14,6 @@ from lablib.lib.utils import (
 class Transform:
     """Transform operator for repositioning images.
 
-    This operator is used to apply transformations to images.
-
     Note:
         The transformations are applied in the following order:
         ``translate, rotate, scale, center, invert, skewX, skewY``.
