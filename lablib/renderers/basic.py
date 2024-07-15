@@ -26,7 +26,7 @@ class Codec:
         Supported codecs are: ``ProRes422-HQ``, ``ProRes4444-XQ``, ``DNxHR-SQ``
 
     Attributes:
-        name (str): The name of the codec.
+        name (str):
     """
 
     name: str = field(default_factory=str, init=True, repr=True)
@@ -45,7 +45,7 @@ class Codec:
             Maybe like it's handled in the server settings of ``Extract Review``.
 
         Returns:
-            List[str]: The ffmpeg arguments
+            List[str]:
         """
         args = []
         # fmt: off
@@ -125,7 +125,7 @@ class Burnin:
         """Get the OIIO arguments.
 
         Returns:
-            List[str]: The OIIO arguments.
+            List[str]:
         """
         args = []
         width_token = r"{TOP.width}"
@@ -247,7 +247,7 @@ class BasicRenderer:
         """Get arguments for rendering with OIIO.
 
         Returns:
-            List[str]: The OIIO arguments.
+            List[str]:
         """
         input_path = Path(
             self.source_sequence.path, self.source_sequence.hash_string
@@ -282,7 +282,7 @@ class BasicRenderer:
         """Get arguments for rendering with ffmpeg.
 
         Returns:
-            List[str]: The ffmpeg arguments.
+            List[str]:
         """
         cmd = ["ffmpeg", "-loglevel", "info", "-hide_banner"]
 
@@ -385,7 +385,7 @@ class BasicRenderer:
 
     @property
     def processor(self) -> Any:
-        """:obj:`Processor`: The processor to use for rendering."""
+        """:obj:`Any`: The processor to use for rendering."""
         if not hasattr(self, "_processor"):
             return None
         return self._processor
