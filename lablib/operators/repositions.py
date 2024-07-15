@@ -44,6 +44,7 @@ class Transform:
     skewY: float = 0.0
     skew_order: str = "XY"
 
+    def to_oiio_args(self) -> List[str]:
         """Gets the arguments for ``oiiotool``.
 
         Uses :obj:`lablib.lib` to work with transformation matrices.
@@ -62,7 +63,7 @@ class Transform:
         return [warp_flag, warp_cmd]
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "Transform":
         """Create a :obj:`Transform` object from node data.
 
         Args:
@@ -98,11 +99,11 @@ class Crop:
     box: List[int] = field(default_factory=lambda: [0, 0, 1920, 1080])
     # NOTE: could also be called with width, height, x, y
 
-    def to_oiio_args(self):
-        """Convert ``Crop`` to OIIO arguments.
+    def to_oiio_args(self) -> List[str]:
+        """Gets the arguments for ``oiiotool``.
 
         Returns:
-            List[int]: The crop box.
+            List[int]:
         """
         return [
             "--crop",
@@ -111,7 +112,7 @@ class Crop:
         ]
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "Crop":
         """Create :obj:`Crop` from node data.
 
         Args:
@@ -149,7 +150,7 @@ class Mirror2:
         return args
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "Mirror2":
         """Create :obj:`Mirror2` from node data.
 
         Args:
@@ -195,7 +196,7 @@ class CornerPin2D:
         return []
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "CornerPin2D":
         """Create :obj:`CornerPin2D` from node data.
 
         Args:
