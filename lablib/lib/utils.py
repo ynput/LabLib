@@ -1,4 +1,8 @@
-"""Utility functions for the lablib library."""
+"""Utility functions for the lablib library.
+
+TODO:
+    Should we refactor the matrix related functions into a class ``Matrix2D``?
+"""
 
 from __future__ import annotations
 import os

@@ -32,9 +32,6 @@ class Transform:
         skewY (float): The skew in the Y direction.
         skew_order (str): The order in which the skewX and skewY
             transformations are applied.
-
-    Returns:
-        List[str]: The arguments for the OIIO command.
     """
 
     translate: List[float] = field(default_factory=lambda: [0.0, 0.0])
@@ -47,11 +44,12 @@ class Transform:
     skewY: float = 0.0
     skew_order: str = "XY"
 
-    def to_oiio_args(self):
-        """Convert the Transform object to OIIO arguments.
+        """Gets the arguments for ``oiiotool``.
+
+        Uses :obj:`lablib.lib` to work with transformation matrices.
 
         Returns:
-            List[str]: The arguments for the OIIO command.
+            List[str]:
         """
         matrix = calculate_matrix(
             t=self.translate, r=self.rotate, s=self.scale, c=self.center
@@ -65,13 +63,13 @@ class Transform:
 
     @classmethod
     def from_node_data(cls, data):
-        """Create a Transform object from node data.
+        """Create a :obj:`Transform` object from node data.
 
         Args:
             data (dict): The node data.
 
         Returns:
-            Transform: The Transform object.
+            Transform:
         """
         scale = data.get("scale", [0.0, 0.0])
         if isinstance(scale, (int, float)):
@@ -114,7 +112,7 @@ class Crop:
 
     @classmethod
     def from_node_data(cls, data):
-        """Create ``Crop`` from node data.
+        """Create :obj:`Crop` from node data.
 
         Args:
             data (dict): The node data.
@@ -126,6 +124,9 @@ class Crop:
 class Mirror2:
     """Operator for mirroring images.
 
+    TODO:
+        This should be ``Mirror2 -> Mirror2D`` looking at :obj:`CornerPin2D`.
+
     Attributes:
         flop (bool): Mirror vertically.
         flip (bool): Mirror horizontally.
@@ -135,7 +136,7 @@ class Mirror2:
     flip: bool = False
 
     def to_oiio_args(self):
-        """Convert ``Mirror2`` to OIIO arguments.
+        """Gets the arguments for ``oiiotool``.
 
         Returns:
             List[str]: Arguments for OIIO.
@@ -149,7 +150,7 @@ class Mirror2:
 
     @classmethod
     def from_node_data(cls, data):
-        """Create ``Mirror2`` from node data.
+        """Create :obj:`Mirror2` from node data.
 
         Args:
             data (dict): The node data.
@@ -161,7 +162,8 @@ class Mirror2:
 class CornerPin2D:
     """Operator for corner pinning images.
 
-    This operator is not yet tested or used in the codebase.
+    Danger:
+        This operator is not yet tested or used in the codebase.
 
     Attributes:
         from1 (List[float]): The first corner of the source image.
@@ -184,17 +186,17 @@ class CornerPin2D:
     to4: List[float] = field(default_factory=lambda: [0.0, 0.0])
 
     def to_oiio_args(self):
-        """Convert ``CornerPin2D`` to OIIO arguments.
+        """Gets the arguments for ``oiiotool``.
 
         Returns:
-            List[str]: Arguments for OIIO.
+            List[str]:.
         """
         # TODO: use matrix operation from utils.py
         return []
 
     @classmethod
     def from_node_data(cls, data):
-        """Create ``CornerPin2D`` from node data.
+        """Create :obj:`CornerPin2D` from node data.
 
         Args:
             data (dict): The node data.

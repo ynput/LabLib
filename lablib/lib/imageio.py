@@ -207,7 +207,7 @@ class SequenceInfo:
             directory (Any[str, Path]): Path to the directory to be scanned.
 
         Returns:
-            List[SequenceInfo]: List of all found image sequences.
+            List[SequenceInfo]:
         """
         log.info(f"Scanning {directory}")
         if not isinstance(directory, Path):
