@@ -16,9 +16,9 @@ log.setLevel(logging.DEBUG)
 class OIIORepositionProcessor:
     """Processor for repositioning images.
 
-    Note:
-        You can use this processor without operators only specifying ``dst_width`` or ``dst_height``.
-        This way ``OIIORepositionProcessor`` will act as a basic reformat.
+    Hint:
+        You can use this processor without operators only specifying :attr:`dst_width` or :attr:`dst_height`.
+        This way :obj:`OIIORepositionProcessor` will act as a basic reformat.
 
     Attributes:
         operators (List): The list of repositioning operators.
@@ -55,7 +55,7 @@ class OIIORepositionProcessor:
         """Get the OIIO arguments for repositioning images.
 
         Returns:
-            List[str]: The OIIO arguments.
+            List[str]:
         """
         result = []
         for op in self.operators:
