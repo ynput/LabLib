@@ -32,7 +32,6 @@ class OCIOFileTransform:
     Note:
         Reads Foundry Hiero Timeline soft effect node class.
 
-
     Arguments:
         file (str): Path to the LUT file.
 
@@ -48,7 +47,11 @@ class OCIOFileTransform:
     interpolation: str = "linear"
 
     def to_ocio_obj(self):
-        """Converts the object to native OCIO object."""
+        """Converts the object to native OCIO object.
+
+        Returns:
+            List[OCIO.FileTransform]:
+        """
         # define direction
         direction = get_direction(self.direction)
 
@@ -76,6 +79,9 @@ class OCIOFileTransform:
 
         Arguments:
             data (dict): The node data.
+
+        Returns:
+            OCIOFileTransform:
         """
         return cls(
             file=data.get("file", ""),
@@ -98,7 +104,11 @@ class OCIOColorSpace:
     out_colorspace: str = "ACES - ACEScg"
 
     def to_ocio_obj(self):
-        """Returns native OCIO ColorSpaceTransform object."""
+        """Returns native OCIO ColorSpaceTransform object.
+
+        Returns:
+            List[OCIO.ColorSpaceTransform]:
+        """
         return [
             OCIO.ColorSpaceTransform(
                 src=self.in_colorspace,
@@ -112,6 +122,9 @@ class OCIOColorSpace:
 
         Arguments:
             data (dict): The node data.
+
+        Returns:
+            OCIOColorSpace:
         """
         return cls(
             in_colorspace=data.get("in_colorspace", ""),
@@ -148,7 +161,11 @@ class OCIOCDLTransform:
     interpolation: str = "linear"
 
     def to_ocio_obj(self):
-        """Returns native OCIO CDLTransform object."""
+        """Returns native OCIO CDLTransform object.
+
+        Returns:
+            List[Union[OCIO.FileTransform, OCIO.CDLTransform]]:
+        """
         effects = []
 
         # define direction
@@ -186,6 +203,9 @@ class OCIOCDLTransform:
 
         Arguments:
             data (dict): The node data.
+
+        Returns:
+            OCIOCDLTransform:
         """
         if data.get("file"):
             return cls(
@@ -261,7 +281,11 @@ class AYONOCIOLookProduct:
     ocioLookWorkingSpace: dict = field(default_factory=dict)
 
     def to_ocio_obj(self):
-        """Converts to list of native OCIO objects."""
+        """Converts to list of native OCIO objects.
+
+        Returns:
+            List[Union[OCIO.ColorSpaceTransform, OCIO.FileTransform]]:
+        """
         look_working_colorspace = self.ocioLookWorkingSpace["colorspace"]
         all_transformations = []
         for index, item in enumerate(self.ocioLookItems):
@@ -310,6 +334,9 @@ class AYONOCIOLookProduct:
 
         Arguments:
             data (dict): The node data.
+
+        Returns:
+            AYONOCIOLookProduct:
         """
         return cls(
             ocioLookItems=data.get("ocioLookItems", []),
