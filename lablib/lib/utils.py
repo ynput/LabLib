@@ -19,11 +19,14 @@ log.setLevel(logging.DEBUG)
 def get_vendored_env() -> None:
     """Get a prepared copy of the current environment.
 
-    It checks for the presence of ``$OCIO``, ``$LABLIB_OIIO`` and ``$LABLIB_FFMPEG`` and adds them to ``$PATH``.
+    Checks for the presence of ``$OCIO``, ``$LABLIB_OIIO`` and ``$LABLIB_FFMPEG`` and adds them to ``$PATH``.
     If these environment variables are not set, it assumes vendored files to be present in ``./vendor``.
-    Run ``.\start.ps1 get-dependencies`` to download the vendored files.
 
-    :returns: Dict[str, Any]
+    Hint:
+        Run ``.\start.ps1 get-dependencies`` to download the vendored files.
+
+    Returns:
+        Dict[str, Any]
     """
     _parts = Path(__file__).parts[:-3]
     vendor_root = Path(*_parts, "vendor")
