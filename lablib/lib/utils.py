@@ -7,7 +7,7 @@ import uuid
 import logging
 import subprocess
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 import opentimelineio as otio
 
@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def get_vendored_env() -> None:
+def get_vendored_env() -> Dict[str, Any]:
     """Get a prepared copy of the current environment.
 
     Checks for the presence of ``$OCIO``, ``$LABLIB_OIIO`` and ``$LABLIB_FFMPEG`` and adds them to ``$PATH``.
