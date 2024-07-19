@@ -1,5 +1,7 @@
 # LabLib
 ![](https://img.shields.io/badge/os-windows-blue)
+[![run all tests](https://github.com/ynput/LabLib/actions/workflows/run_all_tests.yml/badge.svg)](https://github.com/ynput/LabLib/actions/workflows/run_all_tests.yml)
+[![documentation](https://github.com/ynput/LabLib/actions/workflows/documentation.yml/badge.svg)](https://github.com/ynput/LabLib/actions/workflows/documentation.yml)
 
 Generate intermediate sequences for VFX processing using OIIO and FFMPEG!
 
