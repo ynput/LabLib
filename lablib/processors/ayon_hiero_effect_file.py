@@ -6,6 +6,7 @@ import inspect
 
 from typing import List, Dict
 from pathlib import Path
+import PyOpenColorIO as OCIO
 
 from .. import operators
 
@@ -14,10 +15,15 @@ log.setLevel(logging.DEBUG)
 
 
 class AYONHieroEffectsFileProcessor(object):
+    """Class for processing an AYON Hiero effects file.
+
+    Arguments:
+        filepath (Path): Path to the effects file.
+    """
+
     filepath: Path = None
 
-    _wrapper_class_members = dict(
-        inspect.getmembers(operators, inspect.isclass))
+    _wrapper_class_members = dict(inspect.getmembers(operators, inspect.isclass))
     _color_ops: List = []
     _repo_ops: List = []
 
@@ -26,20 +32,23 @@ class AYONHieroEffectsFileProcessor(object):
 
     @property
     def color_operators(self) -> List:
-        return self._color_ops
+        """List of color operators to be processed."""
+        ops = []
+        for op in self._color_ops:
+            ops.extend(op.to_ocio_obj())
+        return ops
 
     @property
     def repo_operators(self) -> Dict:
+        """List of repositioning operators to be processed."""
         return self._repo_ops
 
     def _load(self) -> None:
-
         effect_file_path = self.filepath.resolve().as_posix()
 
         # get all relative files recursively so we can make sure files in
         # transforms are having correct path
-        all_relative_files = {
-            f.name: f for f in Path(self.filepath.parent).rglob("*")}
+        all_relative_files = {f.name: f for f in Path(self.filepath.parent).rglob("*")}
 
         with open(effect_file_path, "r") as f:
             ops_data = json.load(f)
@@ -50,7 +59,6 @@ class AYONHieroEffectsFileProcessor(object):
         all_ops.sort(key=lambda op: op["subTrackIndex"])
 
         for value in all_ops:
-
             class_name = value["class"]
 
             if class_name not in self._wrapper_class_members.keys():
@@ -69,12 +77,11 @@ class AYONHieroEffectsFileProcessor(object):
 
             # separate color ops from repo ops
             if "color" in class_obj.__class__.__module__:
-                self._color_ops.extend(class_obj.to_ocio_obj())
+                self._color_ops.append(class_obj)
             else:
-                self._repo_ops.append(class_obj.to_oiio_args())
+                self._repo_ops.append(class_obj)
 
     def _sanitize_file_path(self, node_value: dict, all_relative_files: dict) -> None:
-
         filepath = Path(node_value["file"])
         if filepath.exists():
             node_value["file"] = filepath.as_posix()
@@ -90,9 +97,29 @@ class AYONHieroEffectsFileProcessor(object):
         node_value["file"] = relative_file.resolve().as_posix()
 
     def clear_operators(self) -> None:
+        """Clears lists of all operators."""
         self._color_ops = []
         self._repo_ops = []
 
     def load(self) -> None:
+        """Loads the effects file.
+
+        Attention:
+            This method clears the lists of all operators before loading.
+        """
         self.clear_operators()
         self._load()
+
+    def get_oiiotool_cmd(self) -> List[str]:
+        """Returns arguments for oiiotool command."""
+        args = []
+        for op in self.color_operators:
+            if isinstance(op, OCIO.FileTransform):
+                lut = Path(op.getSrc()).resolve()
+                args.extend(["--ociofiletransform", f"{lut.as_posix()}"])
+            if isinstance(op, OCIO.ColorSpaceTransform):
+                args.extend(["--colorconvert", op.getSrc(), op.getDst()])
+        for op in self.repo_operators:
+            args.extend(op.to_oiio_args())
+
+        return args

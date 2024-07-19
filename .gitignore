@@ -37,3 +37,4 @@ results/
 .python-version
 
 test_results/
+docs/_build/

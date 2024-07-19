@@ -1,0 +1,44 @@
+name: documentation
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main", "develop"]
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - uses: abatilo/actions-poetry@v2
+      - uses: conda-incubator/setup-miniconda@v3.0.4
+      - name: Install dependencies
+        run: |
+          poetry install
+      - name: Install pandoc
+        shell: bash -el {0}
+        run: |
+          conda install pandoc
+      - name: Convert Readme to rst
+        shell: bash -el {0}
+        run: |
+          pandoc ./README.md -o ./docs/README.rst
+      - name: Sphinx build
+        run: |
+          poetry run sphinx-build ./docs ./docs/_build
+
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_build/
+          force_orphan: true

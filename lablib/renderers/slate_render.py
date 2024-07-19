@@ -8,13 +8,23 @@ from typing import List
 from pathlib import Path
 
 from ..lib.utils import call_iinfo, offset_timecode
-from ..processors import SlateHtmlProcessor
+from ..generators import SlateHtmlGenerator
 from ..lib import SequenceInfo
 
 
 @dataclass
 class SlateRenderer:
-    slate_proc: SlateHtmlProcessor = None
+    """Class for rendering slates.
+
+    Attention:
+        This class is functional but not yet tested.
+
+    TODO:
+        * refactor into a plain python class
+        * add tests
+    """
+
+    slate_proc: SlateHtmlGenerator = None
     source_sequence: SequenceInfo = None
     dest: str = None
 
@@ -28,7 +38,7 @@ class SlateRenderer:
         if self.dest:
             self.set_destination(self.dest)
 
-    def set_slate_processor(self, processor: SlateHtmlProcessor) -> None:
+    def set_slate_processor(self, processor: SlateHtmlGenerator) -> None:
         self.slate_proc = processor
 
     def set_debug(self, debug: bool) -> None:
@@ -36,8 +46,7 @@ class SlateRenderer:
 
     def set_source_sequence(self, source_sequence: SequenceInfo) -> None:
         self.source_sequence = source_sequence
-        head, frame, tail = source_sequence._get_file_splits(
-            source_sequence.frames[0])
+        head, frame, tail = source_sequence._get_file_splits(source_sequence.frames[0])
         self.dest = f"{head}{str(int(frame) - 1).zfill(source_sequence.padding)}{tail}"  # noqa
 
     def set_destination(self, dest: str) -> None:
@@ -52,7 +61,7 @@ class SlateRenderer:
         )
         self.slate_proc.create_base_slate()
         if not self.slate_proc:
-            raise ValueError("Missing valid SlateHtmlProcessor!")
+            raise ValueError("Missing valid SlateHtmlGenerator!")
         cmd = ["oiiotool"]
         cmd.extend(self.slate_proc.get_oiiotool_cmd())
         cmd.extend(

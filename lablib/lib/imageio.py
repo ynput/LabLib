@@ -1,10 +1,12 @@
+"""Module providing classes for handling image metadata and sequences."""
+
 from __future__ import annotations
 
-import os
 import re
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Union, Any
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional
 
 import opentimelineio.opentime as opentime
 
@@ -23,56 +25,86 @@ IMAGE_INFO_DEFAULTS = {
     "display_height": 1080,
 }
 
-
-class ImageIOBase:
-    log = logging.getLogger(__name__)
-    log.setLevel(logging.DEBUG)
-
-    def __init__(self, *args, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-        self.update(*args, **kwargs)
-
-    def __getitem__(self, k: str) -> Any:
-        return getattr(self, k)
-
-    def __setitem__(self, k: str, v: Any) -> None:
-        if hasattr(self, k):
-            setattr(self, k, v)
-        else:
-            raise AttributeError(f"Attribute is not implemented: {k}")
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}{self.__dict__}"
-
-    def update(self, **kwargs) -> None:
-        """Update operator attributes by calling implemented setter of keyword argument key."""
-        self.log.warning(f"Update not implemented for {self.__class__.__name__}")
-        pass
-
-    @property
-    def path(self) -> Path:
-        return self._path
-
-    @path.setter
-    def path(self, path: Union[str, Path]) -> None:
-        if isinstance(path, str):
-            path = Path(path)
-        if not path.exists():
-            raise Exception(f"Path does not exist: {path}")
-
-        self._path = path
-
-    @property
-    def filepath(self) -> Path:
-        return self.path
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
-class ImageInfo(ImageIOBase):
-    """ImageInfo class for reading image metadata."""
+@dataclass
+class ImageInfo:
+    """A dataclass for reading image metadata.
 
-    def __init__(self, path: Path):
-        super().__init__(path=path)
+    Note:
+        All attributes are optional and will be set from calling ``iinfo`` and ``ffprobe`` in :obj:`ImageInfo.update()` if found.
+        Defaults are set if not found and set by user. See the next example for defaults.
+
+    .. admonition:: Example with Defaults
+
+        .. code-block:: python
+
+            image = ImageInfo(
+                path=Path("path/to/image.exr"),
+                width = 1920
+                height = 1080
+                channels = 3
+                fps = 24.0
+                par = 1.0
+                timecode = "00:00:00:00"
+                origin_x = 0
+                origin_y = 0
+                display_width = 1920
+                display_height = 1080
+            )
+
+    Attributes:
+        path(Path): Path to the image file.
+        width(Optional[int]): Image width.
+        height(Optional[int]): Image height.
+        origin_x(Optional[int]): Origin x position.
+        origin_y(Optional[int]): Origin y position.
+        display_width(Optional[int]): Display width.
+        display_height(Optional[int]): Display height.
+        par(Optional[float]): Pixel aspect ratio.
+        channels(Optional[int]): Number of channels.
+        fps(Optional[float]): Frames per second.
+        timecode(Optional[str]): Timecode.
+    """
+
+    path: Path = field(default_factory=Path)
+
+    # fmt: off
+    width: int = field(
+        default=IMAGE_INFO_DEFAULTS["width"], init=False, repr=True)
+    height: int = field(
+        default=IMAGE_INFO_DEFAULTS["height"], init=False, repr=True)
+    origin_x: int = field(
+        default=IMAGE_INFO_DEFAULTS["origin_x"], init=False, repr=False)
+    origin_y: int = field(
+        default=IMAGE_INFO_DEFAULTS["origin_y"], init=False, repr=False)
+    display_width: int = field(
+        default=IMAGE_INFO_DEFAULTS["display_width"], init=False, repr=False)
+    display_height: int = field(
+        default=IMAGE_INFO_DEFAULTS["display_height"], init=False, repr=False)
+    par: float = field(
+        default=IMAGE_INFO_DEFAULTS["par"], init=False, repr=False)
+    channels: int = field(
+        default=IMAGE_INFO_DEFAULTS["channels"], init=False, repr=True)
+
+    fps: float = field(
+        default=IMAGE_INFO_DEFAULTS["fps"], init=False, repr=False)
+    timecode: str = field(
+        default=IMAGE_INFO_DEFAULTS["timecode"], init=False, repr=False)
+    # fmt: on
+
+    def __post_init__(self):
+        """Post init function for ImageInfo class.
+        Checks if path is set and calls update.
+
+        Raises:
+            ValueError if path is not set.
+        """
+        if not self.path:
+            raise ValueError("ImageInfo needs to be initialized with a path")
+        self.update()
 
     def __gt__(self, other: ImageInfo) -> bool:
         return self.frame_number > other.frame_number
@@ -80,15 +112,18 @@ class ImageInfo(ImageIOBase):
     def __lt__(self, other: ImageInfo) -> bool:
         return self.frame_number < other.frame_number
 
-    def update(self, force_ffprobe=True, **kwargs):
-        """Update ImageInfo from a given file path.
-        NOTE: force_ffprobe overrides iinfo values with ffprobe values.
-              It's used since they report different framerates for testing exr
-              files.
-        """
-        if kwargs.get("path"):
-            self.path = kwargs["path"]
+    def update(self, force_ffprobe: Optional[bool] = False) -> None:
+        """Updates metadata by calling iinfo and ffprobe.
 
+        Attention:
+            During testing it was found that ``ffprobe`` reported different
+            framerates on different systems. Therefore we added the
+            ``force_ffprobe=False`` flag to silently disable ``ffprobe``.
+
+        Arguments:
+            force_ffprobe (Optional[bool]): whether to override attributes with
+                ``ffprobe`` output if found.
+        """
         iinfo_res = utils.call_iinfo(self.path)
         ffprobe_res = utils.call_ffprobe(self.path)
 
@@ -97,123 +132,29 @@ class ImageInfo(ImageIOBase):
                 continue
             if ffprobe_res.get(k) and force_ffprobe:
                 v = ffprobe_res[k]
-            self[k] = v
-
-    @property
-    def width(self) -> int:
-        if not hasattr(self, "_width"):
-            return IMAGE_INFO_DEFAULTS["width"]
-        return self._width
-
-    @width.setter
-    def width(self, value: int):
-        self._width = value
-
-    @property
-    def height(self) -> int:
-        if not hasattr(self, "_height"):
-            return IMAGE_INFO_DEFAULTS["height"]
-        return self._height
-
-    @height.setter
-    def height(self, value: int):
-        self._height = value
-
-    @property
-    def display_height(self) -> int:
-        if not hasattr(self, "_display_height"):
-            return self.height  # default to initial height
-        return self._display_height
-
-    @display_height.setter
-    def display_height(self, value: int):
-        self._display_height = value
-
-    @property
-    def display_width(self) -> int:
-        if not hasattr(self, "_display_width"):
-            return self.width  # default to initial width
-        return self._display_width
-
-    @display_width.setter
-    def display_width(self, value: int):
-        self._display_width = value
-
-    @property
-    def channels(self) -> int:
-        if not hasattr(self, "_channels"):
-            return IMAGE_INFO_DEFAULTS["channels"]
-        return self._channels
-
-    @channels.setter
-    def channels(self, value: int):
-        self._channels = value
-
-    @property
-    def fps(self) -> int:
-        if not hasattr(self, "_fps"):
-            return IMAGE_INFO_DEFAULTS["fps"]
-        return self._fps
-
-    @fps.setter
-    def fps(self, value: int):
-        self._fps = value
-
-    @property
-    def par(self) -> int:
-        if not hasattr(self, "_par"):
-            return IMAGE_INFO_DEFAULTS["par"]
-        return self._par
-
-    @par.setter
-    def par(self, value: int):
-        self._par = value
-
-    @property
-    def timecode(self) -> str:
-        if not hasattr(self, "_timecode"):
-            return IMAGE_INFO_DEFAULTS["timecode"]
-        return self._timecode
-
-    @timecode.setter
-    def timecode(self, value: int):
-        self._timecode = value
-
-    @property
-    def origin_x(self) -> int:
-        if not hasattr(self, "_origin_x"):
-            return IMAGE_INFO_DEFAULTS["origin_x"]
-        return self._origin_x
-
-    @origin_x.setter
-    def origin_x(self, value: int):
-        self._origin_x = value
-
-    @property
-    def origin_y(self) -> int:
-        if not hasattr(self, "_origin_y"):
-            return IMAGE_INFO_DEFAULTS["origin_y"]
-        return self._origin_y
-
-    @origin_y.setter
-    def origin_y(self, value: int):
-        self._origin_y = value
+            setattr(self, k, v)
 
     @property
     def filename(self) -> str:
+        """:obj:`str`: The image file name including extension."""
         return self.path.name
 
     @property
     def rational_time(self) -> opentime.RationalTime:
+        """:obj:`opentime.RationalTime`: Retrieved from :obj:`ImageInfo.timecode` using otio library."""
         if not all([self.timecode, self.fps]):
-            # NOTE: i should use otio here
             raise Exception("no timecode and fps found")
 
-        result = opentime.from_timecode(self.timecode, self.fps)
-        return result
+        return opentime.from_timecode(self.timecode, self.fps)
 
     @property
     def frame_number(self) -> int:
+        """:obj:`int`: Retrieved from the filename by using regex lookup.
+
+        Note:
+            The regex could use a little love to be more robust.
+            Filename should be something like ``filename.0001.exr``.
+        """
         if not self.filename:
             raise Exception("needs filename for querying frame number")
         matches = re.findall(r"\.(\d+)\.", self.filename)
@@ -226,20 +167,65 @@ class ImageInfo(ImageIOBase):
 
     @property
     def extension(self) -> str:
+        """:obj:`str`: The file extension."""
         return self.path.suffix
 
     @property
     def name(self) -> str:
+        """:obj:`str`: The file name with extension.
+
+        Note:
+            Used in SequenceInfo but could become obsolete in favor
+            for `filename`.
+        """
         return f"{self.path.stem}{self.path.suffix}"
 
+    @property
+    def filepath(self) -> str:
+        """:obj:`str`: The file path as posix string."""
 
-class SequenceInfo(ImageIOBase):
-    def __init__(self, path: Path, imageinfos: List[ImageInfo]):
-        super().__init__(path=path, imageinfos=imageinfos)
+        return self.path.resolve().as_posix()
+
+
+@dataclass
+class SequenceInfo:
+    """Class for handling image sequences by using instances of `ImageInfo`.
+
+    Hint:
+        If you want to scan a directory for image sequences, you can use the
+        ``scan`` classmethod.
+
+    Attributes:
+        path Any[Path, str]: Path to the image sequence directory.
+        imageinfos List[ImageInfo]: List of all files as `ImageInfo` to be
+            used.
+    """
+
+    path: Path = field(default_factory=Path)
+    imageinfos: List[ImageInfo] = field(default_factory=list)
+
+    def __post_init__(self):
+        if not all([self.path, self.imageinfos]):
+            raise ValueError(
+                "SequenceInfo needs to be initialized with path and imageinfos"
+            )
 
     @classmethod
     def scan(cls, directory: str | Path) -> List[SequenceInfo]:
-        cls.log.info(f"Scanning {directory}")
+        """Scan a directory for a list of images.
+
+        Attention:
+            Currently only supports EXR files. Needs to be extended and tested
+            for other formats.
+
+        Arguments:
+            directory (Any[str, Path]): Path to the directory
+                to be scanned.
+
+        Returns:
+            List[SequenceInfo]: List of all found sequences.
+        """
+        log.info(f"Scanning {directory}")
         if not isinstance(directory, Path):
             directory = Path(directory)
 
@@ -251,12 +237,12 @@ class SequenceInfo(ImageIOBase):
             if not item.is_file():
                 continue
             if item.suffix not in (".exr"):
-                cls.log.warning(f"{item.suffix} not in (.exr)")
+                log.warning(f"{item.suffix} not in (.exr)")
                 continue
 
             _parts = item.stem.split(".")
             if len(_parts) > 2:
-                cls.log.warning(f"{_parts = }")
+                log.warning(f"{_parts = }")
                 continue
             seq_key = Path(item.parent, _parts[0])
 
@@ -269,34 +255,34 @@ class SequenceInfo(ImageIOBase):
             for seq_key, seq_files in files_map.items()
         ]
 
-    def update(self, **kwargs):
-        if kwargs.get("path"):
-            self.path = kwargs["path"]
-        if kwargs.get("imageinfos"):
-            self.imageinfos = kwargs["imageinfos"]
-
-    @property
-    def imageinfos(self) -> List[int]:
-        return self._imageinfos
-
-    @imageinfos.setter
-    def imageinfos(self, value: List[ImageInfo]):
-        self._imageinfos = value
-
     @property
     def frames(self) -> List[int]:
+        """:obj:`List[int]`: List of all available frame numbers in the sequence."""  # noqa
         return self.imageinfos
 
     @property
     def start_frame(self) -> int:
+        """:obj:`int`: the lowest frame number in the sequence."""
         return min(self.frames).frame_number
 
     @property
     def end_frame(self) -> int:
+        """:obj:`int`: the highest frame number in the sequence."""
         return max(self.frames).frame_number
 
     @property
+    def format_string(self) -> str:
+        """:obj:`str`: A sequence representation used for ``ffmpeg`` arguments formatting."""  # noqa
+        frame: ImageInfo = min(self.frames)
+        ext: str = frame.extension
+        basename = frame.name.split(".")[0]
+
+        result = f"{basename}.%0{self.padding}d{ext}"
+        return result
+
+    @property
     def hash_string(self) -> str:
+        """:obj:`str`: A sequence representation used for ``oiiotool`` arguments formatting."""  # noqa
         frame: ImageInfo = min(self.frames)
         ext: str = frame.extension
         basename = frame.name.split(".")[0]
@@ -305,13 +291,33 @@ class SequenceInfo(ImageIOBase):
         return result
 
     @property
+    def format_string(self) -> str:
+        """:obj:`str`: A sequence representation used for ``ffmpeg`` arguments formatting.  # noqa
+
+        Error:
+            That's a duplicate so let's run tests and remove it.
+        """
+        frame: ImageInfo = min(self.frames)
+        ext: str = frame.extension
+        basename = frame.name.split(".")[0]
+
+        result = f"{basename}.%0{self.padding}d{ext}"
+        return result
+
+    @property
     def padding(self) -> int:
+        """:obj:`int`: The sequence's frame padding."""
         frame = min(self.frames)
         result = len(str(frame.frame_number))
         return result
 
     @property
     def frames_missing(self) -> bool:
+        """:obj:`bool`: Property for checking if any frames are missing in the sequence.  # noqa
+
+        Note:
+            Could be extended to also return which frames are missing.
+        """
         start = min(self.frames).frame_number
         end = max(self.frames).frame_number
         expected: int = len(range(start, end)) + 1
@@ -319,16 +325,20 @@ class SequenceInfo(ImageIOBase):
 
     @property
     def width(self) -> int:
+        """:obj:`int`: the sequence's width based on the first frame found."""
         return self.imageinfos[0].width
 
     @property
     def display_width(self) -> int:
+        """:obj:`int`: the sequence's display_width based on the first frame found."""  # noqa
         return self.imageinfos[0].display_width
 
     @property
     def height(self) -> int:
+        """:obj:`int`: the sequence's height based on the first frame found."""
         return self.imageinfos[0].height
 
     @property
     def display_height(self) -> int:
+        """:obj:`int`: the sequence's display_height based on the first frame found."""  # noqa
         return self.imageinfos[0].display_height

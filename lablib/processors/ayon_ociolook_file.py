@@ -3,8 +3,10 @@ from __future__ import annotations
 import json
 import logging
 
-from typing import List, Any
+from typing import List
 from pathlib import Path
+import PyOpenColorIO as OCIO
+
 
 from ..operators import AYONOCIOLookProduct
 
@@ -13,32 +15,37 @@ log.setLevel(logging.DEBUG)
 
 
 class AYONOCIOLookFileProcessor(object):
-    filepath: Path = None
+    """Class for processing an AYON OCIO Look file.
 
-    _color_ops: List = []
+    Arguments:
+        filepath (Path): Path to the OCIO Look file.
+
+    Attributes:
+        operator (AYONOCIOLookProduct): The OCIO Look operator.
+    """
+
+    filepath: Path
+    operator: AYONOCIOLookProduct
 
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
+        self.load()
 
-    @property
-    def color_operators(self) -> List:
-        return self._color_ops
+    def load(self) -> None:
+        """Load the OCIO Look file.
 
-    @color_operators.setter
-    def color_operators(self, value: Any[List, str]) -> None:
-        if isinstance(value, list):
-            self._color_ops.extend(value)
-        elif isinstance(value, str):
-            self._color_ops.append(value)
+        Note:
+            This globs all relative files recursively so we can make sure files in transforms are having correct path.
 
-    def _load(self) -> None:
-
+        Attention:
+            This method clears the operator before loading the file.
+        """
+        self.operator = None  # clear operator
         ociolook_file_path = self.filepath.resolve().as_posix()
 
         # get all relative files recursively so we can make sure files in
         # transforms are having correct path
-        all_relative_files = {
-            f.name: f for f in Path(self.filepath.parent).rglob("*")}
+        all_relative_files = {f.name: f for f in Path(self.filepath.parent).rglob("*")}
 
         with open(ociolook_file_path, "r") as f:
             ops_data = json.load(f)
@@ -47,7 +54,8 @@ class AYONOCIOLookFileProcessor(object):
 
         if schema_data_version != 1:
             raise ValueError(
-                f"Schema data version {schema_data_version} is not supported")
+                f"Schema data version {schema_data_version} is not supported"
+            )
 
         # INFO: This is a temporary fix to handle the case where
         #   the filepath is not found in the data
@@ -55,12 +63,20 @@ class AYONOCIOLookFileProcessor(object):
         for item in ops_data["data"]["ocioLookItems"]:
             self._sanitize_file_path(item, all_relative_files)
 
-        class_obj = AYONOCIOLookProduct.from_node_data(ops_data["data"])
+        self.operator = AYONOCIOLookProduct.from_node_data(ops_data["data"])
 
-        self.color_operators = class_obj.to_ocio_obj()
+    def get_oiiotool_cmd(self) -> List[str]:
+        """Get arguments for the OIIO command."""
+        args = []
+        for xfm in self.operator.to_ocio_obj():
+            if isinstance(xfm, OCIO.FileTransform):
+                lut = Path(xfm.getSrc()).resolve()
+                args.extend(["--ociofiletransform", f"{lut.as_posix()}"])
+            if isinstance(xfm, OCIO.ColorSpaceTransform):
+                args.extend(["--colorconvert", xfm.getSrc(), xfm.getDst()])
+        return args
 
     def _sanitize_file_path(self, repre_data: dict, all_relative_files: dict) -> None:  # noqa: E501
-
         extension = repre_data["ext"]
 
         for file, path in all_relative_files.items():
@@ -69,13 +85,4 @@ class AYONOCIOLookFileProcessor(object):
                 break
 
         if not repre_data.get("file"):
-            log.warning(
-                f"File not found: {repre_data['name']}.{repre_data['ext']}."
-            )
-
-    def _clear_operators(self) -> None:
-        self._color_ops = []
-
-    def load(self) -> None:
-        self._clear_operators()
-        self._load()
+            log.warning(f"File not found: {repre_data['name']}.{repre_data['ext']}.")
