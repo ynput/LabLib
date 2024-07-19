@@ -1,8 +1,8 @@
 name: documentation
 
 on:
-  push:
-    branches: ["15-refining-docstrings-for-code-api-enhancement"]
+  pull_request:
+    branches: ["main", "develop"]
 
 permissions:
   contents: write
@@ -31,7 +31,9 @@ jobs:
       - name: Sphinx build
         run: |
           poetry run sphinx-build ./docs ./docs/_build
+
       - name: Deploy to GitHub Pages
+        if: github.base_ref == 'main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           publish_branch: gh-pages
