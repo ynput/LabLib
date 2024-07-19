@@ -1,4 +1,4 @@
-✏️ Module Documentation
+⚙️ Module Documentation
 =======================
 
 This page contains auto-generated documentation for all exposed modules.
