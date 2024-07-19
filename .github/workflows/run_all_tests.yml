@@ -1,8 +1,8 @@
 name: run all tests
 
 on:
-  push:
-    branches: ["ci/run-full-test-suite"]
+  pull_request:
+    branches: ["develop"]
 
 jobs:
   full_test_suite:
