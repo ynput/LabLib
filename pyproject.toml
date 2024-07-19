@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lablib"
-version = "0.1.0-dev.1"
+version = "0.1.0"
 description = ""
 authors = [
     "maxpareschi <max.pareschi@22dogstudio.com>",
