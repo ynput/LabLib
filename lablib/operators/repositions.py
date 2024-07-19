@@ -48,7 +48,7 @@ class Transform:
         Uses :obj:`lablib.lib` to work with transformation matrices.
 
         Returns:
-            List[str]:
+            List[str]: Arguments for OIIO.
         """
         matrix = calculate_matrix(
             t=self.translate, r=self.rotate, s=self.scale, c=self.center
@@ -64,11 +64,11 @@ class Transform:
     def from_node_data(cls, data) -> "Transform":
         """Create a :obj:`Transform` object from node data.
 
-        Args:
+        Attributes:
             data (dict): The node data.
 
         Returns:
-            Transform:
+            Transform: The transform object.
         """
         scale = data.get("scale", [0.0, 0.0])
         if isinstance(scale, (int, float)):
@@ -101,7 +101,7 @@ class Crop:
         """Gets the arguments for ``oiiotool``.
 
         Returns:
-            List[int]:
+            List[int]: Arguments for OIIO.
         """
         return [
             "--crop",
@@ -111,10 +111,13 @@ class Crop:
 
     @classmethod
     def from_node_data(cls, data) -> "Crop":
-        """Create :obj:`Crop` from node data.
+        """Create a :obj:`Crop` object from node data.
 
-        Args:
+        Attributes:
             data (dict): The node data.
+
+        Returns:
+            Crop: The crop object.
         """
         return cls(box=data.get("box", [0, 0, 1920, 1080]))
 
@@ -151,8 +154,11 @@ class Mirror2:
     def from_node_data(cls, data) -> "Mirror2":
         """Create :obj:`Mirror2` from node data.
 
-        Args:
+        Attributes:
             data (dict): The node data.
+
+        Returns:
+            Mirror2: The mirror object.
         """
         return cls(flop=data.get("flop", False), flip=data.get("flip", False))
 
@@ -188,7 +194,7 @@ class CornerPin2D:
         """Gets the arguments for ``oiiotool``.
 
         Returns:
-            List[str]:.
+            List[str]: Arguments for OIIO.
         """
         # TODO: use matrix operation from utils.py
         return []
@@ -197,8 +203,11 @@ class CornerPin2D:
     def from_node_data(cls, data) -> "CornerPin2D":
         """Create :obj:`CornerPin2D` from node data.
 
-        Args:
+        Attributes:
             data (dict): The node data.
+
+        Returns:
+            CornerPin2D: The corner pin object.
         """
         return cls(
             from1=data.get("from1", [0.0, 0.0]),

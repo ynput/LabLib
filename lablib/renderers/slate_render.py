@@ -20,7 +20,8 @@ class SlateRenderer:
         This class is functional but not yet tested.
 
     TODO:
-        This should be refactored into a plain python class
+        * refactor into a plain python class
+        * add tests
     """
 
     slate_proc: SlateHtmlGenerator = None

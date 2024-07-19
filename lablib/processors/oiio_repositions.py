@@ -36,7 +36,8 @@ class OIIORepositionProcessor:
     dst_height: int = 0
     fit: str = None
 
-    _wrapper_class_members = dict(inspect.getmembers(repositions, inspect.isclass))
+    _wrapper_class_members = dict(
+        inspect.getmembers(repositions, inspect.isclass))
 
     def __init__(self, **kwargs) -> None:
         for k, v in kwargs.items():
@@ -55,7 +56,7 @@ class OIIORepositionProcessor:
         """Get the OIIO arguments for repositioning images.
 
         Returns:
-            List[str]:
+            List[str]: The OIIO arguments.
         """
         result = []
         for op in self.operators:

@@ -6,6 +6,14 @@ import PyOpenColorIO as OCIO
 
 
 def get_direction(direction: Union[str, int]) -> int:
+    """Get the direction for OCIO FileTransform.
+
+    Attributes:
+        direction (Union[str, int]): The direction.
+
+    Returns:
+        int: The direction.
+    """
     if direction == "inverse":
         return OCIO.TransformDirection.TRANSFORM_DIR_INVERSE
     return OCIO.TransformDirection.TRANSFORM_DIR_FORWARD
@@ -32,10 +40,8 @@ class OCIOFileTransform:
     Note:
         Reads Foundry Hiero Timeline soft effect node class.
 
-    Arguments:
-        file (str): Path to the LUT file.
-
     Attributes:
+        file (str): Path to the LUT file.
         cccid (str): Path to the cccid file.
         direction (int): The direction. Defaults to 0.
         interpolation (str): The interpolation. Defaults to "linear".
@@ -50,7 +56,7 @@ class OCIOFileTransform:
         """Converts the object to native OCIO object.
 
         Returns:
-            List[OCIO.FileTransform]:
+            List[OCIO.FileTransform]: The OCIO FileTransform object in a list.
         """
         # define direction
         direction = get_direction(self.direction)
@@ -77,11 +83,16 @@ class OCIOFileTransform:
             Would it be cool if we'd had a way to interface other DCC node data?
             Would they even be so much different?
 
-        Arguments:
-            data (dict): The node data.
+        Args:
+            data (dict): The node data. List of expected but not required keys:
+                - file (str): Path to the LUT file.
+                - cccid (str): Path to the cccid file.
+                - direction (int): The direction. Defaults to 0.
+                - interpolation (str): The interpolation. Defaults to "linear".
+
 
         Returns:
-            OCIOFileTransform:
+            OCIOFileTransform: The OCIOFileTransform object.
         """
         return cls(
             file=data.get("file", ""),
@@ -96,19 +107,21 @@ class OCIOColorSpace:
     """Foundry Hiero Timeline soft effect node class.
 
     Attributes:
-        in_colorspace (str): The input colorspace. Defaults to "ACES - ACEScg".
-        out_colorspace (str): The output colorspace. Defaults to "ACES - ACEScg".
+        in_colorspace (str): The input colorspace.
+            Defaults to "ACES - ACEScg".
+        out_colorspace (str): The output colorspace.
+            Defaults to "ACES - ACEScg".
     """
 
     in_colorspace: str = "ACES - ACEScg"
     out_colorspace: str = "ACES - ACEScg"
 
-    def to_ocio_obj(self):
-        # -> List[OCIO.ColorSpaceTransform]:
+    def to_ocio_obj(self) -> List[OCIO.ColorSpaceTransform]:
         """Returns native OCIO ColorSpaceTransform object.
 
         Returns:
-            List[OCIO.ColorSpaceTransform]:
+            List[OCIO.ColorSpaceTransform]: The OCIO ColorSpaceTransform object
+                in a list.
         """
         return [
             OCIO.ColorSpaceTransform(
@@ -139,7 +152,8 @@ class OCIOCDLTransform:
 
     Note:
         Since this node class combines two of OCIO classes (FileTransform and
-        CDLTransform), we will separate them here within :obj:`OCIOCDLTransform.to_ocio_obj()`.
+        CDLTransform), we will separate them here within
+        :obj:`OCIOCDLTransform.to_ocio_obj()`.
 
     Attributes:
         file (Optional[str]): Path to the LUT file.
@@ -161,12 +175,13 @@ class OCIOCDLTransform:
     saturation: float = 1.0
     interpolation: str = "linear"
 
-    def to_ocio_obj(self):
-        # -> List[Union[OCIO.FileTransform, OCIO.CDLTransform]]:
-        """Returns native OCIO CDLTransform object.
+    def to_ocio_obj(self) -> List[Union[OCIO.FileTransform, OCIO.CDLTransform]]:  # noqa: E501
+        """Returns native OCIO FileTransform and CDLTransform object.
 
         Returns:
-            List[Union[OCIO.FileTransform, OCIO.CDLTransform]]:
+            List[Union[OCIO.FileTransform, OCIO.CDLTransform]]: The OCIO
+                CDLTransform and FileTransform object in a list.
+                If file is not provided, only CDLTransform will be returned.
         """
         effects = []
 
@@ -203,11 +218,26 @@ class OCIOCDLTransform:
     def from_node_data(cls, data) -> "OCIOCDLTransform":
         """Create :obj:`OCIOCDLTransform` from node data.
 
-        Arguments:
-            data (dict): The node data.
+        Args:
+            data (dict): The node data. List of expected but not required keys:
+                - file (str): Path to the LUT file.
+                - direction (int): The direction.
+                    Defaults to 0.
+                - cccid (str): The cccid.
+                    Defaults to "".
+                - offset (List[float]): The offset.
+                    Defaults to [0.0, 0.0, 0.0].
+                - power (List[float]): The power.
+                    Defaults to [1.0, 1.0, 1.0].
+                - slope (List[float]): The slope.
+                    Defaults to [0.0, 0.0, 0.0].
+                - saturation (float): The saturation.
+                    Defaults to 1.0.
+                - interpolation (str): The interpolation.
+                    Defaults to "linear".
 
         Returns:
-            OCIOCDLTransform:
+            OCIOCDLTransform: The OCIOCDLTransform object.
         """
         if data.get("file"):
             return cls(
@@ -282,12 +312,14 @@ class AYONOCIOLookProduct:
     ocioLookItems: List[dict] = field(default_factory=list)
     ocioLookWorkingSpace: dict = field(default_factory=dict)
 
-    def to_ocio_obj(self):
-        # -> List[Union[OCIO.ColorSpaceTransform, OCIO.FileTransform]]:
+    def to_ocio_obj(self) -> List[Union[OCIO.ColorSpaceTransform, OCIO.FileTransform]]:  # noqa: E501
         """Converts to list of native OCIO objects.
 
         Returns:
-            List[Union[OCIO.ColorSpaceTransform, OCIO.FileTransform]]:
+            List[Union[OCIO.ColorSpaceTransform, OCIO.FileTransform]]: The OCIO
+                ColorSpaceTransform and FileTransform objects in a list. The
+                order of the objects is based on the order of the items in
+                :attr:`ocioLookItems`.
         """
         look_working_colorspace = self.ocioLookWorkingSpace["colorspace"]
         all_transformations = []
@@ -339,7 +371,7 @@ class AYONOCIOLookProduct:
             data (dict): The node data.
 
         Returns:
-            AYONOCIOLookProduct:
+            AYONOCIOLookProduct: The AYONOCIOLookProduct object.
         """
         return cls(
             ocioLookItems=data.get("ocioLookItems", []),

@@ -6,7 +6,7 @@ import re
 import logging
 from pathlib import Path
 from dataclasses import dataclass, field
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import opentimelineio.opentime as opentime
 
@@ -72,17 +72,27 @@ class ImageInfo:
     path: Path = field(default_factory=Path)
 
     # fmt: off
-    width: int = field(default=IMAGE_INFO_DEFAULTS["width"], init=False, repr=True)
-    height: int = field(default=IMAGE_INFO_DEFAULTS["height"], init=False, repr=True)
-    origin_x: int = field(default=IMAGE_INFO_DEFAULTS["origin_x"], init=False, repr=False)
-    origin_y: int = field(default=IMAGE_INFO_DEFAULTS["origin_y"], init=False, repr=False)
-    display_width: int = field(default=IMAGE_INFO_DEFAULTS["display_width"], init=False, repr=False)
-    display_height: int = field(default=IMAGE_INFO_DEFAULTS["display_height"], init=False, repr=False)
-    par: float = field(default=IMAGE_INFO_DEFAULTS["par"], init=False, repr=False)
-    channels: int = field(default=IMAGE_INFO_DEFAULTS["channels"], init=False, repr=True)
+    width: int = field(
+        default=IMAGE_INFO_DEFAULTS["width"], init=False, repr=True)
+    height: int = field(
+        default=IMAGE_INFO_DEFAULTS["height"], init=False, repr=True)
+    origin_x: int = field(
+        default=IMAGE_INFO_DEFAULTS["origin_x"], init=False, repr=False)
+    origin_y: int = field(
+        default=IMAGE_INFO_DEFAULTS["origin_y"], init=False, repr=False)
+    display_width: int = field(
+        default=IMAGE_INFO_DEFAULTS["display_width"], init=False, repr=False)
+    display_height: int = field(
+        default=IMAGE_INFO_DEFAULTS["display_height"], init=False, repr=False)
+    par: float = field(
+        default=IMAGE_INFO_DEFAULTS["par"], init=False, repr=False)
+    channels: int = field(
+        default=IMAGE_INFO_DEFAULTS["channels"], init=False, repr=True)
 
-    fps: float = field(default=IMAGE_INFO_DEFAULTS["fps"], init=False, repr=False)
-    timecode: str = field(default=IMAGE_INFO_DEFAULTS["timecode"], init=False, repr=False)
+    fps: float = field(
+        default=IMAGE_INFO_DEFAULTS["fps"], init=False, repr=False)
+    timecode: str = field(
+        default=IMAGE_INFO_DEFAULTS["timecode"], init=False, repr=False)
     # fmt: on
 
     def __post_init__(self):
@@ -102,15 +112,17 @@ class ImageInfo:
     def __lt__(self, other: ImageInfo) -> bool:
         return self.frame_number < other.frame_number
 
-    def update(self, force_ffprobe=False):
+    def update(self, force_ffprobe: Optional[bool] = False) -> None:
         """Updates metadata by calling iinfo and ffprobe.
 
         Attention:
-            During testing it was found that ``ffprobe`` reported different framerates on different systems.
-            Therefore we added the ``force_ffprobe=False`` flag to silently disable ``ffprobe``.
+            During testing it was found that ``ffprobe`` reported different
+            framerates on different systems. Therefore we added the
+            ``force_ffprobe=False`` flag to silently disable ``ffprobe``.
 
-        Kwargs:
-            force_ffprobe bool: whether to override attributes with ``ffprobe`` output if found.
+        Arguments:
+            force_ffprobe (Optional[bool]): whether to override attributes with
+                ``ffprobe`` output if found.
         """
         iinfo_res = utils.call_iinfo(self.path)
         ffprobe_res = utils.call_ffprobe(self.path)
@@ -162,9 +174,9 @@ class ImageInfo:
     def name(self) -> str:
         """:obj:`str`: The file name with extension.
 
-        TODO:
-            I use this in SequenceInfo but could become obsolete in favor for `filename`.
-            Should this be rewritten?
+        Note:
+            Used in SequenceInfo but could become obsolete in favor
+            for `filename`.
         """
         return f"{self.path.stem}{self.path.suffix}"
 
@@ -180,11 +192,13 @@ class SequenceInfo:
     """Class for handling image sequences by using instances of `ImageInfo`.
 
     Hint:
-        If you want to scan a directory for image sequences, you can use the ``scan`` classmethod.
+        If you want to scan a directory for image sequences, you can use the
+        ``scan`` classmethod.
 
     Attributes:
         path Any[Path, str]: Path to the image sequence directory.
-        imageinfos List[ImageInfo]: List of all files as `ImageInfo` to be used.
+        imageinfos List[ImageInfo]: List of all files as `ImageInfo` to be
+            used.
     """
 
     path: Path = field(default_factory=Path)
@@ -201,13 +215,15 @@ class SequenceInfo:
         """Scan a directory for a list of images.
 
         Attention:
-            Currently only supports EXR files. Needs to be extended and tested for other formats.
+            Currently only supports EXR files. Needs to be extended and tested
+            for other formats.
 
-        Args:
-            directory (Any[str, Path]): Path to the directory to be scanned.
+        Arguments:
+            directory (Any[str, Path]): Path to the directory
+                to be scanned.
 
         Returns:
-            List[SequenceInfo]:
+            List[SequenceInfo]: List of all found sequences.
         """
         log.info(f"Scanning {directory}")
         if not isinstance(directory, Path):
@@ -241,7 +257,7 @@ class SequenceInfo:
 
     @property
     def frames(self) -> List[int]:
-        """:obj:`List[int]`: List of all available frame numbers in the sequence."""
+        """:obj:`List[int]`: List of all available frame numbers in the sequence."""  # noqa
         return self.imageinfos
 
     @property
@@ -256,7 +272,7 @@ class SequenceInfo:
 
     @property
     def format_string(self) -> str:
-        """:obj:`str`: A sequence representation used for ``ffmpeg`` arguments formatting."""
+        """:obj:`str`: A sequence representation used for ``ffmpeg`` arguments formatting."""  # noqa
         frame: ImageInfo = min(self.frames)
         ext: str = frame.extension
         basename = frame.name.split(".")[0]
@@ -266,7 +282,7 @@ class SequenceInfo:
 
     @property
     def hash_string(self) -> str:
-        """:obj:`str`: A sequence representation used for ``oiiotool`` arguments formatting."""
+        """:obj:`str`: A sequence representation used for ``oiiotool`` arguments formatting."""  # noqa
         frame: ImageInfo = min(self.frames)
         ext: str = frame.extension
         basename = frame.name.split(".")[0]
@@ -276,7 +292,7 @@ class SequenceInfo:
 
     @property
     def format_string(self) -> str:
-        """:obj:`str`: A sequence representation used for ``ffmpeg`` arguments formatting.
+        """:obj:`str`: A sequence representation used for ``ffmpeg`` arguments formatting.  # noqa
 
         Error:
             That's a duplicate so let's run tests and remove it.
@@ -297,7 +313,7 @@ class SequenceInfo:
 
     @property
     def frames_missing(self) -> bool:
-        """:obj:`bool`: Property for checking if any frames are missing in the sequence.
+        """:obj:`bool`: Property for checking if any frames are missing in the sequence.  # noqa
 
         Note:
             Could be extended to also return which frames are missing.
@@ -314,7 +330,7 @@ class SequenceInfo:
 
     @property
     def display_width(self) -> int:
-        """:obj:`int`: the sequence's display_width based on the first frame found."""
+        """:obj:`int`: the sequence's display_width based on the first frame found."""  # noqa
         return self.imageinfos[0].display_width
 
     @property
@@ -324,5 +340,5 @@ class SequenceInfo:
 
     @property
     def display_height(self) -> int:
-        """:obj:`int`: the sequence's display_height based on the first frame found."""
+        """:obj:`int`: the sequence's display_height based on the first frame found."""  # noqa
         return self.imageinfos[0].display_height
