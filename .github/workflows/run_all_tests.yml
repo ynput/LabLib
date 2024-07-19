@@ -2,7 +2,7 @@ name: run all tests
 
 on:
   pull_request:
-    branches: ["develop"]
+    branches: ["main", "develop"]
 
 jobs:
   full_test_suite:
