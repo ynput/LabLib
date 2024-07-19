@@ -19,18 +19,38 @@ SUPPORTED_CODECS = ["ProRes422-HQ", "ProRes4444-XQ", "DNxHR-SQ"]
 
 @dataclass
 class Codec:
+    """Utility class for abstracting ffmpeg codec arguments.
+
+    Important:
+        Currently this only supports 2 flavors of ProRes and 1 of DNxHR but
+        could deserve more. Supported codecs are:
+        ``ProRes422-HQ``, ``ProRes4444-XQ``, ``DNxHR-SQ``
+
+    Attributes:
+        name (str): The name of the codec.
+    """
+
     name: str = field(default_factory=str, init=True, repr=True)
 
     def __post_init__(self) -> None:
         if self.name not in SUPPORTED_CODECS:
             raise ValueError(
-                f"{self.name} is not found in supported codecs.\n{SUPPORTED_CODECS = }"
+                f"{self.name} is not found in supported "
+                f"codecs.\n{SUPPORTED_CODECS = }"
             )
 
     def get_ffmpeg_args(self) -> List[str]:
+        """Get the ffmpeg arguments for the codec.
+
+        TODO:
+            * treating arguments more generally - similarly as the AYON server
+              settings of ``Extract Review``.
+
+        Returns:
+            List[str]: The ffmpeg arguments.
+        """
         args = []
         # fmt: off
-        # TODO: i should probably abstract the cmdargs
         if self.name == "ProRes422-HQ":
             args = [
                 "-vcodec", "prores_ks",
@@ -60,6 +80,33 @@ class Codec:
 
 @dataclass
 class Burnin:
+    """Utility class for handling burnins with OIIO.
+
+    .. admonition:: Example ``data`` attribute structure
+
+        .. code-block:: json
+
+            {
+                "text": "YOUR_TEXT_HERE",
+                "position": [
+                    "top_left"
+                    "top_center"
+                    "top_right"
+                    "bottom_left"
+                    "bottom_center"
+                    "bottom_right"
+                ],
+            },
+
+    Attributes:
+        data (Dict[str, str]): The text to be drawn and its positioning.
+        size (int): The size of the text.
+        padding (int): The padding around the text.
+        color (Set[float]): The color of the text.
+        font (Optional[str]): The font to use.
+        outline (Optional[int]): The outline size.
+    """
+
     data: Dict[str, str] = field(default_factory=dict)
 
     size: int = field(default=64)
@@ -77,6 +124,11 @@ class Burnin:
             self._font = Path(self.font).resolve()
 
     def get_oiiotool_args(self) -> List[str]:
+        """Get the OIIO arguments.
+
+        Returns:
+            List[str]:
+        """
         args = []
         width_token = r"{TOP.width}"
         height_token = r"{TOP.height}"
@@ -121,6 +173,40 @@ class Burnin:
 
 
 class BasicRenderer:
+    """Basic renderer for image sequences.
+
+    Note:
+        Also supports single image rendering but needs to support more formats.
+        PSDs would be really nice to have.
+
+    .. admonition:: Example
+
+        .. code-block:: python
+
+            # render sequence into a ProRes with a basic reformat to 1080p
+            rend = BasicRenderer(
+                processor=OIIORepositionProcessor(
+                    dst_width=1920,
+                    dst_height=1080,
+                    fit="letterbox",
+                ),
+                source_sequence=SequenceInfo.scan("resources/public/plateMain/v002")[0],
+                output_dir="test_results/reformat_1080p/letterbox",
+                codec="ProRes422-HQ",
+                fps=25,
+                keep_only_container=False,
+            )
+            rend.render(debug=True)
+
+
+    Attributes:
+        source_sequence (SequenceInfo): The source sequence to render.
+        output_dir (Union[Path, str]): The output directory.
+        name (str): The name of the output file.
+        threads (int): The number of threads to use for rendering.
+        keep_only_container (bool): Keep only the container file.
+    """
+
     name: str = "lablib.mov"
 
     # rendering options
@@ -160,6 +246,14 @@ class BasicRenderer:
         return f"{self.__class__.__name__}({props[:-2]})"
 
     def get_oiiotool_cmd(self, debug=False) -> List[str]:
+        """Get arguments for rendering with OIIO.
+
+        Arguments:
+            debug (Optional[bool]): Whether to increase log verbosity.
+
+        Returns:
+            List[str]: The OIIO arguments.
+        """
         input_path = Path(
             self.source_sequence.path, self.source_sequence.hash_string
         ).resolve()
@@ -190,6 +284,11 @@ class BasicRenderer:
         return cmd
 
     def get_ffmpeg_cmd(self) -> List[str]:
+        """Get arguments for rendering with ffmpeg.
+
+        Returns:
+            List[str]: The ffmpeg arguments.
+        """
         cmd = ["ffmpeg", "-loglevel", "info", "-hide_banner"]
 
         # common args
@@ -240,6 +339,21 @@ class BasicRenderer:
         return cmd
 
     def render(self, debug=False) -> None:
+        """Render the sequence with the given options.
+
+        Important:
+            This always tries to render into a local temporary EXR sequence
+            first and then converts it to the desired codec. These will then
+            be attempted to be copied to the output directory.
+            In any case, the temporary directory will be cleaned up afterwards.
+
+        Hint:
+            If you're only interested in the video file you can set
+            ``BasicRenderer(*args, keep_only_container=True)``.
+
+        Arguments:
+            debug (Optional[bool]): Whether to increase log verbosity.
+        """
         # run oiiotool command
         cmd = self.get_oiiotool_cmd(debug)
         log.info("oiiotool cmd >>> {}".format(" ".join(cmd)))
@@ -278,6 +392,7 @@ class BasicRenderer:
 
     @property
     def processor(self) -> Any:
+        """:obj:`Any`: The processor to use for rendering."""
         if not hasattr(self, "_processor"):
             return None
         return self._processor
@@ -288,6 +403,12 @@ class BasicRenderer:
 
     @property
     def codec(self) -> str:
+        """:obj:`Codec`: The codec to use.
+
+        Attention:
+            Please check the supported codecs.
+            The passed ``str`` will be looked up against them.
+        """
         if not hasattr(self, "_codec"):
             return None
         return self._codec.name
@@ -298,6 +419,12 @@ class BasicRenderer:
 
     @property
     def fps(self) -> int:
+        """:obj:`int`: The frames per second to use.
+
+        TODO:
+            * should be a float. But currently only 24 and 25 are tested.
+            * testing with 23.976 and 29.97 would be nice.
+        """
         if not hasattr(self, "_fps"):
             return min(self.source_sequence.frames).fps
         return self._fps
@@ -308,6 +435,10 @@ class BasicRenderer:
 
     @property
     def audio(self) -> str:
+        """:obj:`str`: The path to an audio file to be used.
+
+        The passed string will be resolved to an absolute path object.
+        """
         if not hasattr(self, "_audio"):
             return None
         return self._audio.as_posix()
@@ -318,6 +449,15 @@ class BasicRenderer:
 
     @property
     def burnins(self) -> Burnin:
+        """:obj:`Burnin`: The burnins to use.
+
+        Attention:
+            Please check the Burnin class for formatting.
+            Currently you can only pass in a dict formatted accordingly.
+
+        TODO:
+            * Should also accept passing a ``Burnin`` directly.
+        """
         if not hasattr(self, "_burnins"):
             return None
         return self._burnins

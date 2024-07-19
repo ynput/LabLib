@@ -12,6 +12,26 @@ from lablib.lib.utils import (
 
 @dataclass
 class Transform:
+    """Transform operator for repositioning images.
+
+    Note:
+        The transformations are applied in the following order:
+        ``translate, rotate, scale, center, invert, skewX, skewY``.
+
+        The :obj:`Transform.skew_order` parameter determines the order in which the skewX and skewY transformations are applied.
+
+    Attributes:
+        translate (List[float]): The translation vector.
+        rotate (float): The rotation angle in degrees.
+        scale (List[float]): The scaling vector.
+        center (List[float]): The center of the transformation.
+        invert (bool): Invert the transformation.
+        skewX (float): The skew in the X direction.
+        skewY (float): The skew in the Y direction.
+        skew_order (str): The order in which the skewX and skewY
+            transformations are applied.
+    """
+
     translate: List[float] = field(default_factory=lambda: [0.0, 0.0])
     rotate: float = 0.0
     # needs to be treated as a list of floats but can be single float
@@ -22,7 +42,14 @@ class Transform:
     skewY: float = 0.0
     skew_order: str = "XY"
 
-    def to_oiio_args(self):
+    def to_oiio_args(self) -> List[str]:
+        """Gets the arguments for ``oiiotool``.
+
+        Uses :obj:`lablib.lib` to work with transformation matrices.
+
+        Returns:
+            List[str]: Arguments for OIIO.
+        """
         matrix = calculate_matrix(
             t=self.translate, r=self.rotate, s=self.scale, c=self.center
         )
@@ -34,7 +61,15 @@ class Transform:
         return [warp_flag, warp_cmd]
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "Transform":
+        """Create a :obj:`Transform` object from node data.
+
+        Attributes:
+            data (dict): The node data.
+
+        Returns:
+            Transform: The transform object.
+        """
         scale = data.get("scale", [0.0, 0.0])
         if isinstance(scale, (int, float)):
             scale = [scale, scale]
@@ -53,10 +88,21 @@ class Transform:
 
 @dataclass
 class Crop:
+    """Operator for cropping images.
+
+    Attributes:
+        box (List[int]): The crop box.
+    """
+
     box: List[int] = field(default_factory=lambda: [0, 0, 1920, 1080])
     # NOTE: could also be called with width, height, x, y
 
-    def to_oiio_args(self):
+    def to_oiio_args(self) -> List[str]:
+        """Gets the arguments for ``oiiotool``.
+
+        Returns:
+            List[int]: Arguments for OIIO.
+        """
         return [
             "--crop",
             # using xmin,ymin,xmax,ymax
@@ -64,16 +110,39 @@ class Crop:
         ]
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "Crop":
+        """Create a :obj:`Crop` object from node data.
+
+        Attributes:
+            data (dict): The node data.
+
+        Returns:
+            Crop: The crop object.
+        """
         return cls(box=data.get("box", [0, 0, 1920, 1080]))
 
 
 @dataclass
 class Mirror2:
+    """Operator for mirroring images.
+
+    TODO:
+        This should be ``Mirror2 -> Mirror2D`` looking at :obj:`CornerPin2D`.
+
+    Attributes:
+        flop (bool): Mirror vertically.
+        flip (bool): Mirror horizontally.
+    """
+
     flop: bool = False
     flip: bool = False
 
     def to_oiio_args(self):
+        """Gets the arguments for ``oiiotool``.
+
+        Returns:
+            List[str]: Arguments for OIIO.
+        """
         args = []
         if self.flop:
             args.append("--flop")
@@ -82,12 +151,36 @@ class Mirror2:
         return args
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "Mirror2":
+        """Create :obj:`Mirror2` from node data.
+
+        Attributes:
+            data (dict): The node data.
+
+        Returns:
+            Mirror2: The mirror object.
+        """
         return cls(flop=data.get("flop", False), flip=data.get("flip", False))
 
 
 @dataclass
 class CornerPin2D:
+    """Operator for corner pinning images.
+
+    Danger:
+        This operator is not yet tested or used in the codebase.
+
+    Attributes:
+        from1 (List[float]): The first corner of the source image.
+        from2 (List[float]): The second corner of the source image.
+        from3 (List[float]): The third corner of the source image.
+        from4 (List[float]): The fourth corner of the source image.
+        to1 (List[float]): The first corner of the destination image.
+        to2 (List[float]): The second corner of the destination image.
+        to3 (List[float]): The third corner of the destination image.
+        to4 (List[float]): The fourth corner of the destination image.
+    """
+
     from1: List[float] = field(default_factory=lambda: [0.0, 0.0])
     from2: List[float] = field(default_factory=lambda: [0.0, 0.0])
     from3: List[float] = field(default_factory=lambda: [0.0, 0.0])
@@ -98,11 +191,24 @@ class CornerPin2D:
     to4: List[float] = field(default_factory=lambda: [0.0, 0.0])
 
     def to_oiio_args(self):
+        """Gets the arguments for ``oiiotool``.
+
+        Returns:
+            List[str]: Arguments for OIIO.
+        """
         # TODO: use matrix operation from utils.py
         return []
 
     @classmethod
-    def from_node_data(cls, data):
+    def from_node_data(cls, data) -> "CornerPin2D":
+        """Create :obj:`CornerPin2D` from node data.
+
+        Attributes:
+            data (dict): The node data.
+
+        Returns:
+            CornerPin2D: The corner pin object.
+        """
         return cls(
             from1=data.get("from1", [0.0, 0.0]),
             from2=data.get("from2", [0.0, 0.0]),

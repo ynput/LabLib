@@ -15,6 +15,15 @@ log.setLevel(logging.DEBUG)
 
 
 class AYONOCIOLookFileProcessor(object):
+    """Class for processing an AYON OCIO Look file.
+
+    Arguments:
+        filepath (Path): Path to the OCIO Look file.
+
+    Attributes:
+        operator (AYONOCIOLookProduct): The OCIO Look operator.
+    """
+
     filepath: Path
     operator: AYONOCIOLookProduct
 
@@ -23,6 +32,14 @@ class AYONOCIOLookFileProcessor(object):
         self.load()
 
     def load(self) -> None:
+        """Load the OCIO Look file.
+
+        Note:
+            This globs all relative files recursively so we can make sure files in transforms are having correct path.
+
+        Attention:
+            This method clears the operator before loading the file.
+        """
         self.operator = None  # clear operator
         ociolook_file_path = self.filepath.resolve().as_posix()
 
@@ -49,6 +66,7 @@ class AYONOCIOLookFileProcessor(object):
         self.operator = AYONOCIOLookProduct.from_node_data(ops_data["data"])
 
     def get_oiiotool_cmd(self) -> List[str]:
+        """Get arguments for the OIIO command."""
         args = []
         for xfm in self.operator.to_ocio_obj():
             if isinstance(xfm, OCIO.FileTransform):

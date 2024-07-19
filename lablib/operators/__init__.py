@@ -1,3 +1,5 @@
+"""Operators for color and reposition effects."""
+
 from .color import (
     OCIOCDLTransform,
     OCIOColorSpace,

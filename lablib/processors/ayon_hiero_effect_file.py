@@ -15,6 +15,12 @@ log.setLevel(logging.DEBUG)
 
 
 class AYONHieroEffectsFileProcessor(object):
+    """Class for processing an AYON Hiero effects file.
+
+    Arguments:
+        filepath (Path): Path to the effects file.
+    """
+
     filepath: Path = None
 
     _wrapper_class_members = dict(inspect.getmembers(operators, inspect.isclass))
@@ -26,6 +32,7 @@ class AYONHieroEffectsFileProcessor(object):
 
     @property
     def color_operators(self) -> List:
+        """List of color operators to be processed."""
         ops = []
         for op in self._color_ops:
             ops.extend(op.to_ocio_obj())
@@ -33,6 +40,7 @@ class AYONHieroEffectsFileProcessor(object):
 
     @property
     def repo_operators(self) -> Dict:
+        """List of repositioning operators to be processed."""
         return self._repo_ops
 
     def _load(self) -> None:
@@ -89,14 +97,21 @@ class AYONHieroEffectsFileProcessor(object):
         node_value["file"] = relative_file.resolve().as_posix()
 
     def clear_operators(self) -> None:
+        """Clears lists of all operators."""
         self._color_ops = []
         self._repo_ops = []
 
     def load(self) -> None:
+        """Loads the effects file.
+
+        Attention:
+            This method clears the lists of all operators before loading.
+        """
         self.clear_operators()
         self._load()
 
     def get_oiiotool_cmd(self) -> List[str]:
+        """Returns arguments for oiiotool command."""
         args = []
         for op in self.color_operators:
             if isinstance(op, OCIO.FileTransform):
