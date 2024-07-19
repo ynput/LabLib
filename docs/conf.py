@@ -21,3 +21,5 @@ html_theme_options = {
 }
 
 todo_include_todos = True
+
+autodoc_typehints = "none"
