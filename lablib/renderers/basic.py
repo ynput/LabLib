@@ -22,11 +22,12 @@ class Codec:
     """Utility class for abstracting ffmpeg codec arguments.
 
     Important:
-        Currently this only supports 2 flavors of ProRes and 1 of DNxHR but could deserve more.
-        Supported codecs are: ``ProRes422-HQ``, ``ProRes4444-XQ``, ``DNxHR-SQ``
+        Currently this only supports 2 flavors of ProRes and 1 of DNxHR but
+        could deserve more. Supported codecs are:
+        ``ProRes422-HQ``, ``ProRes4444-XQ``, ``DNxHR-SQ``
 
     Attributes:
-        name (str):
+        name (str): The name of the codec.
     """
 
     name: str = field(default_factory=str, init=True, repr=True)
@@ -34,18 +35,19 @@ class Codec:
     def __post_init__(self) -> None:
         if self.name not in SUPPORTED_CODECS:
             raise ValueError(
-                f"{self.name} is not found in supported codecs.\n{SUPPORTED_CODECS = }"
+                f"{self.name} is not found in supported "
+                f"codecs.\n{SUPPORTED_CODECS = }"
             )
 
     def get_ffmpeg_args(self) -> List[str]:
         """Get the ffmpeg arguments for the codec.
 
         TODO:
-            Should the arguments be treated more generally?
-            Maybe like it's handled in the server settings of ``Extract Review``.
+            * treating arguments more generally - similarly as the AYON server
+              settings of ``Extract Review``.
 
         Returns:
-            List[str]:
+            List[str]: The ffmpeg arguments.
         """
         args = []
         # fmt: off
@@ -246,8 +248,11 @@ class BasicRenderer:
     def get_oiiotool_cmd(self, debug=False) -> List[str]:
         """Get arguments for rendering with OIIO.
 
+        Arguments:
+            debug (Optional[bool]): Whether to increase log verbosity.
+
         Returns:
-            List[str]:
+            List[str]: The OIIO arguments.
         """
         input_path = Path(
             self.source_sequence.path, self.source_sequence.hash_string
@@ -282,7 +287,7 @@ class BasicRenderer:
         """Get arguments for rendering with ffmpeg.
 
         Returns:
-            List[str]:
+            List[str]: The ffmpeg arguments.
         """
         cmd = ["ffmpeg", "-loglevel", "info", "-hide_banner"]
 
@@ -337,15 +342,17 @@ class BasicRenderer:
         """Render the sequence with the given options.
 
         Important:
-            This always tries to render into a local temporary EXR sequence first and then converts it to the desired codec.
-            These will then be attempted to be copied to the output directory.
+            This always tries to render into a local temporary EXR sequence
+            first and then converts it to the desired codec. These will then
+            be attempted to be copied to the output directory.
             In any case, the temporary directory will be cleaned up afterwards.
 
         Hint:
-            If you're only interested in the video file you can set ``BasicRenderer(*args, keep_only_container=True)``.
+            If you're only interested in the video file you can set
+            ``BasicRenderer(*args, keep_only_container=True)``.
 
-        Args:
-            debug (bool): Whether to increase log verbosity.
+        Arguments:
+            debug (Optional[bool]): Whether to increase log verbosity.
         """
         # run oiiotool command
         cmd = self.get_oiiotool_cmd(debug)
@@ -415,7 +422,8 @@ class BasicRenderer:
         """:obj:`int`: The frames per second to use.
 
         TODO:
-            This should be a float. But currently only 24 and 25 are tested.
+            * should be a float. But currently only 24 and 25 are tested.
+            * testing with 23.976 and 29.97 would be nice.
         """
         if not hasattr(self, "_fps"):
             return min(self.source_sequence.frames).fps
@@ -448,7 +456,7 @@ class BasicRenderer:
             Currently you can only pass in a dict formatted accordingly.
 
         TODO:
-            Should also accept passing a ``Burnin`` directly.
+            * Should also accept passing a ``Burnin`` directly.
         """
         if not hasattr(self, "_burnins"):
             return None

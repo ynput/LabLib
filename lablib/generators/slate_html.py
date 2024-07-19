@@ -20,7 +20,8 @@ class SlateHtmlGenerator:
         This class is functional but not yet tested.
 
     TODO:
-        This should be refactored into a plain python class
+        * refactor into a plain python class
+        * add tests
 
     Attributes:
         data: A dictionary containing the data to be formatted in the template.
