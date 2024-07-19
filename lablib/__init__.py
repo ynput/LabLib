@@ -25,7 +25,7 @@ __all__ = [
 ]
 
 
-__version__ = "0.1.0"
+__version__ = "0.1.1-dev.1"
 __author__ = "YNPUT, s.r.o. <team@ynput.io>"
 __title__ = "LabLib"
 __homepage__ = "https://github.com/ynput/lablib"
