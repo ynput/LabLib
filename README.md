@@ -13,6 +13,7 @@ This module aims to help by providing helper classes and functions to:
 - Create correctly formed OIIO commandline strings automatically.
 - Render out frames with Color and Repositioning baked in using oiiotool
 
+Check out the full documentation over at https://ynput.github.io/LabLib/
 
 ## Instructions
 The core functionality relies on using **Processors** and **Operators** to compute the correct commandline parameters.
