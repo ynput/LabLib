@@ -30,6 +30,7 @@ class OCIOConfigFileGenerator:
             file.
         environment_variables (Optional[Dict]): A dictionary of environment
             variables.
+        search_paths (Optional[List[str]]): A list of search paths.
 
     Example:
         >>> from lablib.operators import LUT
@@ -59,12 +60,12 @@ class OCIOConfigFileGenerator:
     _vars: Dict[str, str] = {}
     _views: List[str] = []
     _config_path: Path  # OCIO Config file
-    _ocio_config: OCIO.Config   # OCIO Config object
+    _ocio_config: OCIO.Config  # OCIO Config object
     _ocio_transforms: List = []
-    _ocio_search_paths: List[str]
+    _ocio_search_paths: List[str] = []
     _ocio_config_name: str = "config.ocio"
-    _dest_path: str
-    _operators: List[OCIO.Transform]
+    _dest_path: str = ""
+    _operators: List[OCIO.Transform] = []
 
     def __init__(
         self,
@@ -77,6 +78,7 @@ class OCIOConfigFileGenerator:
         description: Optional[str] = None,
         staging_dir: Optional[str] = None,
         environment_variables: Optional[Dict] = None,
+        search_paths: Optional[List[str]] = None,
     ):
         # Context is required
         self.context = context
@@ -96,6 +98,8 @@ class OCIOConfigFileGenerator:
         # Default operators
         if operators:
             self.set_operators(operators)
+        else:
+            self.clear_operators()
 
         # Set OCIO config path and with validation
         if config_path is None:
@@ -130,6 +134,10 @@ class OCIOConfigFileGenerator:
         if environment_variables:
             self.set_vars(**environment_variables)
 
+        if search_paths:
+            # add additional search paths
+            self.set_search_paths(search_paths)
+
     def set_ocio_config_name(self, name: str) -> None:
         """Set the name of the OCIO Config file.
 
@@ -149,6 +157,10 @@ class OCIOConfigFileGenerator:
         """
         self.clear_views()
         self.append_views(*args)
+
+    def set_search_paths(self, *args: Union[str, List[str]]) -> None:
+        self.clear_search_paths()
+        self.append_search_paths(*args)
 
     def set_operators(self, *args) -> None:
         """Set operators.
@@ -185,6 +197,16 @@ class OCIOConfigFileGenerator:
     def clear_vars(self):
         """Clear the environment variables."""
         self._vars = {}
+
+    def clear_search_paths(self):
+        self._ocio_search_paths = []
+
+    def append_search_paths(self, *args) -> None:
+        for arg in args:
+            if isinstance(arg, list):
+                self.append_search_paths(*arg)
+            else:
+                self._ocio_search_paths.append(self._swap_variables(arg))
 
     def append_operators(self, *args) -> None:
         """Append operators.
@@ -261,9 +283,7 @@ class OCIOConfigFileGenerator:
                 computed_path = computed_path.resolve()
                 real_paths.append(computed_path.as_posix())
 
-        real_paths = list(set(real_paths))
-        var_paths = [self._swap_variables(path) for path in real_paths]
-        self._search_paths = var_paths
+        self.append_search_paths(list(set(real_paths)))
 
     def _get_absolute_search_paths(self) -> None:
         """Get the absolute search paths from the OCIO Config file."""
@@ -317,7 +337,13 @@ class OCIOConfigFileGenerator:
         """
         new_text = text
         for k, v in self._vars.items():
-            new_text = text.replace(v, f"${k}")
+            v = v.replace("\\", "/")
+            text = text.replace("\\", "/")
+            if v in text:
+                new_text = text.replace(v, f"${k}")
+                # and stop the loop since it had already found a match
+                break
+
         return new_text
 
     def load_config_from_file(self, filepath: str) -> None:
