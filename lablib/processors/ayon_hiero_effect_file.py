@@ -19,10 +19,12 @@ class AYONHieroEffectsFileProcessor(object):
 
     Arguments:
         filepath (Path): Path to the effects file.
+        target_dir_path (Path): Target directory path for the operator.
+        logger (logging.Logger): Logger instance.
     """
 
     filepath: Path = None
-    target_path: Path = None
+    target_dir_path: Path = None
     log: logging.Logger = log
 
     _wrapper_class_members = dict(
@@ -33,11 +35,11 @@ class AYONHieroEffectsFileProcessor(object):
     def __init__(
         self,
         filepath: Path,
-        target_path: Path = None,
-        logger: logging.Logger = None
+        target_dir_path: Path = None,
+        logger: logging.Logger = None,
     ) -> None:
         self.filepath = filepath
-        self.target_path = target_path
+        self.target_dir_path = target_dir_path
         if logger:
             self.log = logger
 
@@ -103,9 +105,12 @@ class AYONHieroEffectsFileProcessor(object):
     ) -> None:
         filepath = Path(node_value["file"])
 
-        if self.target_path:
+        if self.target_dir_path:
+            new_file_path = (
+                self.target_dir_path / filepath.name).as_posix()
             # set file with extension
-            node_value["file"] = f"{self.target_path.stem}.{extension}"
+            node_value["file"] = new_file_path
+            self.log.debug(f"new_file_path: {new_file_path}")
             return
 
         if filepath.exists():
