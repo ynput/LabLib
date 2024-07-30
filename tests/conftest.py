@@ -6,7 +6,7 @@ import shutil
 log = logging.getLogger(__name__)
 
 STAGING_DIR = "test_results"
-KEEP_TEST_RESULTS = True
+KEEP_TEST_RESULTS = False
 
 
 @pytest.fixture(scope="session")
