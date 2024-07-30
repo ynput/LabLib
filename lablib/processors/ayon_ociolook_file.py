@@ -22,6 +22,8 @@ class AYONOCIOLookFileProcessor(object):
 
     Attributes:
         operator (AYONOCIOLookProduct): The OCIO Look operator.
+        target_path (Path): Target path for the operator.
+        log (logging.Logger): Logger instance.
     """
 
     filepath: Path

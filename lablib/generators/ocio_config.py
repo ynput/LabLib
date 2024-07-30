@@ -406,7 +406,7 @@ class OCIOConfigFileGenerator:
         Arguments:
             dest (str): The destination path to write the OCIO Config file.
         """
-        search_paths = [f"  - {path}" for path in self._search_paths]
+        search_paths = [f"  - {path}" for path in self._ocio_search_paths]
 
         config_lines = []
         for line in self._ocio_config.serialize().splitlines():
