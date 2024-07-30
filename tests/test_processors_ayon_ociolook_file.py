@@ -21,7 +21,8 @@ class TestAYONOCIOLookFileProcessor:
                         "jp03_john_ociolookMain_v005.json"
                     ),
                     "target_path": Path(
-                        "published/ociolookMain/v006/" "john_ociolookMain_v006.json"
+                        "published/ociolookMain/v006/"
+                        "john_ociolookMain_v006.json"
                     ),
                     "logger": log,
                 },
