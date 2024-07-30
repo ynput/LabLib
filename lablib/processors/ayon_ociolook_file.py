@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 
-from typing import List, Any
+from typing import List
 from pathlib import Path
 import PyOpenColorIO as OCIO
 

@@ -188,6 +188,7 @@ class OCIOConfigFileGenerator:
 
     def clear_operators(self) -> None:
         """Clear the operators."""
+        self._ocio_transforms = []
         self._operators = []
 
     def clear_views(self):
