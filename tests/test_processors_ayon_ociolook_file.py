@@ -80,16 +80,16 @@ class TestAYONOCIOLookFileProcessor:
         ],
     )
     def test_EffectsFileProcessor(self, kwargs, results):
-        look_processor = AYONOCIOLookFileProcessor(**kwargs)
-        log.debug(f"{look_processor = }")
+        processor = AYONOCIOLookFileProcessor(**kwargs)
+        log.debug(f"Processor: {processor = }")
 
-        log.debug(look_processor.operator)
-        assert look_processor.filepath == results["expected_path"]
-        assert look_processor.get_oiiotool_cmd() == results["expected_cmd"]
+        log.debug(processor.operator)
+        assert processor.filepath == results["expected_path"]
+        assert processor.get_oiiotool_cmd() == results["expected_cmd"]
         # FileTransform
-        assert len(look_processor.operator.to_ocio_obj()) == results[
-            "expected_length"
-        ]
-        assert look_processor.operator.ocioLookItems[0]["file"] == results[
-            "expected_target_file"
-        ]
+        assert len(processor.operator.to_ocio_obj()) == results[
+            "expected_length"]
+        assert (
+            processor.operator.ocioLookItems[0]["file"]
+            == results["expected_target_file"]
+        )
