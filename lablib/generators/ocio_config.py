@@ -24,6 +24,9 @@ class OCIOConfigFileGenerator:
             objects.
         working_space (Optional[str]): The working space of the OCIO Config
             file.
+        target_view_space (Optional[str]): The target view space of the OCIO
+            Config file. For views to be using specific color spaces
+            different from working space.
         views (Optional[List[str]]): A list of views.
         description (Optional[str]): The description of the OCIO Config file.
         staging_dir (Optional[str]): The staging directory of the OCIO Config
@@ -74,6 +77,7 @@ class OCIOConfigFileGenerator:
         operators: Optional[List[OCIO.Transform]] = None,
         config_path: Optional[str] = None,
         working_space: Optional[str] = None,
+        target_view_space: Optional[str] = None,
         views: Optional[List[str]] = None,
         description: Optional[str] = None,
         staging_dir: Optional[str] = None,
@@ -90,6 +94,12 @@ class OCIOConfigFileGenerator:
             self.working_space = "ACES - ACEScg"
         else:
             self.working_space = working_space
+
+        # Default target view space
+        if target_view_space is None:
+            self.target_view_space = self.working_space
+        else:
+            self.target_view_space = target_view_space
 
         # Default views
         if views:
@@ -310,13 +320,8 @@ class OCIOConfigFileGenerator:
                 continue
 
             # TODO: this should be probably somewhere else
-            if (
-                hasattr(ocio_transform, "getCCCId")
-                and ocio_transform.getCCCId()
-            ):
-                ocio_transform.setCCCId(
-                    self._swap_variables(ocio_transform.getCCCId())
-                )
+            if hasattr(ocio_transform, "getCCCId") and ocio_transform.getCCCId():
+                ocio_transform.setCCCId(self._swap_variables(ocio_transform.getCCCId()))
 
             search_path = Path(ocio_transform.getSrc())
             if not search_path.exists():
@@ -324,8 +329,7 @@ class OCIOConfigFileGenerator:
 
             # Change the src path to the name of the search path
             # and replace any found variables
-            ocio_transform.setSrc(
-                self._swap_variables(search_path.name))
+            ocio_transform.setSrc(self._swap_variables(search_path.name))
 
     def _swap_variables(self, text: str) -> str:
         """Replace variables in a string with their values.
@@ -374,20 +378,17 @@ class OCIOConfigFileGenerator:
         colorspace.setName(self.context)
         colorspace.setFamily(self.family)
         colorspace.setTransform(
-            group_transform,
-            OCIO.ColorSpaceDirection.COLORSPACE_DIR_FROM_REFERENCE
+            group_transform, OCIO.ColorSpaceDirection.COLORSPACE_DIR_FROM_REFERENCE
         )
         look = OCIO.Look(
-            name=self.context,
-            processSpace=self.working_space,
-            transform=look_transform
+            name=self.context, processSpace=self.working_space, transform=look_transform
         )
         self._ocio_config.addColorSpace(colorspace)
         self._ocio_config.addLook(look)
         self._ocio_config.addDisplayView(
             self._ocio_config.getActiveDisplays().split(",")[0],
             self.context,
-            self.working_space,
+            self.target_view_space,
             looks=self.context,
         )
 
@@ -396,9 +397,7 @@ class OCIOConfigFileGenerator:
         else:
             views_value = ",".join(self._views)
 
-        self._ocio_config.setActiveViews(
-            f"{self.context},{views_value}"
-        )
+        self._ocio_config.setActiveViews(f"{self.context},{views_value}")
         self._ocio_config.validate()
 
     def write_config(self, dest: str = None) -> str:
@@ -456,9 +455,6 @@ class OCIOConfigFileGenerator:
         return [
             "--colorconfig",
             self._dest_path,
-            (
-                f"--ociolook:from=\"{self.working_space}\""
-                f":to=\"{self.working_space}\""
-            ),
+            (f'--ociolook:from="{self.working_space}"' f':to="{self.working_space}"'),
             self.context,
         ]
