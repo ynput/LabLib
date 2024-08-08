@@ -169,7 +169,6 @@ class OCIOConfigFileGenerator:
         self.append_views(*args)
 
     def set_search_paths(self, *args: Union[str, List[str]]) -> None:
-        self.clear_search_paths()
         self.append_search_paths(*args)
 
     def set_operators(self, *args) -> None:
@@ -209,10 +208,10 @@ class OCIOConfigFileGenerator:
         """Clear the environment variables."""
         self._vars = {}
 
-    def clear_search_paths(self):
+    def append_search_paths(self, *args) -> None:
+        # first clear all search paths
         self._ocio_search_paths = []
 
-    def append_search_paths(self, *args) -> None:
         for arg in args:
             if isinstance(arg, list):
                 self.append_search_paths(*arg)
