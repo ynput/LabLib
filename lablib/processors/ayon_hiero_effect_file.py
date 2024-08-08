@@ -59,6 +59,10 @@ class AYONHieroEffectsFileProcessor(object):
         return self._repo_ops
 
     def load(self) -> None:
+        """Loads the effects file.
+        Attention:
+            This method clears the lists of all operators before loading.
+        """
         # first clear all operators
         self.clear_operators()
 
