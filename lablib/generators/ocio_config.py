@@ -64,7 +64,6 @@ class OCIOConfigFileGenerator:
     _views: List[str] = []
     _config_path: Path  # OCIO Config file
     _ocio_config: OCIO.Config  # OCIO Config object
-    _ocio_transforms: List = []
     _ocio_search_paths: List[str] = []
     _ocio_config_name: str = "config.ocio"
     _dest_path: str = ""
@@ -197,7 +196,6 @@ class OCIOConfigFileGenerator:
 
     def clear_operators(self) -> None:
         """Clear the operators."""
-        self._ocio_transforms = []
         self._operators = []
 
     def clear_views(self):
@@ -298,7 +296,7 @@ class OCIOConfigFileGenerator:
     def _get_absolute_search_paths(self) -> None:
         """Get the absolute search paths from the OCIO Config file."""
         paths = self._get_search_paths_from_config()
-        for ocio_transform in self._ocio_transforms:
+        for ocio_transform in self._operators:
             if not hasattr(ocio_transform, "getSrc"):
                 continue
             search_path = Path(ocio_transform.getSrc())
@@ -314,7 +312,7 @@ class OCIOConfigFileGenerator:
 
         This will also replace any variables found in the path.
         """
-        for ocio_transform in self._ocio_transforms:
+        for ocio_transform in self._operators:
             if not hasattr(ocio_transform, "getSrc"):
                 continue
 
@@ -369,7 +367,7 @@ class OCIOConfigFileGenerator:
             self._ocio_config.addEnvironmentVar(k, v)
 
         self._ocio_config.setDescription(self._description)
-        group_transform = OCIO.GroupTransform(self._ocio_transforms)
+        group_transform = OCIO.GroupTransform(self._operators)
         look_transform = OCIO.ColorSpaceTransform(
             src=self.working_space, dst=self.context
         )
@@ -377,10 +375,13 @@ class OCIOConfigFileGenerator:
         colorspace.setName(self.context)
         colorspace.setFamily(self.family)
         colorspace.setTransform(
-            group_transform, OCIO.ColorSpaceDirection.COLORSPACE_DIR_FROM_REFERENCE
+            group_transform,
+            OCIO.ColorSpaceDirection.COLORSPACE_DIR_FROM_REFERENCE
         )
         look = OCIO.Look(
-            name=self.context, processSpace=self.working_space, transform=look_transform
+            name=self.context,
+            processSpace=self.working_space,
+            transform=look_transform
         )
         self._ocio_config.addColorSpace(colorspace)
         self._ocio_config.addLook(look)
@@ -434,9 +435,6 @@ class OCIOConfigFileGenerator:
             dest = Path(self.staging_dir, self._ocio_config_name)
         dest = Path(dest).resolve().as_posix()
         self.load_config_from_file(self._config_path.resolve().as_posix())
-
-        for op in self._operators:
-            self._ocio_transforms.append(op)
 
         self._get_absolute_search_paths()
         self._change_src_paths_to_names()
