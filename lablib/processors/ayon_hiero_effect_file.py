@@ -19,16 +19,31 @@ class AYONHieroEffectsFileProcessor(object):
 
     Arguments:
         filepath (Path): Path to the effects file.
+        target_dir_path (Path): Target directory path for the operator.
+        logger (logging.Logger): Logger instance.
     """
 
     filepath: Path = None
+    target_dir_path: Path = None
+    log: logging.Logger = log
 
-    _wrapper_class_members = dict(inspect.getmembers(operators, inspect.isclass))
+    _wrapper_class_members = dict(
+        inspect.getmembers(operators, inspect.isclass))
     _color_ops: List = []
     _repo_ops: List = []
 
-    def __init__(self, filepath: Path) -> None:
+    def __init__(
+        self,
+        filepath: Path,
+        target_dir_path: Path = None,
+        logger: logging.Logger = None,
+    ) -> None:
         self.filepath = filepath
+        self.target_dir_path = target_dir_path
+        if logger:
+            self.log = logger
+
+        self.load()
 
     @property
     def color_operators(self) -> List:
@@ -43,7 +58,15 @@ class AYONHieroEffectsFileProcessor(object):
         """List of repositioning operators to be processed."""
         return self._repo_ops
 
-    def _load(self) -> None:
+    def load(self) -> None:
+        """Loads the effects file.
+        Attention:
+            This method clears the lists of all operators before loading.
+        """
+        # first clear all operators
+        self.clear_operators()
+
+        # load the effect file
         effect_file_path = self.filepath.resolve().as_posix()
 
         # get all relative files recursively so we can make sure files in
@@ -81,8 +104,19 @@ class AYONHieroEffectsFileProcessor(object):
             else:
                 self._repo_ops.append(class_obj)
 
-    def _sanitize_file_path(self, node_value: dict, all_relative_files: dict) -> None:
+    def _sanitize_file_path(
+        self, node_value: dict, all_relative_files: dict
+    ) -> None:
         filepath = Path(node_value["file"])
+
+        if self.target_dir_path:
+            new_file_path = (
+                self.target_dir_path / filepath.name).as_posix()
+            # set file with extension
+            node_value["file"] = new_file_path
+            self.log.debug(f"new_file_path: {new_file_path}")
+            return
+
         if filepath.exists():
             node_value["file"] = filepath.as_posix()
             return
@@ -100,15 +134,6 @@ class AYONHieroEffectsFileProcessor(object):
         """Clears lists of all operators."""
         self._color_ops = []
         self._repo_ops = []
-
-    def load(self) -> None:
-        """Loads the effects file.
-
-        Attention:
-            This method clears the lists of all operators before loading.
-        """
-        self.clear_operators()
-        self._load()
 
     def get_oiiotool_cmd(self) -> List[str]:
         """Returns arguments for oiiotool command."""

@@ -22,20 +22,34 @@ class AYONOCIOLookFileProcessor(object):
 
     Attributes:
         operator (AYONOCIOLookProduct): The OCIO Look operator.
+        target_path (Path): Target path for the operator.
+        log (logging.Logger): Logger instance.
     """
 
     filepath: Path
     operator: AYONOCIOLookProduct
+    target_path: Path = None
+    log: logging.Logger = log
 
-    def __init__(self, filepath: Path) -> None:
+    def __init__(
+        self,
+        filepath: Path,
+        target_path: Path = None,
+        logger: logging.Logger = None
+    ) -> None:
         self.filepath = filepath
+        self.target_path = target_path
+        if logger:
+            self.log = logger
+
         self.load()
 
     def load(self) -> None:
         """Load the OCIO Look file.
 
         Note:
-            This globs all relative files recursively so we can make sure files in transforms are having correct path.
+            This globs all relative files recursively so we can make sure
+            files in transforms are having correct path.
 
         Attention:
             This method clears the operator before loading the file.
@@ -45,7 +59,8 @@ class AYONOCIOLookFileProcessor(object):
 
         # get all relative files recursively so we can make sure files in
         # transforms are having correct path
-        all_relative_files = {f.name: f for f in Path(self.filepath.parent).rglob("*")}
+        all_relative_files = {
+            f.name: f for f in Path(self.filepath.parent).rglob("*")}
 
         with open(ociolook_file_path, "r") as f:
             ops_data = json.load(f)
@@ -54,8 +69,7 @@ class AYONOCIOLookFileProcessor(object):
 
         if schema_data_version != 1:
             raise ValueError(
-                f"Schema data version {schema_data_version} is not supported"
-            )
+                f"Schema data version {schema_data_version} is not supported")
 
         # INFO: This is a temporary fix to handle the case where
         #   the filepath is not found in the data
@@ -76,13 +90,26 @@ class AYONOCIOLookFileProcessor(object):
                 args.extend(["--colorconvert", xfm.getSrc(), xfm.getDst()])
         return args
 
-    def _sanitize_file_path(self, repre_data: dict, all_relative_files: dict) -> None:  # noqa: E501
+    def _sanitize_file_path(
+        self, repre_data: dict, all_relative_files: dict
+    ) -> None:
+
         extension = repre_data["ext"]
 
-        for file, path in all_relative_files.items():
-            if file.endswith(extension):
-                repre_data["file"] = path.resolve().as_posix()
-                break
+        if repre_data.get("file"):
+            return
+
+        if self.target_path:
+            # set file with extension
+            repre_data["file"] = f"{self.target_path.stem}.{extension}"
+        else:
+            for file, path in all_relative_files.items():
+                if file.endswith(extension):
+                    repre_data["file"] = path.resolve().as_posix()
+                    break
 
         if not repre_data.get("file"):
-            log.warning(f"File not found: {repre_data['name']}.{repre_data['ext']}.")
+            log.warning(
+                f"File not found: {repre_data['name']}.{repre_data['ext']}.")
+
+        self.log.info(f"Added missing file path: {repre_data['file']}")
