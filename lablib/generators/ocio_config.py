@@ -58,6 +58,7 @@ class OCIOConfigFileGenerator:
         FileNotFoundError: If the OCIO Config file is not found.
 
     """
+    log: logging.Logger = log
 
     _description: str
     _vars: Dict[str, str] = {}
@@ -82,7 +83,9 @@ class OCIOConfigFileGenerator:
         staging_dir: Optional[str] = None,
         environment_variables: Optional[Dict] = None,
         search_paths: Optional[List[str]] = None,
+        logger: logging.Logger = None,
     ):
+
         # Context is required
         self.context = context
 
@@ -143,9 +146,14 @@ class OCIOConfigFileGenerator:
         if environment_variables:
             self.set_vars(**environment_variables)
 
+        # first clear all search paths
+        self._ocio_search_paths = []
         if search_paths:
             # add additional search paths
             self.set_search_paths(search_paths)
+
+        if logger:
+            self.log = logger
 
     def set_ocio_config_name(self, name: str) -> None:
         """Set the name of the OCIO Config file.
@@ -207,9 +215,11 @@ class OCIOConfigFileGenerator:
         self._vars = {}
 
     def append_search_paths(self, *args) -> None:
-        # first clear all search paths
-        self._ocio_search_paths = []
+        """Append search paths.
 
+        Arguments:
+            *args: A list of search paths.
+        """
         for arg in args:
             if isinstance(arg, list):
                 self.append_search_paths(*arg)
@@ -301,7 +311,7 @@ class OCIOConfigFileGenerator:
                 continue
             search_path = Path(ocio_transform.getSrc())
             if not search_path.exists():
-                log.warning(f"Path not found: {search_path}")
+                self.log.warning(f"Path not found: {search_path}")
 
             paths.append(ocio_transform.getSrc())
 
@@ -322,7 +332,7 @@ class OCIOConfigFileGenerator:
 
             search_path = Path(ocio_transform.getSrc())
             if not search_path.exists():
-                log.warning(f"Path not found: {search_path}")
+                self.log.warning(f"Path not found: {search_path}")
 
             # Change the src path to the name of the search path
             # and replace any found variables
@@ -363,9 +373,6 @@ class OCIOConfigFileGenerator:
         color space transform, color space, look, display view, active views,
         and validate the OCIO Config object.
         """
-        for k, v in self._vars.items():
-            self._ocio_config.addEnvironmentVar(k, v)
-
         self._ocio_config.setDescription(self._description)
         group_transform = OCIO.GroupTransform(self._operators)
         look_transform = OCIO.ColorSpaceTransform(
@@ -406,14 +413,24 @@ class OCIOConfigFileGenerator:
         Arguments:
             dest (str): The destination path to write the OCIO Config file.
         """
-        search_paths = [f"  - {path}" for path in self._ocio_search_paths]
+
+        search_path_lines = self._get_search_paths_lines()
+        environment_lines = self._get_environment_variables_lines()
 
         config_lines = []
         for line in self._ocio_config.serialize().splitlines():
             if "search_path" not in line:
                 config_lines.append(line)
                 continue
-            config_lines.extend(["", "search_path:"] + search_paths + [""])
+
+            # Add search paths and environment variables
+            # TODO: figure out how to do it properly since this is a hacky way
+            if environment_lines:
+                config_lines.extend(
+                    ["", "environment:"] + environment_lines + [""])
+            if search_path_lines:
+                config_lines.extend(
+                    ["", "search_path:"] + search_path_lines + [""])
 
         final_config = "\n".join(config_lines)
         dest = Path(dest).resolve()
@@ -421,6 +438,29 @@ class OCIOConfigFileGenerator:
         with open(dest.as_posix(), "w") as f:
             f.write(final_config)
         return final_config
+
+    def _get_search_paths_lines(self) -> List[str]:
+        """Add search paths to the OCIO Config file.
+
+        INFO: This is temporary hacky way to add search paths to the
+            OCIO since OCIO is ignoring official api methods `addSearchPath()`.
+
+        Arguments:
+            paths (List[str]): A list of search paths.
+        """
+        return [f"  - {path}" for path in self._ocio_search_paths]
+
+    def _get_environment_variables_lines(self) -> List[str]:
+        """Add environment variables to the OCIO Config file.
+
+        INFO: This is temporary hacky way to add environment variables to the
+            OCIO since OCIO is ignoring official api
+            methods `addEnvironmentVar()`.
+
+        Returns:
+            List[str]: A list of environment variables.
+        """
+        return [f"  {k}: {v}" for k, v in self._vars.items()]
 
     def create_config(self, dest: str = None) -> str:
         """Create an OCIO Config file.
