@@ -196,7 +196,7 @@ class OCIOCDLTransform:
             effects.append(
                 OCIO.FileTransform(
                     src=lut_file.as_posix(),
-                    cccId=self.cccid,
+                    cccId=(self.cccid or "0"),
                     interpolation=interpolation,
                     direction=direction,
                 )
