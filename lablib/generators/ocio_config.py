@@ -405,6 +405,16 @@ class OCIOConfigFileGenerator:
             views_value = ",".join(self._views)
 
         self._ocio_config.setActiveViews(f"{self.context},{views_value}")
+
+        for env_key, env_value in self._vars.items():
+            self._ocio_config.addEnvironmentVar(env_key, env_value)
+
+        # adding all search paths doesn't serialize for some reason
+        # so setting the first one and adding the rest
+        self._ocio_config.setSearchPath(self._ocio_search_paths[0])
+        for i in range(1, len(self._ocio_search_paths)):
+            self._ocio_config.addSearchPath(self._ocio_search_paths[i])
+
         self._ocio_config.validate()
 
     def write_config(self, dest: str = None) -> str:
@@ -414,30 +424,10 @@ class OCIOConfigFileGenerator:
             dest (str): The destination path to write the OCIO Config file.
         """
 
-        search_path_lines = self._get_search_paths_lines()
-        environment_lines = self._get_environment_variables_lines()
-
-        config_lines = []
-        for line in self._ocio_config.serialize().splitlines():
-            if "search_path" not in line:
-                config_lines.append(line)
-                continue
-
-            # Add search paths and environment variables
-            # TODO: figure out how to do it properly since this is a hacky way
-            if environment_lines:
-                config_lines.extend(
-                    ["", "environment:"] + environment_lines + [""])
-            if search_path_lines:
-                config_lines.extend(
-                    ["", "search_path:"] + search_path_lines + [""])
-
-        final_config = "\n".join(config_lines)
         dest = Path(dest).resolve()
         dest.parent.mkdir(exist_ok=True, parents=True)
         with open(dest.as_posix(), "w") as f:
-            f.write(final_config)
-        return final_config
+            f.write(self._ocio_config.serialize())
 
     def _get_search_paths_lines(self) -> List[str]:
         """Add search paths to the OCIO Config file.
