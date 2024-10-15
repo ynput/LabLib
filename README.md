@@ -39,3 +39,4 @@ You can run the full suite with `.\start.ps1 test` or to run custom `pytest` com
 
 ## Contributing
 The best way to contribute to LabLib currently is to write extensive test cases for all modules. But also sharing your thoughts and ideas on the [Discussions Page](https://github.com/ynput/LabLib/discussions) really helps to keep this project going 💞
+
