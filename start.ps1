@@ -142,7 +142,7 @@ function main {
     } elseif ($FunctionName -eq "test") {
         Change-Cwd
         set_env
-        & "$env:POETRY_HOME\bin\poetry" run pytest -vv -x --capture=sys -W ignore::DeprecationWarning @arguments
+        & "$env:POETRY_HOME\bin\poetry" run python -X faulthandler -m pytest -p no:faulthandler -s -vv -x --capture=sys -W ignore::DeprecationWarning @arguments
     } elseif ($FunctionName -eq "setenv") {
         Change-Cwd
         set_env
