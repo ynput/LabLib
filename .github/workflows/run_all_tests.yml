@@ -45,7 +45,7 @@ jobs:
 
       - name: run all tests
         run: |
-          .\start.ps1 test
+          poetry run pytest -vv tests
 
       - name: save vendor dependencies cache
         if: steps.restore-vendor.outputs.cache-hit != 'true'
