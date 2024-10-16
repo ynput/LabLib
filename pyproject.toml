@@ -12,7 +12,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.9.1,<3.10"
 opentimelineio = "^0.16.0"
-opencolorio = "^2.3.2"
+opencolorio = "<=2.3.2"
 selenium = "4.16.0"
 
 [tool.poetry.dev-dependencies]
