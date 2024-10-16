@@ -37,7 +37,7 @@ jobs:
       - name: install LabLib
         run: |
           $env:POETRY_HOME="$repo_root\.poetry"
-          $repo_root\.poetry\bin\poetry.exe lock
+          .\.poetry\bin\poetry.exe lock
           .\start.ps1 install
 
       - name: get dependencies
