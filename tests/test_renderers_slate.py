@@ -46,14 +46,10 @@ def source_dir():
         and after each tests.
     """
     # Prepare a temporary directory with a copy of default sequence
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = tempfile.mkdtemp(dir=os.getcwd())
     for img in DEFAULT_SEQUENCE.frames:
         new_path = pathlib.Path(temp_dir) / img.filename
-
-        try:
-            new_path.symlink_to(img.path)
-        except OSError:
-            shutil.copy(img.filepath, new_path)
+        shutil.copy(img.filepath, new_path)
 
     yield temp_dir
 
