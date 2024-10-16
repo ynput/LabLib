@@ -193,13 +193,6 @@ def call_ffprobe(filepath: str | Path) -> dict:
     return result
 
 
-class format_dict(dict):
-    _placeholder = "**MISSING**"
-
-    def __missing__(self, key) -> str:
-        return self._placeholder
-
-
 def offset_timecode(tc: str, frame_offset: int = None, fps: float = None) -> str:
     if not frame_offset:
         frame_offset = -1

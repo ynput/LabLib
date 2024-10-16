@@ -1,5 +1,4 @@
 from __future__ import annotations
-from dataclasses import dataclass
 
 import subprocess
 import shutil
@@ -7,63 +6,121 @@ from typing import List
 
 from pathlib import Path
 
-from ..lib.utils import call_iinfo, offset_timecode
+from ..lib.utils import call_iinfo, call_cmd, offset_timecode
 from ..generators import SlateHtmlGenerator
 from ..lib import SequenceInfo
+from .basic import BasicRenderer
 
 
-@dataclass
-class SlateRenderer:
+class SlateRenderer(BasicRenderer):
     """Class for rendering slates.
 
-    Attention:
-        This class is functional but not yet tested.
+    .. admonition:: Example
 
-    TODO:
-        * refactor into a plain python class
-        * add tests
+        .. code-block:: python
+
+            # render slate image to 1080p
+            slate_generator = SlateHtmlGenerator(
+                # data used to fill up the slate template
+                {
+                    "project": {"name": "test_project"},
+                    "intent": {"value": "test_intent"},            
+                    "task": {"short": "test_task"},
+                    "asset": "test_asset",
+                    "comment": "some random comment",
+                    "scope": "test_scope",
+                    "@version": "123",
+                },
+                "/templates/slates/slate_generic/slate_generic.html",
+            )
+            rend = SlateRenderer(
+                slate_generator,
+                SequenceInfo.scan("resources/public/plateMain/v002")[0],
+            )
+            rend.render(debug=True)
     """
 
-    slate_proc: SlateHtmlGenerator = None
-    source_sequence: SequenceInfo = None
-    dest: str = None
+    def __init__(
+        self,
+        slate_generator: SlateHtmlGenerator,
+        source_sequence: SequenceInfo,
+        destination: str = None  # default prepend to the source sequence
+    ):
+        self._slate_proc = slate_generator
+        self._dest = None  # default destination
+        self._forced_dest = destination  # explicit destination
 
-    def __post_init__(self) -> None:
-        self._thumbs: List = None
-        self._debug: bool = False
-        self._command: List = []
-        if self.source_sequence:
-            self.set_source_sequence(self.source_sequence)
-            self.slate_proc.source_files = self.source_sequence.frames
-        if self.dest:
-            self.set_destination(self.dest)
-
-    def set_slate_processor(self, processor: SlateHtmlGenerator) -> None:
-        self.slate_proc = processor
-
-    def set_debug(self, debug: bool) -> None:
-        self._debug = debug
-
-    def set_source_sequence(self, source_sequence: SequenceInfo) -> None:
+        self._source_sequence = None
         self.source_sequence = source_sequence
-        head, frame, tail = source_sequence._get_file_splits(source_sequence.frames[0])
-        self.dest = f"{head}{str(int(frame) - 1).zfill(source_sequence.padding)}{tail}"  # noqa
 
-    def set_destination(self, dest: str) -> None:
-        self.dest = dest
+        self._thumbs: List = None
+        self._command: List = []
 
-    def render(self) -> None:
-        iinfo_metadata = call_iinfo(self.source_sequence.frames[0])
+    @property
+    def slate_generator(self) -> SlateHtmlGenerator:
+        """
+        Returns:
+            SlateHtmlGenerator: The generator associated to the renderer.
+        """
+        return self._slate_proc
+
+    @slate_generator.setter
+    def slate_generator(self, generator: SlateHtmlGenerator) -> None:
+        """
+        Args:
+            generator (SlateHtmlGenerator): The new generator for the renderer.
+        """
+        self._slate_proc = generator
+        self._slate_proc.source_files = self._source_sequence.frames
+
+    @property
+    def source_sequence(self) -> SequenceInfo:
+        """Return the source sequence.
+
+        Returns:
+            SequenceInfo. The source sequence.
+        """
+        return self._source_sequence
+
+    @source_sequence.setter
+    def source_sequence(self, source_sequence: SequenceInfo) -> None:
+        """Set new source sequence.
+        """
+        self._source_sequence = source_sequence
+        self._slate_proc.source_files = self._source_sequence.frames
+
+        first_frame = self._source_sequence.frames[0]
+        frame_number = first_frame.frame_number
+        slate_frame = str(frame_number - 1).zfill(source_sequence.padding)
+        ext = first_frame.extension
+        head, _, __ =  first_frame.filepath.rsplit(".", 3)
+
+        self._dest = f"{head}.{slate_frame}{ext}"
+
+    @property
+    def destination(self):
+        """
+        Returns:
+            str: The renderer destination.
+        """
+        return self._forced_dest or self._dest
+
+    def render(self, debug=False) -> None:
+        """Render the slate sequence.
+
+        Arguments:
+            debug (Optional[bool]): Whether to increase log verbosity.
+        """        
+        first_frame = self.source_sequence.frames[0]
         timecode = offset_timecode(
-            tc=iinfo_metadata["timecode"],
+            tc=first_frame.timecode,
             frame_offset=-1,
-            fps=iinfo_metadata["fps"],
+            fps=first_frame.fps,
         )
-        self.slate_proc.create_base_slate()
-        if not self.slate_proc:
-            raise ValueError("Missing valid SlateHtmlGenerator!")
+        self._slate_proc.create_base_slate()
+
         cmd = ["oiiotool"]
-        cmd.extend(self.slate_proc.get_oiiotool_cmd())
+        cmd.extend(self._slate_proc.get_oiiotool_cmd())
         cmd.extend(
             [
                 "--ch",
@@ -73,11 +130,12 @@ class SlateRenderer:
                 f"""'{timecode.replace('"', "")}'""",
             ]
         )
-        if self._debug:
+        if debug:
             cmd.extend(["--debug", "-v"])
-        cmd.extend(["-o", self.dest])
-        self._command = cmd
-        subprocess.run(cmd)
-        slate_base_image_path = Path(self.slate_proc._slate_base_image_path).resolve()
+
+        cmd.extend(["-o", self.destination])
+        call_cmd(cmd)
+
+        slate_base_image_path = Path(self._slate_proc._slate_base_image_path).resolve()
         slate_base_image_path.unlink()
         shutil.rmtree(slate_base_image_path.parent)
