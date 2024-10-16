@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import collections
 import datetime
-import os
+from enum import Enum
 import shutil
 from typing import List, Dict
 from pathlib import Path
@@ -13,21 +14,31 @@ from selenium.webdriver.common.by import By
 from ..lib import utils, imageio
 
 
+class SlateFillMode(Enum):
+    """Slate fill mode (fill up template from data).
+    """
+    RAISE_WHEN_MISSING = 1  # missing data from template : raise
+    HIDE_FIELD_WHEN_MISSING = 2  # missing data from template : hide field
+
+
 class SlateHtmlGenerator:
     """Class to generate a slate from a template.
 
     Attributes:
-        slate_template_path: The path to the template.
-        data: A dictionary containing the data to be formatted in the template.
-        width: The width of the slate.
-        height: The height of the slate.
-        staging_dir: The directory where the slate will be staged.
-        source_files: A list of source files.
-        is_source_linear: A boolean to set whether the source files are linear.
+        data (dict): A dictionary containing the data to be formatted in the template.    
+        slate_template_path (str): The path to the template.
+        width (int): The width of the slate.
+        height (int): The height of the slate.
+        staging_dir (str): The directory where the slate will be staged.
+        source_files (list): A list of source files.
+        is_source_linear (bool): A boolean to set whether the source files are linear.
+        slate_fill_mode (SlateFillMode): The template fill mode.
 
     Raises:
         ValueError: When the provided slate template path is invalid.
     """
+    _MISSING_FIELD = "**MISSING**"
+
     def __init__(
         self,
         data: Dict,
@@ -36,7 +47,8 @@ class SlateHtmlGenerator:
         height: int = None,
         staging_dir: str = None,
         source_files: List = None,
-        is_source_linear: bool = None
+        is_source_linear: bool = None,
+        slate_fill_mode: SlateFillMode = None
     ):
         self.data = data
         self.width = width or 1920
@@ -44,6 +56,7 @@ class SlateHtmlGenerator:
         self._staging_dir =  staging_dir or utils.get_staging_dir()
         self.source_files = source_files or []
         self.is_source_linear = is_source_linear if is_source_linear is not None else True
+        self._slate_fill_mode = slate_fill_mode or SlateFillMode.RAISE_WHEN_MISSING
 
         try:
             slate_template_path = slate_template_path
@@ -156,6 +169,35 @@ class SlateHtmlGenerator:
         self._slate_staged_path = slate_staged_path.as_posix()
         return self._slate_staged_path
 
+    def __format_template(self, template_content: str, values: dict) -> str:
+        """
+        Args:
+            template_content (str): The template content to format.
+            values (dict): The values to use for formatting.
+
+        Returns:
+            str: The formatted string.
+
+        Raises:
+            ValueError: When some key is missing or the mode is unknown.
+        """
+        # Attempt to replace/format template with content.
+        if self._slate_fill_mode == SlateFillMode.RAISE_WHEN_MISSING:
+            try:
+                return template_content.format(**values)
+            except KeyError as error:
+                raise ValueError(
+                    f"Key mismatch, cannot fill template: {error}"
+                ) from error
+
+        elif self._slate_fill_mode == SlateFillMode.HIDE_FIELD_WHEN_MISSING:
+            default_values = collections.defaultdict(lambda: self._MISSING_FIELD)
+            default_values.update(values)
+            return template_content.format_map(default_values)
+
+        else:
+            raise ValueError(f"Unknown slate fill mode {self._slate_fill_mode}.")
+
     def _format_slate(self) -> None:
         """Format template with generator data values.
 
@@ -179,13 +221,7 @@ class SlateHtmlGenerator:
         with open(self._slate_staged_path, "r+") as f:
             template_content = f.read()
 
-        # Attempt to replace/format template with content.
-        try:
-            content = template_content.format(**formatted_dict)
-        except KeyError as error:
-            raise ValueError(
-                f"Key mismatch, cannot fill template: {error}"
-            ) from error
+        content = self.__format_template(template_content, formatted_dict)
 
         # Override template file content with formatted data.
         with open(self._slate_staged_path, "w+") as f:
@@ -195,27 +231,17 @@ class SlateHtmlGenerator:
 
         self._driver.get(self._slate_staged_path)
 
-        # TODO: Revisit this.
-        # Currently this function will fail with a KeyError
-        # if any data expected by the template is missing from
-        # the data dict.
-        #
-        # The code below turns this into a silent fails where
-        # missig fields are hidden from the resulting slate.
-#        elements = self._driver.find_elements(
-#            By.XPATH,
-#            "//*[contains(text(),'{}')]".format("**MISSING"),
-#        )
-#        for el in elements:
-#            self._driver.execute_script(
-#                "var element = arguments[0];\n" "element.style.display = 'none';", el
-#            )
-#            if self._remove_missing_parents:
-#                parent = el.find_element(By.XPATH, "..")
-#                self._driver.execute_script(
-#                    "var element = arguments[0];\n" "element.style.display = 'none';",
-#                    parent,
-#                )
+        # HIDE_FIELD_WHEN_MISSING mode
+        # The code below hide detected missing fields from the resulting slate.
+        elements = self._driver.find_elements(
+            By.XPATH,
+            "//*[contains(text(),'{}')]".format(self._MISSING_FIELD),
+        )
+        for el in elements:
+            self._driver.execute_script(
+                "var element = arguments[0];\n" "element.style.display = 'none';", el
+            )
+
         with open(self._slate_staged_path, "w") as f:
             f.write(self._driver.page_source)
 

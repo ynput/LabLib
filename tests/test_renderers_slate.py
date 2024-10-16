@@ -6,7 +6,7 @@ import shutil
 import pytest
 
 from lablib.lib import SequenceInfo
-from lablib.generators import SlateHtmlGenerator
+from lablib.generators import SlateHtmlGenerator, SlateFillMode
 from lablib.renderers import SlateRenderer
 
 
@@ -56,6 +56,7 @@ def source_dir():
     # Remove all temporary directory content.
     shutil.rmtree(temp_dir)
 
+
 def test_Slaterenderer_missing_keys():
     """ An Exception should raise if any key defined in the 
         template but missing in the provided data.
@@ -68,15 +69,47 @@ def test_Slaterenderer_missing_keys():
         _run_slate_renderer(generator)
 
 
+def test_Slaterenderer_unknown_mode():
+    """ An Exception should raise if the provided slate mode is unknown.
+    """
+    with pytest.raises(ValueError):
+        generator = SlateHtmlGenerator(
+            {"missing": "data"},
+            SLATE_TEMPLATE_FILE,
+            slate_fill_mode="UNKNOWN MODE"
+        )
+        _run_slate_renderer(generator)
+
+
+def test_Slaterenderer_missing_keys_hide(source_dir):
+    """ Slate should go through even with missing data
+        when using HIDE_WHEN_MISSING mode.
+    """
+    source_sequence =  SequenceInfo.scan(source_dir)[0]    
+    generator = SlateHtmlGenerator(
+        {"missing": "data"},
+        SLATE_TEMPLATE_FILE,
+        slate_fill_mode=SlateFillMode.HIDE_FIELD_WHEN_MISSING
+    )
+    _run_slate_renderer(generator, sequence=source_sequence)
+
+    edited_sequence = SequenceInfo.scan(source_dir)[0]
+    slate_frame = edited_sequence.frames[0]
+
+    assert len(edited_sequence.frames) == len(source_sequence.frames) + 1
+    assert slate_frame.width == 1920
+    assert slate_frame.height == 1080
+
+
 def test_Slaterenderer_default(source_dir):
     """ Ensure a valid HD slate is generated from default.
     """
     source_sequence =  SequenceInfo.scan(source_dir)[0]
     generator = SlateHtmlGenerator(
         {
-            "project": {"name": "test_project"},
-            "intent": {"value": "test_intent"},            
-            "task": {"short": "test_task"},
+            "project_name": "test_project",
+            "intent": "test_intent",
+            "task_short": "test_task",
             "asset": "test_asset",
             "comment": "some random comment",
             "scope": "test_scope",
@@ -100,9 +133,9 @@ def test_Slaterenderer_4K(source_dir):
     source_sequence =  SequenceInfo.scan(source_dir)[0]
     generator = SlateHtmlGenerator(
         {
-            "project": {"name": "test_project"},
-            "intent": {"value": "test_intent"},            
-            "task": {"short": "test_task"},
+            "project_name": "test_project",
+            "intent": "test_intent",
+            "task_short": "test_task",
             "asset": "test_asset",
             "comment": "some random comment",
             "scope": "test_scope",
@@ -128,9 +161,9 @@ def test_Slaterenderer_explicit_output(source_dir):
     expected_output = pathlib.Path(source_dir) / "output.exr"
     generator = SlateHtmlGenerator(
         {
-            "project": {"name": "test_project"},
-            "intent": {"value": "test_intent"},            
-            "task": {"short": "test_task"},
+            "project_name": "test_project",
+            "intent": "test_intent",
+            "task_short": "test_task",
             "asset": "test_asset",
             "comment": "some random comment",
             "scope": "test_scope",
