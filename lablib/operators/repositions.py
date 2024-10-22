@@ -9,9 +9,20 @@ from lablib.lib.utils import (
     mult_matrix,
 )
 
+from .base import BaseOperator
+
+
+class RepositionOperator(BaseOperator):
+    """Base class for reposition operators.
+
+    Currently this is only used for type checking.
+    """
+
+    pass
+
 
 @dataclass
-class Transform:
+class Transform(RepositionOperator):
     """Transform operator for repositioning images.
 
     Note:
@@ -87,7 +98,7 @@ class Transform:
 
 
 @dataclass
-class Crop:
+class Crop(RepositionOperator):
     """Operator for cropping images.
 
     Attributes:
@@ -123,7 +134,7 @@ class Crop:
 
 
 @dataclass
-class Mirror2:
+class Mirror2(RepositionOperator):
     """Operator for mirroring images.
 
     TODO:
@@ -164,7 +175,7 @@ class Mirror2:
 
 
 @dataclass
-class CornerPin2D:
+class CornerPin2D(RepositionOperator):
     """Operator for corner pinning images.
 
     Danger:

@@ -4,6 +4,8 @@ from typing import List, Optional, Union
 
 import PyOpenColorIO as OCIO
 
+from .base import BaseOperator
+
 
 def get_direction(direction: Union[str, int]) -> int:
     """Get the direction for OCIO FileTransform.
@@ -33,8 +35,17 @@ def get_interpolation(interpolation: str) -> int:
     return OCIO.Interpolation.INTERP_DEFAULT
 
 
+class ColorOperator(BaseOperator):
+    """Base class for color operators.
+
+    Currently this is only used for type checking.
+    """
+
+    pass
+
+
 @dataclass
-class OCIOFileTransform:
+class OCIOFileTransform(ColorOperator):
     """Class for handling OCIO FileTransform effects.
 
     Note:
@@ -103,7 +114,7 @@ class OCIOFileTransform:
 
 
 @dataclass
-class OCIOColorSpace:
+class OCIOColorSpace(ColorOperator):
     """Foundry Hiero Timeline soft effect node class.
 
     Attributes:
@@ -147,7 +158,7 @@ class OCIOColorSpace:
 
 
 @dataclass
-class OCIOCDLTransform:
+class OCIOCDLTransform(ColorOperator):
     """Foundry Hiero Timeline soft effect node class.
 
     Note:
@@ -261,7 +272,7 @@ class OCIOCDLTransform:
 
 
 @dataclass
-class AYONOCIOLookProduct:
+class AYONOCIOLookProduct(ColorOperator):
     """AYON ocioLook product dataclass
 
     This class will hold all the necessary data for the ocioLook product, so
