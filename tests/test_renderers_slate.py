@@ -41,20 +41,17 @@ def _run_slate_renderer(
 
 
 @pytest.fixture()
-def source_dir():
+def source_dir(test_staging_dir):
     """ Prepare are clean source sequence
         and after each tests.
     """
     # Prepare a temporary directory with a copy of default sequence
-    temp_dir = tempfile.mkdtemp(dir=os.getcwd())
+    temp_dir = tempfile.mkdtemp(dir=test_staging_dir)
     for img in DEFAULT_SEQUENCE.frames:
         new_path = pathlib.Path(temp_dir) / img.filename
         shutil.copy(img.filepath, new_path)
 
     yield temp_dir
-
-    # Remove all temporary directory content.
-    shutil.rmtree(temp_dir)
 
 
 def test_Slaterenderer_missing_keys():
