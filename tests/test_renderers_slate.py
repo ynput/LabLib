@@ -45,11 +45,13 @@ def source_dir(test_staging_dir, request):
         and after each tests.
     """
     # Prepare a temporary directory with a copy of default sequence
-    temp_dir = os.path.join(
-        test_staging_dir,
-        request.node.name
-    )
-    os.mkdir(temp_dir)
+    temp_dir = test_staging_dir / request.node.name
+    
+    # remove folder with content
+    shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    # create temp folder again
+    temp_dir.mkdir()
 
     for img in DEFAULT_SEQUENCE.frames:
         new_path = pathlib.Path(temp_dir) / img.filename
