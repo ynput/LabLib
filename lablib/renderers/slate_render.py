@@ -133,7 +133,6 @@ class SlateRenderer(BasicRenderer):
         if debug:
             cmd.extend(["--debug", "-v"])
 
-        cmd.extend(["-resize", f"{self._slate_proc.width}x{self._slate_proc.height}"])
         cmd.extend(["-o", self.destination])
         call_cmd(cmd)
 
