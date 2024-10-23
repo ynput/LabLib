@@ -277,7 +277,7 @@ class OCIOFileTransform(ColorOperator):
 
 
 @dataclass
-class OCIOCDLTransform(ColorOperator):
+class OCIOCDLTransform(OCIOFileTransform):
     """Foundry Hiero Timeline soft effect node class.
 
     Note:
