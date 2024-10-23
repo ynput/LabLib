@@ -94,7 +94,7 @@ class SlateHtmlGenerator:
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--disable-extensions")
         options.add_argument("--disable-gpu")
-        options.add_argument(f"--force-device-scale-factor=1")
+        options.add_argument("--force-device-scale-factor=1")
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
         self._driver = webdriver.Chrome(options=options)
 
