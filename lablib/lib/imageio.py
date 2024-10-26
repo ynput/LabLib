@@ -263,17 +263,17 @@ class SequenceInfo:
     @property
     def start_frame(self) -> int:
         """:obj:`int`: the lowest frame number in the sequence."""
-        return min(self.frames).frame_number
+        return min(self.frames)
 
     @property
     def end_frame(self) -> int:
         """:obj:`int`: the highest frame number in the sequence."""
-        return max(self.frames).frame_number
+        return max(self.frames)
 
     @property
     def format_string(self) -> str:
         """:obj:`str`: A sequence representation used for ``ffmpeg`` arguments formatting."""  # noqa
-        frame: ImageInfo = min(self.frames)
+        frame: ImageInfo = min(self.imageinfos)
         ext: str = frame.extension
         basename = frame.name.split(".")[0]
 
@@ -283,7 +283,7 @@ class SequenceInfo:
     @property
     def hash_string(self) -> str:
         """:obj:`str`: A sequence representation used for ``oiiotool`` arguments formatting."""  # noqa
-        frame: ImageInfo = min(self.frames)
+        frame: ImageInfo = min(self.imageinfos)
         ext: str = frame.extension
         basename = frame.name.split(".")[0]
 
@@ -293,9 +293,7 @@ class SequenceInfo:
     @property
     def padding(self) -> int:
         """:obj:`int`: The sequence's frame padding."""
-        frame = min(self.frames)
-        result = len(str(frame.frame_number))
-        return result
+        return len(str(self.start_frame))
 
     @property
     def frames_missing(self) -> bool:
@@ -304,8 +302,8 @@ class SequenceInfo:
         Note:
             Could be extended to also return which frames are missing.
         """
-        start = min(self.frames).frame_number
-        end = max(self.frames).frame_number
+        start = min(self.frames)
+        end = max(self.frames)
         expected: int = len(range(start, end)) + 1
         return not expected == len(self.frames)
 

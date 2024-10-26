@@ -322,7 +322,7 @@ class BasicRenderer:
         cmd.extend(input_args)
 
         # timecode args
-        timecode = min(self.source_sequence.frames).timecode
+        timecode = min(self.source_sequence.imageinfos).timecode
         cmd.extend(["-timecode", timecode])
 
         # codec args
