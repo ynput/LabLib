@@ -127,7 +127,7 @@ class SlateRenderer(BasicRenderer):
                 "R,G,B",
                 "--attrib:type=timecode",
                 "smpte:TimeCode",
-                f"""'{timecode.replace('"', "")}'""",
+                timecode,
             ]
         )
         if debug:
