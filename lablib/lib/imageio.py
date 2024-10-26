@@ -291,20 +291,6 @@ class SequenceInfo:
         return result
 
     @property
-    def format_string(self) -> str:
-        """:obj:`str`: A sequence representation used for ``ffmpeg`` arguments formatting.  # noqa
-
-        Error:
-            That's a duplicate so let's run tests and remove it.
-        """
-        frame: ImageInfo = min(self.frames)
-        ext: str = frame.extension
-        basename = frame.name.split(".")[0]
-
-        result = f"{basename}.%0{self.padding}d{ext}"
-        return result
-
-    @property
     def padding(self) -> int:
         """:obj:`int`: The sequence's frame padding."""
         frame = min(self.frames)
