@@ -258,7 +258,7 @@ class SequenceInfo:
     @property
     def frames(self) -> List[int]:
         """:obj:`List[int]`: List of all available frame numbers in the sequence."""  # noqa
-        return self.imageinfos
+        return [ii.frame_number for ii in self.imageinfos]
 
     @property
     def start_frame(self) -> int:
