@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from dataclasses import dataclass, field
 from typing import List
 
@@ -18,7 +19,27 @@ class RepositionOperator(BaseOperator):
     Currently this is only used for type checking.
     """
 
-    pass
+    @classmethod
+    @abstractmethod
+    def from_node_data(cls, data) -> "RepositionOperator":
+        """An abstract method for returning a reposition operator from node data.
+
+        Attributes:
+            data (dict): The node data.
+
+        Returns:
+            RepositionOperator: The reposition operator.
+        """
+        pass
+
+    @abstractmethod
+    def to_oiio_args(self) -> List[str]:
+        """An abstract method for returning the arguments for ``oiiotool``.
+
+        Returns:
+            List[str]: Arguments for OIIO.
+        """
+        pass
 
 
 @dataclass

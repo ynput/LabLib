@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional, Union
@@ -41,7 +42,27 @@ class ColorOperator(BaseOperator):
     Currently this is only used for type checking.
     """
 
-    pass
+    @classmethod
+    @abstractmethod
+    def from_node_data(cls, data) -> "ColorOperator":
+        """An abstract classmethod for returning a ``ColorOperator`` from node data.
+
+        Args:
+            data (dict): The node data.
+
+        Returns:
+            ColorOperator: The color operator object.
+        """
+        pass
+
+    @abstractmethod
+    def to_ocio_obj(self) -> Union[OCIO.Transform, List[OCIO.Transform]]:
+        """Converts the object to native OCIO object.
+
+        Raises:
+            NotImplementedError: This method must be implemented in the subclass.
+        """
+        pass
 
 
 @dataclass
