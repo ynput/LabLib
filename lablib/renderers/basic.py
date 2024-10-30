@@ -9,6 +9,8 @@ from typing import Any, Dict, List, Optional, Set, Union
 from pathlib import Path
 
 from ..lib import SequenceInfo, utils
+from ._base import RendererBase
+
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -172,7 +174,7 @@ class Burnin:
         return args
 
 
-class BasicRenderer:
+class BasicRenderer(RendererBase):
     """Basic renderer for image sequences.
 
     Note:

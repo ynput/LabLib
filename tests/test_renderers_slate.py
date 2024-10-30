@@ -6,7 +6,7 @@ import pytest
 
 from lablib.lib import SequenceInfo
 from lablib.generators import SlateHtmlGenerator, SlateFillMode
-from lablib.renderers import SlateRenderer
+from lablib.renderers import SlateRenderer, RendererBase
 
 
 SLATE_TEMPLATE_FILE = os.path.join(
@@ -177,3 +177,8 @@ def test_Slaterenderer_explicit_output(source_dir):
     _run_slate_renderer(generator, output_path=expected_output)
 
     assert os.path.exists(expected_output)
+
+def test_inheritance_SlateRenderer():
+    """Ensure SlateRenderer inherits from RendererBase
+    """
+    assert issubclass(SlateRenderer, RendererBase)
