@@ -2,6 +2,8 @@ import pytest
 import logging
 from pathlib import Path
 
+import PyOpenColorIO as OCIO
+
 from lablib.processors import AYONOCIOLookFileProcessor
 
 log = logging.getLogger(__name__)
@@ -83,13 +85,16 @@ class TestAYONOCIOLookFileProcessor:
         processor = AYONOCIOLookFileProcessor(**kwargs)
         log.debug(f"Processor: {processor = }")
 
-        log.debug(processor.operator)
+        log.debug(processor.color_operators)
         assert processor.filepath == results["expected_path"]
         assert processor.get_oiiotool_cmd() == results["expected_cmd"]
         # FileTransform
-        assert len(processor.operator.to_ocio_obj()) == results[
+        assert len(processor.color_operators) == results[
             "expected_length"]
-        assert (
-            processor.operator.ocioLookItems[0]["file"]
-            == results["expected_target_file"]
+
+        # make sure the path is in ocio object
+        assert any(
+            op for op in processor.color_operators
+            if isinstance(op, OCIO.FileTransform)
+            if results["expected_target_file"] in op.getSrc()
         )

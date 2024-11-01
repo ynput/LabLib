@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import json
 import logging
-import inspect
 
 from typing import List
 from pathlib import Path
 import PyOpenColorIO as OCIO
-
 
 from .. import operators
 
@@ -31,9 +29,7 @@ class AYONOCIOLookFileProcessor(object):
     target_path: Path = None
     log: logging.Logger = log
 
-    _wrapper_class_members = dict(
-        inspect.getmembers(operators, inspect.isclass))
-    _operators: List = []
+    _operators: List[OCIO.Transform] = []
 
     def __init__(
         self,

@@ -6,7 +6,6 @@ from .color import (
     OCIOCDLTransform,
     OCIOColorSpace,
     OCIOFileTransform,
-    AYONOCIOLookProduct,
 )
 from .repositions import (
     RepositionOperator,
@@ -27,7 +26,6 @@ __all__ = [
     "OCIOCDLTransform",
     "OCIOColorSpace",
     "OCIOFileTransform",
-    "AYONOCIOLookProduct",
     # Repositions
     "RepositionOperator",
     "Transform",
