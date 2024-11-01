@@ -46,7 +46,7 @@ class SlateHtmlGenerator:
         width: int = None,
         height: int = None,
         staging_dir: str = None,
-        source_files: List = None,
+        source_files: List[imageio.ImageInfo] = None,
         is_source_linear: bool = None,
         slate_fill_mode: SlateFillMode = None
     ):
