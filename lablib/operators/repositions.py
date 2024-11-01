@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from dataclasses import dataclass, field
 from typing import List
 
@@ -9,9 +10,40 @@ from lablib.lib.utils import (
     mult_matrix,
 )
 
+from .base import BaseOperator
+
+
+class RepositionOperator(BaseOperator):
+    """Base class for reposition operators.
+
+    Currently this is only used for type checking.
+    """
+
+    @classmethod
+    @abstractmethod
+    def from_node_data(cls, data) -> "RepositionOperator":
+        """An abstract method for returning a reposition operator from node data.
+
+        Attributes:
+            data (dict): The node data.
+
+        Returns:
+            RepositionOperator: The reposition operator.
+        """
+        pass
+
+    @abstractmethod
+    def to_oiio_args(self) -> List[str]:
+        """An abstract method for returning the arguments for ``oiiotool``.
+
+        Returns:
+            List[str]: Arguments for OIIO.
+        """
+        pass
+
 
 @dataclass
-class Transform:
+class Transform(RepositionOperator):
     """Transform operator for repositioning images.
 
     Note:
@@ -87,7 +119,7 @@ class Transform:
 
 
 @dataclass
-class Crop:
+class Crop(RepositionOperator):
     """Operator for cropping images.
 
     Attributes:
@@ -123,7 +155,7 @@ class Crop:
 
 
 @dataclass
-class Mirror2:
+class Mirror2(RepositionOperator):
     """Operator for mirroring images.
 
     TODO:
@@ -164,7 +196,7 @@ class Mirror2:
 
 
 @dataclass
-class CornerPin2D:
+class CornerPin2D(RepositionOperator):
     """Operator for corner pinning images.
 
     Danger:
