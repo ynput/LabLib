@@ -99,9 +99,9 @@ class AYONHieroEffectsFileProcessor(object):
             class_obj = class_obj.from_node_data(node_value)
 
             # separate color ops from repo ops
-            if "color" in class_obj.__class__.__module__:
+            if isinstance(class_obj, operators.ColorOperator):
                 self._color_ops.append(class_obj)
-            else:
+            elif isinstance(class_obj, operators.RepositionOperator):
                 self._repo_ops.append(class_obj)
 
     def _sanitize_file_path(
