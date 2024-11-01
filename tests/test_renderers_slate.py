@@ -53,7 +53,7 @@ def source_dir(test_staging_dir, request):
     # create temp folder again
     temp_dir.mkdir()
 
-    for img in DEFAULT_SEQUENCE.frames:
+    for img in DEFAULT_SEQUENCE.imageinfos:
         new_path = pathlib.Path(temp_dir) / img.filename
         shutil.copy(img.filepath, new_path)
 
@@ -97,7 +97,7 @@ def test_Slaterenderer_missing_keys_hide(source_dir):
     _run_slate_renderer(generator, sequence=source_sequence)
 
     edited_sequence = SequenceInfo.scan(source_dir)[0]
-    slate_frame = edited_sequence.frames[0]
+    slate_frame = edited_sequence.imageinfos[0]
 
     assert len(edited_sequence.frames) == len(source_sequence.frames) + 1
     assert slate_frame.width == 1920
@@ -124,7 +124,7 @@ def test_Slaterenderer_default(source_dir):
     _run_slate_renderer(generator, sequence=source_sequence)
 
     edited_sequence = SequenceInfo.scan(source_dir)[0]
-    slate_frame = edited_sequence.frames[0]
+    slate_frame = edited_sequence.imageinfos[0]
 
     assert len(edited_sequence.frames) == len(source_sequence.frames) + 1
     assert slate_frame.width == 1920
@@ -153,7 +153,7 @@ def test_Slaterenderer_4K(source_dir):
     _run_slate_renderer(generator, sequence=source_sequence)
 
     edited_sequence = SequenceInfo.scan(source_dir)[0]
-    slate_frame = edited_sequence.frames[0]
+    slate_frame = edited_sequence.imageinfos[0]
 
     assert len(edited_sequence.frames) == len(source_sequence.frames) + 1
     assert slate_frame.width == 4096
