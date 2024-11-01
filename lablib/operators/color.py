@@ -6,34 +6,7 @@ from typing import List, Optional, Union
 import PyOpenColorIO as OCIO
 
 from .base import BaseOperator
-
-
-def get_direction(direction: Union[str, int]) -> int:
-    """Get the direction for OCIO FileTransform.
-
-    Attributes:
-        direction (Union[str, int]): The direction.
-
-    Returns:
-        int: The direction.
-    """
-    if direction == "inverse":
-        return OCIO.TransformDirection.TRANSFORM_DIR_INVERSE
-    return OCIO.TransformDirection.TRANSFORM_DIR_FORWARD
-
-
-def get_interpolation(interpolation: str) -> int:
-    if interpolation == "linear":
-        return OCIO.Interpolation.INTERP_LINEAR
-    elif interpolation == "best":
-        return OCIO.Interpolation.INTERP_BEST
-    elif interpolation == "nearest":
-        return OCIO.Interpolation.INTERP_NEAREST
-    elif interpolation == "tetrahedral":
-        return OCIO.Interpolation.INTERP_TETRAHEDRAL
-    elif interpolation == "cubic":
-        return OCIO.Interpolation.INTERP_CUBIC
-    return OCIO.Interpolation.INTERP_DEFAULT
+from .utils import get_direction, get_interpolation
 
 
 class ColorOperator(BaseOperator):
@@ -45,7 +18,7 @@ class ColorOperator(BaseOperator):
     @classmethod
     @abstractmethod
     def from_node_data(cls, data) -> "ColorOperator":
-        """An abstract classmethod for returning a ``ColorOperator`` from node data.
+        """An abstract classmethod for returning a `ColorOperator` from node data.
 
         Args:
             data (dict): The node data.
@@ -56,11 +29,12 @@ class ColorOperator(BaseOperator):
         pass
 
     @abstractmethod
-    def to_ocio_obj(self) -> Union[OCIO.Transform, List[OCIO.Transform]]:
+    def to_ocio_obj(self) -> OCIO.Transform:
         """Converts the object to native OCIO object.
 
         Raises:
-            NotImplementedError: This method must be implemented in the subclass.
+            NotImplementedError: This method must be implemented in the
+                subclass.
         """
         pass
 
@@ -79,19 +53,16 @@ class OCIOColorSpace(ColorOperator):
     in_colorspace: str = "ACES - ACEScg"
     out_colorspace: str = "ACES - ACEScg"
 
-    def to_ocio_obj(self) -> List[OCIO.ColorSpaceTransform]:
+    def to_ocio_obj(self) -> OCIO.ColorSpaceTransform:
         """Returns native OCIO ColorSpaceTransform object.
 
         Returns:
-            List[OCIO.ColorSpaceTransform]: The OCIO ColorSpaceTransform object
-                in a list.
+            OCIO.ColorSpaceTransform: The OCIO ColorSpaceTransform object.
         """
-        return [
-            OCIO.ColorSpaceTransform(
-                src=self.in_colorspace,
-                dst=self.out_colorspace,
-            )
-        ]
+        return OCIO.ColorSpaceTransform(
+            src=self.in_colorspace,
+            dst=self.out_colorspace,
+        )
 
     @classmethod
     def from_node_data(cls, data) -> "OCIOColorSpace":
@@ -106,125 +77,6 @@ class OCIOColorSpace(ColorOperator):
         return cls(
             in_colorspace=data.get("in_colorspace", ""),
             out_colorspace=data.get("out_colorspace", ""),
-        )
-
-
-@dataclass
-class AYONOCIOLookProduct(ColorOperator):
-    """AYON ocioLook product dataclass
-
-    This class will hold all the necessary data for the ocioLook product, so
-    it can be covered into FileTransform and ColorSpaceTransform during
-    :obj:`AYONOCIOLookProduct.to_ocio_obj()` method.
-
-    .. admonition:: Example of input data
-
-        .. code-block::
-
-            {
-                "ocioLookItems": [
-                    {
-                        "name": "LUTfile",
-                        "file: "path/to/lut.cube", # currently created via processor
-                        "ext": "cube",
-                        "input_colorspace": {
-                            "colorspace": "Output - sRGB",
-                            "name": "color_picking",
-                            "type": "roles"
-                        },
-                        "output_colorspace": {
-                            "colorspace": "ACES - ACEScc",
-                            "name": "color_timing",
-                            "type": "roles"
-                        },
-                        "direction": "forward",
-                        "interpolation": "tetrahedral",
-                        "config_data": {
-                            "path": "path/to/config.ocio",
-                            "template": "{BUILTIN_OCIO_ROOT}/aces_1.2/config.ocio",
-                            "colorspace": "compositing_linear"
-                        },
-                    },
-                ],
-                "ocioLookWorkingSpace": {
-                    "colorspace": "ACES - ACEScg",
-                    "name": "compositing_linear",
-                    "type": "roles"
-                },
-            },
-
-    Attributes:
-        ocioLookItems (List[dict]): List of ocioLook items.
-        ocioLookWorkingSpace (dict): The working space.
-    """
-
-    ocioLookItems: List[dict] = field(default_factory=list)
-    ocioLookWorkingSpace: dict = field(default_factory=dict)
-
-    def to_ocio_obj(self) -> List[Union[OCIO.ColorSpaceTransform, OCIO.FileTransform]]:  # noqa: E501
-        """Converts to list of native OCIO objects.
-
-        Returns:
-            List[Union[OCIO.ColorSpaceTransform, OCIO.FileTransform]]: The OCIO
-                ColorSpaceTransform and FileTransform objects in a list. The
-                order of the objects is based on the order of the items in
-                :attr:`ocioLookItems`.
-        """
-        look_working_colorspace = self.ocioLookWorkingSpace["colorspace"]
-        all_transformations = []
-        for index, item in enumerate(self.ocioLookItems):
-            filepath = item["file"]
-            lut_in_colorspace = item["input_colorspace"]["colorspace"]
-            lut_out_colorspace = item["output_colorspace"]["colorspace"]
-            direction = item["direction"]
-            interpolation = item["interpolation"]
-
-            if index == 0:
-                # set the first colorspace as the current working colorspace
-                current_working_colorspace = look_working_colorspace
-
-            if current_working_colorspace != lut_in_colorspace:
-                all_transformations.append(
-                    OCIO.ColorSpaceTransform(
-                        src=current_working_colorspace,
-                        dst=lut_in_colorspace,
-                    )
-                )
-
-            all_transformations.append(
-                OCIO.FileTransform(
-                    src=Path(filepath).as_posix(),
-                    interpolation=get_interpolation(interpolation),
-                    direction=get_direction(direction),
-                )
-            )
-
-            current_working_colorspace = lut_out_colorspace
-
-        # making sure we are back in the working colorspace
-        if current_working_colorspace != look_working_colorspace:
-            all_transformations.append(
-                OCIO.ColorSpaceTransform(
-                    src=current_working_colorspace,
-                    dst=look_working_colorspace,
-                )
-            )
-
-        return all_transformations
-
-    @classmethod
-    def from_node_data(cls, data) -> "AYONOCIOLookProduct":
-        """Create :obj:`AYONOCIOLookProduct` from node data.
-
-        Arguments:
-            data (dict): The node data.
-
-        Returns:
-            AYONOCIOLookProduct: The AYONOCIOLookProduct object.
-        """
-        return cls(
-            ocioLookItems=data.get("ocioLookItems", []),
-            ocioLookWorkingSpace=data.get("ocioLookWorkingSpace", {}),
         )
 
 
@@ -247,11 +99,11 @@ class OCIOFileTransform(ColorOperator):
     direction: int = 0
     interpolation: str = "linear"
 
-    def to_ocio_obj(self) -> List[OCIO.FileTransform]:
+    def to_ocio_obj(self) -> OCIO.FileTransform:
         """Converts the object to native OCIO object.
 
         Returns:
-            List[OCIO.FileTransform]: The OCIO FileTransform object in a list.
+            OCIO.FileTransform: The OCIO FileTransform object in a list.
         """
         # define direction
         direction = get_direction(self.direction)
@@ -259,14 +111,12 @@ class OCIOFileTransform(ColorOperator):
         # define interpolation
         interpolation = get_interpolation(self.interpolation)
 
-        return [
-            OCIO.FileTransform(
-                src=Path(self.file).as_posix(),
-                cccId=self.cccid,
-                direction=direction,
-                interpolation=interpolation,
-            )
-        ]
+        return OCIO.FileTransform(
+            src=Path(self.file).as_posix(),
+            cccId=self.cccid,
+            direction=direction,
+            interpolation=interpolation,
+        )
 
     @classmethod
     def from_node_data(cls, data) -> "OCIOFileTransform":
@@ -275,8 +125,8 @@ class OCIOFileTransform(ColorOperator):
         Note:
             Reads Foundry Hiero Timeline soft effect node data.
 
-            Would it be cool if we'd had a way to interface other DCC node data?
-            Would they even be so much different?
+            Would it be cool if we'd had a way to interface other DCC node
+            data? Would they even be so much different?
 
         Args:
             data (dict): The node data. List of expected but not required keys:
@@ -326,15 +176,14 @@ class OCIOCDLTransform(OCIOFileTransform):
     saturation: float = 1.0
     interpolation: str = "linear"
 
-    def to_ocio_obj(self) -> List[Union[OCIO.FileTransform, OCIO.CDLTransform]]:  # noqa: E501
+    def to_ocio_obj(self) -> Union[OCIO.FileTransform, OCIO.CDLTransform]:  # noqa: E501
         """Returns native OCIO FileTransform and CDLTransform object.
 
         Returns:
-            List[Union[OCIO.FileTransform, OCIO.CDLTransform]]: The OCIO
-                CDLTransform and FileTransform object in a list.
-                If file is not provided, only CDLTransform will be returned.
+            Union[OCIO.FileTransform, OCIO.CDLTransform]: Either OCIO
+                CDLTransform or FileTransform object.
+                If file is not provided, CDLTransform will be returned.
         """
-        effects = []
 
         # define direction
         direction = get_direction(self.direction)
@@ -344,26 +193,20 @@ class OCIOCDLTransform(OCIOFileTransform):
             interpolation = get_interpolation(self.interpolation)
             lut_file = Path(self.file)
 
-            effects.append(
-                OCIO.FileTransform(
-                    src=lut_file.as_posix(),
-                    cccId=(self.cccid or "0"),
-                    interpolation=interpolation,
-                    direction=direction,
-                )
-            )
-
-        effects.append(
-            OCIO.CDLTransform(
-                slope=self.slope,
-                offset=self.offset,
-                power=self.power,
-                sat=self.saturation,
+            return OCIO.FileTransform(
+                src=lut_file.as_posix(),
+                cccId=(self.cccid or "0"),
+                interpolation=interpolation,
                 direction=direction,
             )
-        )
 
-        return effects
+        return OCIO.CDLTransform(
+            slope=self.slope,
+            offset=self.offset,
+            power=self.power,
+            sat=self.saturation,
+            direction=direction,
+        )
 
     @classmethod
     def from_node_data(cls, data) -> "OCIOCDLTransform":
