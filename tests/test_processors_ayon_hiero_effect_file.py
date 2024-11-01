@@ -29,7 +29,7 @@ class TestAYONHieroEffectFileProcessor:
                         "resources/public/effectPlateMain/v000/"
                         "BLD_010_0010_effectPlateMain_v000.json"
                     ),
-                    "expected_length": 5,
+                    "expected_length": 4,
                     "expected_cmd": [
                         "--colorconvert",
                         "scene_linear",
@@ -57,7 +57,7 @@ class TestAYONHieroEffectFileProcessor:
                         "resources/public/effectPlateMain/v000/"
                         "BLD_010_0010_effectPlateMain_v000.json"
                     ),
-                    "expected_length": 5,
+                    "expected_length": 4,
                     "expected_cmd": [
                         "--colorconvert",
                         "scene_linear",
@@ -70,6 +70,37 @@ class TestAYONHieroEffectFileProcessor:
                         f"{ABS_MODULE_PATH}/resources/public/effectPlateMain/v000/resources/Sony_to_709.cube",
                         "--warp:filter=cubic:recompute_roi=1",
                         "1.075,0.0,0.0,0.0,1.075,0.0,-164.32499999999982,-86.625,1.0",
+                    ],
+                },
+            ),
+            (
+                {
+                    "filepath": Path(
+                        "resources/public/effectPlateMain/v001/"
+                        "a01vfxd_sh020_effectPlateP01_v002.json"
+                    )
+                },
+                {
+                    "expected_path": Path(
+                        "resources/public/effectPlateMain/v001/"
+                        "a01vfxd_sh020_effectPlateP01_v002.json"
+                    ),
+                    "expected_length": 4,
+                    "expected_cmd": [
+                        "--colorconvert",
+                        "scene_linear",
+                        "Input - ARRI - V3 LogC (EI800) - Wide Gamut",
+                        "--ociofiletransform",
+                        f"{ABS_MODULE_PATH}/resources/public/effectPlateMain/v001/resources/sh020.cc",
+                        "--ociofiletransform",
+                        f"{ABS_MODULE_PATH}/resources/public/effectPlateMain/v001/resources/ARRI_LogC2Video.cube",
+                        "--colorconvert",
+                        "Output - Rec.709",
+                        "scene_linear",
+                        "--crop",
+                        "0.0,0.0,1920.0,1080.0",
+                        "--flip",
+                        "--flop",
                     ],
                 },
             ),
