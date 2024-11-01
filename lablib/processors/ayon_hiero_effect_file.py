@@ -50,7 +50,7 @@ class AYONHieroEffectsFileProcessor(object):
         """List of color operators to be processed."""
         ops = []
         for op in self._color_ops:
-            ops.extend(op.to_ocio_obj())
+            ops.append(op.to_ocio_obj())
         return ops
 
     @property
@@ -71,7 +71,8 @@ class AYONHieroEffectsFileProcessor(object):
 
         # get all relative files recursively so we can make sure files in
         # transforms are having correct path
-        all_relative_files = {f.name: f for f in Path(self.filepath.parent).rglob("*")}
+        all_relative_files = {
+            f.name: f for f in Path(self.filepath.parent).rglob("*")}
 
         with open(effect_file_path, "r") as f:
             ops_data = json.load(f)
@@ -96,6 +97,7 @@ class AYONHieroEffectsFileProcessor(object):
                 self._sanitize_file_path(node_value, all_relative_files)
 
             class_obj = self._wrapper_class_members[class_name]
+            # feed data into class object
             class_obj = class_obj.from_node_data(node_value)
 
             # separate color ops from repo ops
