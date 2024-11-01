@@ -102,6 +102,7 @@ def test_Slaterenderer_missing_keys_hide(source_dir):
     assert len(edited_sequence.frames) == len(source_sequence.frames) + 1
     assert slate_frame.width == 1920
     assert slate_frame.height == 1080
+    assert slate_frame.timecode == "02:10:04:16"
 
 
 def test_Slaterenderer_default(source_dir):
@@ -128,6 +129,7 @@ def test_Slaterenderer_default(source_dir):
     assert len(edited_sequence.frames) == len(source_sequence.frames) + 1
     assert slate_frame.width == 1920
     assert slate_frame.height == 1080
+    assert slate_frame.timecode == "02:10:04:16"
 
 
 def test_Slaterenderer_4K(source_dir):
@@ -156,6 +158,7 @@ def test_Slaterenderer_4K(source_dir):
     assert len(edited_sequence.frames) == len(source_sequence.frames) + 1
     assert slate_frame.width == 4096
     assert slate_frame.height == 2048
+    assert slate_frame.timecode == "02:10:04:16"
 
 
 def test_Slaterenderer_explicit_output(source_dir):
