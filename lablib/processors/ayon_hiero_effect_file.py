@@ -46,8 +46,8 @@ class AYONHieroEffectsFileProcessor(object):
         self.load()
 
     @property
-    def color_operators(self) -> List:
-        """List of color operators to be processed."""
+    def ocio_objects(self) -> List:
+        """List of OCIO objects to be processed."""
         ops = []
         for op in self._color_ops:
             ops.append(op.to_ocio_obj())
@@ -140,13 +140,13 @@ class AYONHieroEffectsFileProcessor(object):
     def get_oiiotool_cmd(self) -> List[str]:
         """Returns arguments for oiiotool command."""
         args = []
-        for op in self.color_operators:
-            if isinstance(op, OCIO.FileTransform):
-                lut = Path(op.getSrc()).resolve()
+        for oo in self.ocio_objects:
+            if isinstance(oo, OCIO.FileTransform):
+                lut = Path(oo.getSrc()).resolve()
                 args.extend(["--ociofiletransform", f"{lut.as_posix()}"])
-            if isinstance(op, OCIO.ColorSpaceTransform):
-                args.extend(["--colorconvert", op.getSrc(), op.getDst()])
-        for op in self.repo_operators:
-            args.extend(op.to_oiio_args())
+            if isinstance(oo, OCIO.ColorSpaceTransform):
+                args.extend(["--colorconvert", oo.getSrc(), oo.getDst()])
+        for ro in self.repo_operators:
+            args.extend(ro.to_oiio_args())
 
         return args

@@ -24,7 +24,7 @@ effect_processor = AYONHieroEffectsFileProcessor(
 )
 effect_processor.load()
 ocio_config_generator = OCIOConfigFileGenerator(
-    operators=effect_processor.color_operators,
+    ocio_objects=effect_processor.ocio_objects,
     staging_dir=Path("test_results").resolve().as_posix(),
     context=mock_data["asset"],
     family=mock_data["project"]["code"],

@@ -111,12 +111,12 @@ class TestAYONHieroEffectFileProcessor:
         processor = AYONHieroEffectsFileProcessor(**kwargs)
         log.debug(f"Processor: {processor = }")
 
-        log.debug(processor.color_operators)
+        log.debug(processor.ocio_objects)
         log.debug(processor.repo_operators)
         log.debug(processor.get_oiiotool_cmd())
         assert processor.filepath == results["expected_path"]
         assert processor.get_oiiotool_cmd() == results["expected_cmd"]
         # FileTransform
         assert (
-            len(processor.color_operators) == results["expected_length"]
+            len(processor.ocio_objects) == results["expected_length"]
         )
