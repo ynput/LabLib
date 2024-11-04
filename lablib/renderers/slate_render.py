@@ -10,7 +10,7 @@ from ..lib.utils import call_iinfo, call_cmd, offset_timecode
 from ..generators import SlateHtmlGenerator
 from ..lib import SequenceInfo
 from .basic import BasicRenderer
-from ._base import RendererBase
+from .base import RendererBase
 
 
 class SlateRenderer(RendererBase):

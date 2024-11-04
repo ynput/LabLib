@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Set, Union
 from pathlib import Path
 
 from ..lib import SequenceInfo, utils
-from ._base import RendererBase
+from .base import RendererBase
 
 
 log = logging.getLogger(__name__)

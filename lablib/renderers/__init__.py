@@ -2,7 +2,7 @@
 
 from .basic import BasicRenderer, Burnin, Codec
 from .slate_render import SlateRenderer
-from ._base import RendererBase
+from .base import RendererBase
 
 __all__ = [
     "BasicRenderer",
