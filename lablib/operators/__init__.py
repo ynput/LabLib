@@ -6,6 +6,8 @@ from .color import (
     OCIOCDLTransform,
     OCIOColorSpace,
     OCIOFileTransform,
+    get_direction,
+    get_interpolation,
 )
 from .repositions import (
     RepositionOperator,
@@ -13,10 +15,6 @@ from .repositions import (
     Crop,
     Mirror2,
     CornerPin2D,
-)
-from .utils import (
-    get_direction,
-    get_interpolation,
 )
 
 __all__ = [
@@ -26,13 +24,12 @@ __all__ = [
     "OCIOCDLTransform",
     "OCIOColorSpace",
     "OCIOFileTransform",
+    "get_direction",
+    "get_interpolation",
     # Repositions
     "RepositionOperator",
     "Transform",
     "Crop",
     "Mirror2",
     "CornerPin2D",
-    # Utils
-    "get_direction",
-    "get_interpolation",
 ]
