@@ -85,16 +85,16 @@ class TestAYONOCIOLookFileProcessor:
         processor = AYONOCIOLookFileProcessor(**kwargs)
         log.debug(f"Processor: {processor = }")
 
-        log.debug(processor.color_operators)
+        log.debug(processor.ocio_objects)
         assert processor.filepath == results["expected_path"]
         assert processor.get_oiiotool_cmd() == results["expected_cmd"]
         # FileTransform
-        assert len(processor.color_operators) == results[
-            "expected_length"]
+        assert len(processor.ocio_objects) == results["expected_length"]
 
         # make sure the path is in ocio object
         assert any(
-            op for op in processor.color_operators
+            op
+            for op in processor.ocio_objects
             if isinstance(op, OCIO.FileTransform)
             if results["expected_target_file"] in op.getSrc()
         )
