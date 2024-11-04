@@ -18,7 +18,7 @@ class ColorOperator(BaseOperator):
     @classmethod
     @abstractmethod
     def from_node_data(cls, data) -> "ColorOperator":
-        """An abstract classmethod for returning a `ColorOperator` from node data.
+        """An abstract classmethod for returning a :obj:`ColorOperator` from node data.
 
         Args:
             data (dict): The node data.
