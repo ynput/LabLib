@@ -6,7 +6,6 @@ from typing import List, Optional, Union
 import PyOpenColorIO as OCIO
 
 from .base import BaseOperator
-from .utils import get_direction, get_interpolation
 
 
 class ColorOperator(BaseOperator):
