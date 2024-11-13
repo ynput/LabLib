@@ -1,4 +1,3 @@
-from cgi import test
 import json
 import logging
 from pathlib import Path
@@ -53,7 +52,7 @@ class TestConfigExportProcessor:
         }
         # Compute color transformations
         ocio_config_processor = OCIOConfigFileGenerator(
-            operators=effect_processor.color_operators,
+            ocio_objects=effect_processor.ocio_objects,
             staging_dir=test_staging_dir,
             context=test_context_input,
             target_view_space="Output - sRGB",
