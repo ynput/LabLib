@@ -1,0 +1,980 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 --><title>Index - LabLib 0.2.0 documentation</title>
+<link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">LabLib 0.2.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">LabLib 0.2.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">📚 README</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">⚙️ Module Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of ⚙️ Module Documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="lib.html">Lib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operators.html">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generators.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processors.html">Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="renderers.html">Renderers</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          
+<section class="genindex-section">
+  <h1 id="index">Index</h1>
+  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
+</section>
+<section id="A" class="genindex-section">
+  <h2>A</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.append_ocio_objects">append_ocio_objects() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.append_search_paths">append_search_paths() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.append_vars">append_vars() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.append_views">append_views() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.BasicRenderer.audio">audio (lablib.renderers.BasicRenderer property)</a>
+</li>
+        <li><a href="processors.html#lablib.processors.AYONHieroEffectsFileProcessor">AYONHieroEffectsFileProcessor (class in lablib.processors)</a>
+</li>
+        <li><a href="processors.html#lablib.processors.AYONOCIOLookFileProcessor">AYONOCIOLookFileProcessor (class in lablib.processors)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="B" class="genindex-section">
+  <h2>B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="operators.html#lablib.operators.BaseOperator">BaseOperator (class in lablib.operators)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.BasicRenderer">BasicRenderer (class in lablib.renderers)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="operators.html#lablib.operators.Crop.box">box (lablib.operators.Crop attribute)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.Burnin">Burnin (class in lablib.renderers)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.BasicRenderer.burnins">burnins (lablib.renderers.BasicRenderer property)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="C" class="genindex-section">
+  <h2>C</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="operators.html#lablib.operators.OCIOCDLTransform.cccid">cccid (lablib.operators.OCIOCDLTransform attribute)</a>
+
+        <ul>
+          <li><a href="operators.html#lablib.operators.OCIOFileTransform.cccid">(lablib.operators.OCIOFileTransform attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="operators.html#lablib.operators.Transform.center">center (lablib.operators.Transform attribute)</a>
+</li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.channels">channels (lablib.lib.ImageInfo attribute)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.clear_ocio_objects">clear_ocio_objects() (lablib.generators.OCIOConfigFileGenerator method)</a>
+
+        <ul>
+          <li><a href="processors.html#lablib.processors.AYONOCIOLookFileProcessor.clear_ocio_objects">(lablib.processors.AYONOCIOLookFileProcessor method)</a>
+</li>
+        </ul></li>
+        <li><a href="processors.html#lablib.processors.AYONHieroEffectsFileProcessor.clear_operators">clear_operators() (lablib.processors.AYONHieroEffectsFileProcessor method)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.clear_vars">clear_vars() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.clear_views">clear_views() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="renderers.html#lablib.renderers.Codec">Codec (class in lablib.renderers)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.BasicRenderer.codec">codec (lablib.renderers.BasicRenderer property)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.Burnin.color">color (lablib.renderers.Burnin attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.ColorOperator">ColorOperator (class in lablib.operators)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.config_path">config_path (lablib.generators.OCIOConfigFileGenerator attribute)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.context">context (lablib.generators.OCIOConfigFileGenerator attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.CornerPin2D">CornerPin2D (class in lablib.operators)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.create_base_slate">create_base_slate() (lablib.generators.SlateHtmlGenerator method)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.create_config">create_config() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.Crop">Crop (class in lablib.operators)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="D" class="genindex-section">
+  <h2>D</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.data">data (lablib.generators.SlateHtmlGenerator attribute)</a>
+
+        <ul>
+          <li><a href="operators.html#lablib.operators.CornerPin2D.data">(lablib.operators.CornerPin2D attribute)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.Crop.data">(lablib.operators.Crop attribute)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.Mirror2.data">(lablib.operators.Mirror2 attribute)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.RepositionOperator.data">(lablib.operators.RepositionOperator attribute)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.Transform.data">(lablib.operators.Transform attribute)</a>
+</li>
+          <li><a href="renderers.html#lablib.renderers.Burnin.data">(lablib.renderers.Burnin attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.description">description (lablib.generators.OCIOConfigFileGenerator attribute)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.SlateRenderer.destination">destination (lablib.renderers.SlateRenderer property)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="operators.html#lablib.operators.direction">direction (in module lablib.operators)</a>
+
+        <ul>
+          <li><a href="operators.html#lablib.operators.OCIOCDLTransform.direction">(lablib.operators.OCIOCDLTransform attribute)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.OCIOFileTransform.direction">(lablib.operators.OCIOFileTransform attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.display_height">display_height (lablib.lib.ImageInfo attribute)</a>
+
+        <ul>
+          <li><a href="lib.html#lablib.lib.SequenceInfo.display_height">(lablib.lib.SequenceInfo property)</a>
+</li>
+        </ul></li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.display_width">display_width (lablib.lib.ImageInfo attribute)</a>
+
+        <ul>
+          <li><a href="lib.html#lablib.lib.SequenceInfo.display_width">(lablib.lib.SequenceInfo property)</a>
+</li>
+        </ul></li>
+        <li><a href="processors.html#lablib.processors.OIIORepositionProcessor.dst_height">dst_height (lablib.processors.OIIORepositionProcessor attribute)</a>
+</li>
+        <li><a href="processors.html#lablib.processors.OIIORepositionProcessor.dst_width">dst_width (lablib.processors.OIIORepositionProcessor attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="E" class="genindex-section">
+  <h2>E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="lib.html#lablib.lib.SequenceInfo.end_frame">end_frame (lablib.lib.SequenceInfo property)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.environment_variables">environment_variables (lablib.generators.OCIOConfigFileGenerator attribute)</a>
+</li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.extension">extension (lablib.lib.ImageInfo property)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="F" class="genindex-section">
+  <h2>F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.family">family (lablib.generators.OCIOConfigFileGenerator attribute)</a>
+</li>
+        <li><a href="operators.html#id0">file (lablib.operators.OCIOCDLTransform attribute)</a>, <a href="operators.html#lablib.operators.OCIOCDLTransform.file">[1]</a>
+
+        <ul>
+          <li><a href="operators.html#lablib.operators.OCIOFileTransform.file">(lablib.operators.OCIOFileTransform attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.filename">filename (lablib.lib.ImageInfo property)</a>
+</li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.filepath">filepath (lablib.lib.ImageInfo property)</a>
+</li>
+        <li><a href="processors.html#lablib.processors.OIIORepositionProcessor.fit">fit (lablib.processors.OIIORepositionProcessor attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.Mirror2.flip">flip (lablib.operators.Mirror2 attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.Mirror2.flop">flop (lablib.operators.Mirror2 attribute)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.Burnin.font">font (lablib.renderers.Burnin attribute)</a>
+</li>
+        <li><a href="lib.html#lablib.lib.SequenceInfo.format_string">format_string (lablib.lib.SequenceInfo property)</a>
+</li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.fps">fps (lablib.lib.ImageInfo attribute)</a>
+
+        <ul>
+          <li><a href="renderers.html#lablib.renderers.BasicRenderer.fps">(lablib.renderers.BasicRenderer property)</a>
+</li>
+        </ul></li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.frame_number">frame_number (lablib.lib.ImageInfo property)</a>
+</li>
+        <li><a href="lib.html#lablib.lib.SequenceInfo.frames">frames (lablib.lib.SequenceInfo property)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="lib.html#lablib.lib.SequenceInfo.frames_missing">frames_missing (lablib.lib.SequenceInfo property)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.CornerPin2D.from1">from1 (lablib.operators.CornerPin2D attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.CornerPin2D.from2">from2 (lablib.operators.CornerPin2D attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.CornerPin2D.from3">from3 (lablib.operators.CornerPin2D attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.CornerPin2D.from4">from4 (lablib.operators.CornerPin2D attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.ColorOperator.from_node_data">from_node_data() (lablib.operators.ColorOperator class method)</a>
+
+        <ul>
+          <li><a href="operators.html#lablib.operators.CornerPin2D.from_node_data">(lablib.operators.CornerPin2D class method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.Crop.from_node_data">(lablib.operators.Crop class method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.Mirror2.from_node_data">(lablib.operators.Mirror2 class method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.OCIOCDLTransform.from_node_data">(lablib.operators.OCIOCDLTransform class method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.OCIOColorSpace.from_node_data">(lablib.operators.OCIOColorSpace class method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.OCIOFileTransform.from_node_data">(lablib.operators.OCIOFileTransform class method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.RepositionOperator.from_node_data">(lablib.operators.RepositionOperator class method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.Transform.from_node_data">(lablib.operators.Transform class method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="G" class="genindex-section">
+  <h2>G</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.get_config_path">get_config_path() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.get_description_from_config">get_description_from_config() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.get_direction">get_direction() (in module lablib.operators)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.Codec.get_ffmpeg_args">get_ffmpeg_args() (lablib.renderers.Codec method)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.BasicRenderer.get_ffmpeg_cmd">get_ffmpeg_cmd() (lablib.renderers.BasicRenderer method)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.Burnin.get_oiiotool_args">get_oiiotool_args() (lablib.renderers.Burnin method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.get_oiiotool_cmd">get_oiiotool_cmd() (lablib.generators.OCIOConfigFileGenerator method)</a>
+
+        <ul>
+          <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.get_oiiotool_cmd">(lablib.generators.SlateHtmlGenerator method)</a>
+</li>
+          <li><a href="processors.html#lablib.processors.AYONHieroEffectsFileProcessor.get_oiiotool_cmd">(lablib.processors.AYONHieroEffectsFileProcessor method)</a>
+</li>
+          <li><a href="processors.html#lablib.processors.AYONOCIOLookFileProcessor.get_oiiotool_cmd">(lablib.processors.AYONOCIOLookFileProcessor method)</a>
+</li>
+          <li><a href="processors.html#lablib.processors.OIIORepositionProcessor.get_oiiotool_cmd">(lablib.processors.OIIORepositionProcessor method)</a>
+</li>
+          <li><a href="renderers.html#lablib.renderers.BasicRenderer.get_oiiotool_cmd">(lablib.renderers.BasicRenderer method)</a>
+</li>
+        </ul></li>
+        <li><a href="lib.html#lablib.lib.get_vendored_env">get_vendored_env() (in module lablib.lib)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="H" class="genindex-section">
+  <h2>H</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="lib.html#lablib.lib.SequenceInfo.hash_string">hash_string (lablib.lib.SequenceInfo property)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.height">height (lablib.generators.SlateHtmlGenerator attribute)</a>
+
+        <ul>
+          <li><a href="lib.html#lablib.lib.ImageInfo.height">(lablib.lib.ImageInfo attribute)</a>
+</li>
+          <li><a href="lib.html#lablib.lib.SequenceInfo.height">(lablib.lib.SequenceInfo property)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="I" class="genindex-section">
+  <h2>I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="lib.html#lablib.lib.ImageInfo">ImageInfo (class in lablib.lib)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.OCIOColorSpace.in_colorspace">in_colorspace (lablib.operators.OCIOColorSpace attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.OCIOCDLTransform.interpolation">interpolation (lablib.operators.OCIOCDLTransform attribute)</a>
+
+        <ul>
+          <li><a href="operators.html#lablib.operators.OCIOFileTransform.interpolation">(lablib.operators.OCIOFileTransform attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="operators.html#lablib.operators.Transform.invert">invert (lablib.operators.Transform attribute)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.is_source_linear">is_source_linear (lablib.generators.SlateHtmlGenerator attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="K" class="genindex-section">
+  <h2>K</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="renderers.html#lablib.renderers.BasicRenderer.keep_only_container">keep_only_container (lablib.renderers.BasicRenderer attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    lablib.generators
+
+        <ul>
+          <li><a href="generators.html#module-lablib.generators">module</a>
+</li>
+        </ul></li>
+        <li>
+    lablib.lib
+
+        <ul>
+          <li><a href="lib.html#module-lablib.lib">module</a>
+</li>
+        </ul></li>
+        <li>
+    lablib.operators
+
+        <ul>
+          <li><a href="operators.html#module-lablib.operators">module</a>
+</li>
+        </ul></li>
+        <li>
+    lablib.processors
+
+        <ul>
+          <li><a href="processors.html#module-lablib.processors">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    lablib.renderers
+
+        <ul>
+          <li><a href="renderers.html#module-lablib.renderers">module</a>
+</li>
+        </ul></li>
+        <li><a href="processors.html#lablib.processors.AYONHieroEffectsFileProcessor.load">load() (lablib.processors.AYONHieroEffectsFileProcessor method)</a>
+
+        <ul>
+          <li><a href="processors.html#lablib.processors.AYONOCIOLookFileProcessor.load">(lablib.processors.AYONOCIOLookFileProcessor method)</a>
+</li>
+        </ul></li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.load_config_from_file">load_config_from_file() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="processors.html#lablib.processors.AYONOCIOLookFileProcessor.log">log (lablib.processors.AYONOCIOLookFileProcessor attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="M" class="genindex-section">
+  <h2>M</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="operators.html#lablib.operators.Mirror2">Mirror2 (class in lablib.operators)</a>
+</li>
+        <li>
+    module
+
+        <ul>
+          <li><a href="generators.html#module-lablib.generators">lablib.generators</a>
+</li>
+          <li><a href="lib.html#module-lablib.lib">lablib.lib</a>
+</li>
+          <li><a href="operators.html#module-lablib.operators">lablib.operators</a>
+</li>
+          <li><a href="processors.html#module-lablib.processors">lablib.processors</a>
+</li>
+          <li><a href="renderers.html#module-lablib.renderers">lablib.renderers</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="lib.html#lablib.lib.ImageInfo.name">name (lablib.lib.ImageInfo property)</a>
+
+        <ul>
+          <li><a href="renderers.html#lablib.renderers.BasicRenderer.name">(lablib.renderers.BasicRenderer attribute)</a>
+</li>
+          <li><a href="renderers.html#lablib.renderers.Codec.name">(lablib.renderers.Codec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="O" class="genindex-section">
+  <h2>O</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.ocio_objects">ocio_objects (lablib.generators.OCIOConfigFileGenerator attribute)</a>
+
+        <ul>
+          <li><a href="processors.html#lablib.processors.AYONHieroEffectsFileProcessor.ocio_objects">(lablib.processors.AYONHieroEffectsFileProcessor property)</a>
+</li>
+          <li><a href="processors.html#lablib.processors.AYONOCIOLookFileProcessor.ocio_objects">(lablib.processors.AYONOCIOLookFileProcessor property)</a>
+</li>
+        </ul></li>
+        <li><a href="operators.html#lablib.operators.OCIOCDLTransform">OCIOCDLTransform (class in lablib.operators)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.OCIOColorSpace">OCIOColorSpace (class in lablib.operators)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator">OCIOConfigFileGenerator (class in lablib.generators)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.OCIOFileTransform">OCIOFileTransform (class in lablib.operators)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="operators.html#lablib.operators.OCIOCDLTransform.offset">offset (lablib.operators.OCIOCDLTransform attribute)</a>
+</li>
+        <li><a href="processors.html#lablib.processors.OIIORepositionProcessor">OIIORepositionProcessor (class in lablib.processors)</a>
+</li>
+        <li><a href="processors.html#lablib.processors.OIIORepositionProcessor.operators">operators (lablib.processors.OIIORepositionProcessor attribute)</a>
+</li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.origin_x">origin_x (lablib.lib.ImageInfo attribute)</a>
+</li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.origin_y">origin_y (lablib.lib.ImageInfo attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.OCIOColorSpace.out_colorspace">out_colorspace (lablib.operators.OCIOColorSpace attribute)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.Burnin.outline">outline (lablib.renderers.Burnin attribute)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.BasicRenderer.output_dir">output_dir (lablib.renderers.BasicRenderer attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="P" class="genindex-section">
+  <h2>P</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="lib.html#lablib.lib.SequenceInfo.padding">padding (lablib.lib.SequenceInfo property)</a>
+
+        <ul>
+          <li><a href="renderers.html#lablib.renderers.Burnin.padding">(lablib.renderers.Burnin attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.par">par (lablib.lib.ImageInfo attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="lib.html#lablib.lib.ImageInfo.path">path (lablib.lib.ImageInfo attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.OCIOCDLTransform.power">power (lablib.operators.OCIOCDLTransform attribute)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.process_config">process_config() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.BasicRenderer.processor">processor (lablib.renderers.BasicRenderer property)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="R" class="genindex-section">
+  <h2>R</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="lib.html#lablib.lib.ImageInfo.rational_time">rational_time (lablib.lib.ImageInfo property)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.BasicRenderer.render">render() (lablib.renderers.BasicRenderer method)</a>
+
+        <ul>
+          <li><a href="renderers.html#lablib.renderers.RendererBase.render">(lablib.renderers.RendererBase method)</a>
+</li>
+          <li><a href="renderers.html#lablib.renderers.SlateRenderer.render">(lablib.renderers.SlateRenderer method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="renderers.html#lablib.renderers.RendererBase">RendererBase (class in lablib.renderers)</a>
+</li>
+        <li><a href="processors.html#lablib.processors.AYONHieroEffectsFileProcessor.repo_operators">repo_operators (lablib.processors.AYONHieroEffectsFileProcessor property)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.RepositionOperator">RepositionOperator (class in lablib.operators)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.Transform.rotate">rotate (lablib.operators.Transform attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="S" class="genindex-section">
+  <h2>S</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="operators.html#lablib.operators.OCIOCDLTransform.saturation">saturation (lablib.operators.OCIOCDLTransform attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.Transform.scale">scale (lablib.operators.Transform attribute)</a>
+</li>
+        <li><a href="lib.html#lablib.lib.SequenceInfo.scan">scan() (lablib.lib.SequenceInfo class method)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.search_paths">search_paths (lablib.generators.OCIOConfigFileGenerator attribute)</a>
+</li>
+        <li><a href="lib.html#lablib.lib.SequenceInfo">SequenceInfo (class in lablib.lib)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.set_ocio_config_name">set_ocio_config_name() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.set_ocio_objects">set_ocio_objects() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.set_size">set_size() (lablib.generators.SlateHtmlGenerator method)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.set_vars">set_vars() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.set_views">set_views() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.Burnin.size">size (lablib.renderers.Burnin attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.Transform.skew_order">skew_order (lablib.operators.Transform attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.Transform.skewX">skewX (lablib.operators.Transform attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.Transform.skewY">skewY (lablib.operators.Transform attribute)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.slate_filename">slate_filename (lablib.generators.SlateHtmlGenerator property)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.slate_fill_mode">slate_fill_mode (lablib.generators.SlateHtmlGenerator attribute)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.SlateRenderer.slate_generator">slate_generator (lablib.renderers.SlateRenderer property)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.slate_template_path">slate_template_path (lablib.generators.SlateHtmlGenerator attribute)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.SlateFillMode">SlateFillMode (class in lablib.generators)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator">SlateHtmlGenerator (class in lablib.generators)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.SlateRenderer">SlateRenderer (class in lablib.renderers)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.OCIOCDLTransform.slope">slope (lablib.operators.OCIOCDLTransform attribute)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.source_files">source_files (lablib.generators.SlateHtmlGenerator attribute)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.BasicRenderer.source_sequence">source_sequence (lablib.renderers.BasicRenderer attribute)</a>
+
+        <ul>
+          <li><a href="renderers.html#lablib.renderers.SlateRenderer.source_sequence">(lablib.renderers.SlateRenderer property)</a>
+</li>
+        </ul></li>
+        <li><a href="processors.html#lablib.processors.OIIORepositionProcessor.src_height">src_height (lablib.processors.OIIORepositionProcessor attribute)</a>
+</li>
+        <li><a href="processors.html#lablib.processors.OIIORepositionProcessor.src_width">src_width (lablib.processors.OIIORepositionProcessor attribute)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.staging_dir">staging_dir (lablib.generators.OCIOConfigFileGenerator attribute)</a>
+
+        <ul>
+          <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.staging_dir">(lablib.generators.SlateHtmlGenerator attribute)</a>
+</li>
+          <li><a href="generators.html#id0">(lablib.generators.SlateHtmlGenerator property)</a>
+</li>
+        </ul></li>
+        <li><a href="lib.html#lablib.lib.SequenceInfo.start_frame">start_frame (lablib.lib.SequenceInfo property)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="T" class="genindex-section">
+  <h2>T</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="processors.html#lablib.processors.AYONOCIOLookFileProcessor.target_path">target_path (lablib.processors.AYONOCIOLookFileProcessor attribute)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.target_view_space">target_view_space (lablib.generators.OCIOConfigFileGenerator attribute)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.template_path">template_path (lablib.generators.SlateHtmlGenerator property)</a>
+</li>
+        <li><a href="renderers.html#lablib.renderers.BasicRenderer.threads">threads (lablib.renderers.BasicRenderer attribute)</a>
+</li>
+        <li><a href="lib.html#lablib.lib.ImageInfo.timecode">timecode (lablib.lib.ImageInfo attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.CornerPin2D.to1">to1 (lablib.operators.CornerPin2D attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.CornerPin2D.to2">to2 (lablib.operators.CornerPin2D attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.CornerPin2D.to3">to3 (lablib.operators.CornerPin2D attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.CornerPin2D.to4">to4 (lablib.operators.CornerPin2D attribute)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.ColorOperator.to_ocio_obj">to_ocio_obj() (lablib.operators.ColorOperator method)</a>
+
+        <ul>
+          <li><a href="operators.html#lablib.operators.OCIOCDLTransform.to_ocio_obj">(lablib.operators.OCIOCDLTransform method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.OCIOColorSpace.to_ocio_obj">(lablib.operators.OCIOColorSpace method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.OCIOFileTransform.to_ocio_obj">(lablib.operators.OCIOFileTransform method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="operators.html#lablib.operators.CornerPin2D.to_oiio_args">to_oiio_args() (lablib.operators.CornerPin2D method)</a>
+
+        <ul>
+          <li><a href="operators.html#lablib.operators.Crop.to_oiio_args">(lablib.operators.Crop method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.Mirror2.to_oiio_args">(lablib.operators.Mirror2 method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.RepositionOperator.to_oiio_args">(lablib.operators.RepositionOperator method)</a>
+</li>
+          <li><a href="operators.html#lablib.operators.Transform.to_oiio_args">(lablib.operators.Transform method)</a>
+</li>
+        </ul></li>
+        <li><a href="operators.html#lablib.operators.Transform">Transform (class in lablib.operators)</a>
+</li>
+        <li><a href="operators.html#lablib.operators.Transform.translate">translate (lablib.operators.Transform attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="U" class="genindex-section">
+  <h2>U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="lib.html#lablib.lib.ImageInfo.update">update() (lablib.lib.ImageInfo method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="V" class="genindex-section">
+  <h2>V</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.views">views (lablib.generators.OCIOConfigFileGenerator attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="W" class="genindex-section">
+  <h2>W</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.SlateHtmlGenerator.width">width (lablib.generators.SlateHtmlGenerator attribute)</a>
+
+        <ul>
+          <li><a href="lib.html#lablib.lib.ImageInfo.width">(lablib.lib.ImageInfo attribute)</a>
+</li>
+          <li><a href="lib.html#lablib.lib.SequenceInfo.width">(lablib.lib.SequenceInfo property)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.working_space">working_space (lablib.generators.OCIOConfigFileGenerator attribute)</a>
+</li>
+        <li><a href="generators.html#lablib.generators.OCIOConfigFileGenerator.write_config">write_config() (lablib.generators.OCIOConfigFileGenerator method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, maxpareschi, jakubjezek001, doerp
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

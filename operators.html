@@ -1,0 +1,1281 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Generators" href="generators.html" /><link rel="prev" title="Lib" href="lib.html" />
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
+        <title>Operators - LabLib 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">LabLib 0.2.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">LabLib 0.2.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">📚 README</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="modules.html">⚙️ Module Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of ⚙️ Module Documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="lib.html">Lib</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generators.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processors.html">Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="renderers.html">Renderers</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/operators.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-lablib.operators">
+<span id="operators"></span><h1>Operators<a class="headerlink" href="#module-lablib.operators" title="Link to this heading">¶</a></h1>
+<p>Operators for color and reposition effects.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="lablib.operators.BaseOperator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">BaseOperator</span></span><a class="reference internal" href="_modules/lablib/operators/base.html#BaseOperator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.BaseOperator" title="Link to this definition">¶</a></dt>
+<dd><p>Base class for all operators.</p>
+<p>Currently this is only used for type checking.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lablib.operators.ColorOperator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">ColorOperator</span></span><a class="reference internal" href="_modules/lablib/operators/color.html#ColorOperator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.ColorOperator" title="Link to this definition">¶</a></dt>
+<dd><p>Base class for color operators.</p>
+<p>Currently this is only used for type checking.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.ColorOperator.from_node_data">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_node_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#ColorOperator.from_node_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.ColorOperator.from_node_data" title="Link to this definition">¶</a></dt>
+<dd><p>An abstract classmethod for returning a <a class="reference internal" href="#lablib.operators.ColorOperator" title="lablib.operators.ColorOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ColorOperator</span></code></a> from node data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – The node data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The color operator object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lablib.operators.ColorOperator" title="lablib.operators.ColorOperator">ColorOperator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.ColorOperator.to_ocio_obj">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_ocio_obj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#ColorOperator.to_ocio_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.ColorOperator.to_ocio_obj" title="Link to this definition">¶</a></dt>
+<dd><p>Converts the object to native OCIO object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – This method must be implemented in the
+    subclass.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">CornerPin2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from1=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from2=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from3=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from4=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to1=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to2=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to3=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to4=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#CornerPin2D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.CornerPin2D" title="Link to this definition">¶</a></dt>
+<dd><p>Operator for corner pinning images.</p>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>This operator is not yet tested or used in the codebase.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D.from1">
+<span class="sig-name descname"><span class="pre">from1</span></span><a class="headerlink" href="#lablib.operators.CornerPin2D.from1" title="Link to this definition">¶</a></dt>
+<dd><p>The first corner of the source image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D.from2">
+<span class="sig-name descname"><span class="pre">from2</span></span><a class="headerlink" href="#lablib.operators.CornerPin2D.from2" title="Link to this definition">¶</a></dt>
+<dd><p>The second corner of the source image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D.from3">
+<span class="sig-name descname"><span class="pre">from3</span></span><a class="headerlink" href="#lablib.operators.CornerPin2D.from3" title="Link to this definition">¶</a></dt>
+<dd><p>The third corner of the source image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D.from4">
+<span class="sig-name descname"><span class="pre">from4</span></span><a class="headerlink" href="#lablib.operators.CornerPin2D.from4" title="Link to this definition">¶</a></dt>
+<dd><p>The fourth corner of the source image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D.to1">
+<span class="sig-name descname"><span class="pre">to1</span></span><a class="headerlink" href="#lablib.operators.CornerPin2D.to1" title="Link to this definition">¶</a></dt>
+<dd><p>The first corner of the destination image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D.to2">
+<span class="sig-name descname"><span class="pre">to2</span></span><a class="headerlink" href="#lablib.operators.CornerPin2D.to2" title="Link to this definition">¶</a></dt>
+<dd><p>The second corner of the destination image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D.to3">
+<span class="sig-name descname"><span class="pre">to3</span></span><a class="headerlink" href="#lablib.operators.CornerPin2D.to3" title="Link to this definition">¶</a></dt>
+<dd><p>The third corner of the destination image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D.to4">
+<span class="sig-name descname"><span class="pre">to4</span></span><a class="headerlink" href="#lablib.operators.CornerPin2D.to4" title="Link to this definition">¶</a></dt>
+<dd><p>The fourth corner of the destination image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D.from_node_data">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_node_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#CornerPin2D.from_node_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.CornerPin2D.from_node_data" title="Link to this definition">¶</a></dt>
+<dd><p>Create <a class="reference internal" href="#lablib.operators.CornerPin2D" title="lablib.operators.CornerPin2D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CornerPin2D</span></code></a> from node data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#lablib.operators.CornerPin2D.data" title="Link to this definition">¶</a></dt>
+<dd><p>The node data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The corner pin object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#lablib.operators.CornerPin2D" title="lablib.operators.CornerPin2D">CornerPin2D</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.CornerPin2D.to_oiio_args">
+<span class="sig-name descname"><span class="pre">to_oiio_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#CornerPin2D.to_oiio_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.CornerPin2D.to_oiio_args" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the arguments for <code class="docutils literal notranslate"><span class="pre">oiiotool</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Arguments for OIIO.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lablib.operators.Crop">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">Crop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">box=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#Crop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.Crop" title="Link to this definition">¶</a></dt>
+<dd><p>Operator for cropping images.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Crop.box">
+<span class="sig-name descname"><span class="pre">box</span></span><a class="headerlink" href="#lablib.operators.Crop.box" title="Link to this definition">¶</a></dt>
+<dd><p>The crop box.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.Crop.from_node_data">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_node_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#Crop.from_node_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.Crop.from_node_data" title="Link to this definition">¶</a></dt>
+<dd><p>Create a <a class="reference internal" href="#lablib.operators.Crop" title="lablib.operators.Crop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Crop</span></code></a> object from node data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Crop.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#lablib.operators.Crop.data" title="Link to this definition">¶</a></dt>
+<dd><p>The node data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The crop object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#lablib.operators.Crop" title="lablib.operators.Crop">Crop</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.Crop.to_oiio_args">
+<span class="sig-name descname"><span class="pre">to_oiio_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#Crop.to_oiio_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.Crop.to_oiio_args" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the arguments for <code class="docutils literal notranslate"><span class="pre">oiiotool</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Arguments for OIIO.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lablib.operators.Mirror2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">Mirror2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#Mirror2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.Mirror2" title="Link to this definition">¶</a></dt>
+<dd><p>Operator for mirroring images.</p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>This should be <code class="docutils literal notranslate"><span class="pre">Mirror2</span> <span class="pre">-&gt;</span> <span class="pre">Mirror2D</span></code> looking at <a class="reference internal" href="#lablib.operators.CornerPin2D" title="lablib.operators.CornerPin2D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CornerPin2D</span></code></a>.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Mirror2.flop">
+<span class="sig-name descname"><span class="pre">flop</span></span><a class="headerlink" href="#lablib.operators.Mirror2.flop" title="Link to this definition">¶</a></dt>
+<dd><p>Mirror vertically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Mirror2.flip">
+<span class="sig-name descname"><span class="pre">flip</span></span><a class="headerlink" href="#lablib.operators.Mirror2.flip" title="Link to this definition">¶</a></dt>
+<dd><p>Mirror horizontally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.Mirror2.from_node_data">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_node_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#Mirror2.from_node_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.Mirror2.from_node_data" title="Link to this definition">¶</a></dt>
+<dd><p>Create <a class="reference internal" href="#lablib.operators.Mirror2" title="lablib.operators.Mirror2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mirror2</span></code></a> from node data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Mirror2.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#lablib.operators.Mirror2.data" title="Link to this definition">¶</a></dt>
+<dd><p>The node data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The mirror object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#lablib.operators.Mirror2" title="lablib.operators.Mirror2">Mirror2</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.Mirror2.to_oiio_args">
+<span class="sig-name descname"><span class="pre">to_oiio_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#Mirror2.to_oiio_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.Mirror2.to_oiio_args" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the arguments for <code class="docutils literal notranslate"><span class="pre">oiiotool</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Arguments for OIIO.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lablib.operators.OCIOCDLTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">OCIOCDLTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cccid=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation='linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saturation=1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#OCIOCDLTransform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.OCIOCDLTransform" title="Link to this definition">¶</a></dt>
+<dd><p>Foundry Hiero Timeline soft effect node class.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since this node class combines two of OCIO classes (FileTransform and
+CDLTransform), we will separate them here within
+<a class="reference internal" href="#lablib.operators.OCIOCDLTransform.to_ocio_obj" title="lablib.operators.OCIOCDLTransform.to_ocio_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OCIOCDLTransform.to_ocio_obj()</span></code></a>.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOCDLTransform.file">
+<span class="sig-name descname"><span class="pre">file</span></span><a class="headerlink" href="#lablib.operators.OCIOCDLTransform.file" title="Link to this definition">¶</a></dt>
+<dd><p>Path to the LUT file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOCDLTransform.direction">
+<span class="sig-name descname"><span class="pre">direction</span></span><a class="headerlink" href="#lablib.operators.OCIOCDLTransform.direction" title="Link to this definition">¶</a></dt>
+<dd><p>The direction. Defaults to 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOCDLTransform.cccid">
+<span class="sig-name descname"><span class="pre">cccid</span></span><a class="headerlink" href="#lablib.operators.OCIOCDLTransform.cccid" title="Link to this definition">¶</a></dt>
+<dd><p>The cccid. Defaults to “”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOCDLTransform.offset">
+<span class="sig-name descname"><span class="pre">offset</span></span><a class="headerlink" href="#lablib.operators.OCIOCDLTransform.offset" title="Link to this definition">¶</a></dt>
+<dd><p>The offset. Defaults to [0.0, 0.0, 0.0].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOCDLTransform.power">
+<span class="sig-name descname"><span class="pre">power</span></span><a class="headerlink" href="#lablib.operators.OCIOCDLTransform.power" title="Link to this definition">¶</a></dt>
+<dd><p>The power. Defaults to [1.0, 1.0, 1.0].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOCDLTransform.slope">
+<span class="sig-name descname"><span class="pre">slope</span></span><a class="headerlink" href="#lablib.operators.OCIOCDLTransform.slope" title="Link to this definition">¶</a></dt>
+<dd><p>The slope. Defaults to [0.0, 0.0, 0.0].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOCDLTransform.saturation">
+<span class="sig-name descname"><span class="pre">saturation</span></span><a class="headerlink" href="#lablib.operators.OCIOCDLTransform.saturation" title="Link to this definition">¶</a></dt>
+<dd><p>The saturation. Defaults to 1.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOCDLTransform.interpolation">
+<span class="sig-name descname"><span class="pre">interpolation</span></span><a class="headerlink" href="#lablib.operators.OCIOCDLTransform.interpolation" title="Link to this definition">¶</a></dt>
+<dd><p>The interpolation. Defaults to “linear”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">file</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.OCIOCDLTransform.from_node_data">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_node_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#OCIOCDLTransform.from_node_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.OCIOCDLTransform.from_node_data" title="Link to this definition">¶</a></dt>
+<dd><p>Create <a class="reference internal" href="#lablib.operators.OCIOCDLTransform" title="lablib.operators.OCIOCDLTransform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OCIOCDLTransform</span></code></a> from node data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – <p>The node data. List of expected but not required keys:
+- file (str): Path to the LUT file.
+- direction (int): The direction.</p>
+<blockquote>
+<div><p>Defaults to 0.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>cccid (str): The cccid.</dt><dd><p>Defaults to “”.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>offset (List[float]): The offset.</dt><dd><p>Defaults to [0.0, 0.0, 0.0].</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>power (List[float]): The power.</dt><dd><p>Defaults to [1.0, 1.0, 1.0].</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>slope (List[float]): The slope.</dt><dd><p>Defaults to [0.0, 0.0, 0.0].</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>saturation (float): The saturation.</dt><dd><p>Defaults to 1.0.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>interpolation (str): The interpolation.</dt><dd><p>Defaults to “linear”.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The OCIOCDLTransform object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lablib.operators.OCIOCDLTransform" title="lablib.operators.OCIOCDLTransform">OCIOCDLTransform</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.OCIOCDLTransform.to_ocio_obj">
+<span class="sig-name descname"><span class="pre">to_ocio_obj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#OCIOCDLTransform.to_ocio_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.OCIOCDLTransform.to_ocio_obj" title="Link to this definition">¶</a></dt>
+<dd><p>Returns native OCIO FileTransform and CDLTransform object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Either OCIO</dt><dd><p>CDLTransform or FileTransform object.
+If file is not provided, CDLTransform will be returned.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Union[OCIO.FileTransform, OCIO.CDLTransform]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lablib.operators.OCIOColorSpace">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">OCIOColorSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_colorspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ACES</span> <span class="pre">-</span> <span class="pre">ACEScg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_colorspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ACES</span> <span class="pre">-</span> <span class="pre">ACEScg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#OCIOColorSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.OCIOColorSpace" title="Link to this definition">¶</a></dt>
+<dd><p>Foundry Hiero Timeline soft effect node class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOColorSpace.in_colorspace">
+<span class="sig-name descname"><span class="pre">in_colorspace</span></span><a class="headerlink" href="#lablib.operators.OCIOColorSpace.in_colorspace" title="Link to this definition">¶</a></dt>
+<dd><p>The input colorspace.
+Defaults to “ACES - ACEScg”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOColorSpace.out_colorspace">
+<span class="sig-name descname"><span class="pre">out_colorspace</span></span><a class="headerlink" href="#lablib.operators.OCIOColorSpace.out_colorspace" title="Link to this definition">¶</a></dt>
+<dd><p>The output colorspace.
+Defaults to “ACES - ACEScg”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.OCIOColorSpace.from_node_data">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_node_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#OCIOColorSpace.from_node_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.OCIOColorSpace.from_node_data" title="Link to this definition">¶</a></dt>
+<dd><p>Create <a class="reference internal" href="#lablib.operators.OCIOColorSpace" title="lablib.operators.OCIOColorSpace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OCIOColorSpace</span></code></a> from node data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – The node data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#lablib.operators.OCIOColorSpace" title="lablib.operators.OCIOColorSpace">OCIOColorSpace</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.OCIOColorSpace.to_ocio_obj">
+<span class="sig-name descname"><span class="pre">to_ocio_obj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#OCIOColorSpace.to_ocio_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.OCIOColorSpace.to_ocio_obj" title="Link to this definition">¶</a></dt>
+<dd><p>Returns native OCIO ColorSpaceTransform object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The OCIO ColorSpaceTransform object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>OCIO.ColorSpaceTransform</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lablib.operators.OCIOFileTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">OCIOFileTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cccid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#OCIOFileTransform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.OCIOFileTransform" title="Link to this definition">¶</a></dt>
+<dd><p>Class for handling OCIO FileTransform effects.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Reads Foundry Hiero Timeline soft effect node class.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOFileTransform.file">
+<span class="sig-name descname"><span class="pre">file</span></span><a class="headerlink" href="#lablib.operators.OCIOFileTransform.file" title="Link to this definition">¶</a></dt>
+<dd><p>Path to the LUT file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOFileTransform.cccid">
+<span class="sig-name descname"><span class="pre">cccid</span></span><a class="headerlink" href="#lablib.operators.OCIOFileTransform.cccid" title="Link to this definition">¶</a></dt>
+<dd><p>Path to the cccid file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOFileTransform.direction">
+<span class="sig-name descname"><span class="pre">direction</span></span><a class="headerlink" href="#lablib.operators.OCIOFileTransform.direction" title="Link to this definition">¶</a></dt>
+<dd><p>The direction. Defaults to 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.OCIOFileTransform.interpolation">
+<span class="sig-name descname"><span class="pre">interpolation</span></span><a class="headerlink" href="#lablib.operators.OCIOFileTransform.interpolation" title="Link to this definition">¶</a></dt>
+<dd><p>The interpolation. Defaults to “linear”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.OCIOFileTransform.from_node_data">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_node_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#OCIOFileTransform.from_node_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.OCIOFileTransform.from_node_data" title="Link to this definition">¶</a></dt>
+<dd><p>Create <a class="reference internal" href="#lablib.operators.OCIOFileTransform" title="lablib.operators.OCIOFileTransform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OCIOFileTransform</span></code></a> from node data.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Reads Foundry Hiero Timeline soft effect node data.</p>
+<p>Would it be cool if we’d had a way to interface other DCC node
+data? Would they even be so much different?</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – The node data. List of expected but not required keys:
+- file (str): Path to the LUT file.
+- cccid (str): Path to the cccid file.
+- direction (int): The direction. Defaults to 0.
+- interpolation (str): The interpolation. Defaults to “linear”.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The OCIOFileTransform object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lablib.operators.OCIOFileTransform" title="lablib.operators.OCIOFileTransform">OCIOFileTransform</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.OCIOFileTransform.to_ocio_obj">
+<span class="sig-name descname"><span class="pre">to_ocio_obj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#OCIOFileTransform.to_ocio_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.OCIOFileTransform.to_ocio_obj" title="Link to this definition">¶</a></dt>
+<dd><p>Converts the object to native OCIO object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The OCIO FileTransform object in a list.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>OCIO.FileTransform</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lablib.operators.RepositionOperator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">RepositionOperator</span></span><a class="reference internal" href="_modules/lablib/operators/repositions.html#RepositionOperator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.RepositionOperator" title="Link to this definition">¶</a></dt>
+<dd><p>Base class for reposition operators.</p>
+<p>Currently this is only used for type checking.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.RepositionOperator.from_node_data">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_node_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#RepositionOperator.from_node_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.RepositionOperator.from_node_data" title="Link to this definition">¶</a></dt>
+<dd><p>An abstract method for returning a reposition operator from node data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.RepositionOperator.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#lablib.operators.RepositionOperator.data" title="Link to this definition">¶</a></dt>
+<dd><p>The node data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The reposition operator.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#lablib.operators.RepositionOperator" title="lablib.operators.RepositionOperator">RepositionOperator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.RepositionOperator.to_oiio_args">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_oiio_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#RepositionOperator.to_oiio_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.RepositionOperator.to_oiio_args" title="Link to this definition">¶</a></dt>
+<dd><p>An abstract method for returning the arguments for <code class="docutils literal notranslate"><span class="pre">oiiotool</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Arguments for OIIO.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lablib.operators.Transform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">Transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translate=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotate=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skewX=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skewY=0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skew_order='XY'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#Transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.Transform" title="Link to this definition">¶</a></dt>
+<dd><p>Transform operator for repositioning images.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The transformations are applied in the following order:
+<code class="docutils literal notranslate"><span class="pre">translate,</span> <span class="pre">rotate,</span> <span class="pre">scale,</span> <span class="pre">center,</span> <span class="pre">invert,</span> <span class="pre">skewX,</span> <span class="pre">skewY</span></code>.</p>
+<p>The <a class="reference internal" href="#lablib.operators.Transform.skew_order" title="lablib.operators.Transform.skew_order"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Transform.skew_order</span></code></a> parameter determines the order in which the skewX and skewY transformations are applied.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Transform.translate">
+<span class="sig-name descname"><span class="pre">translate</span></span><a class="headerlink" href="#lablib.operators.Transform.translate" title="Link to this definition">¶</a></dt>
+<dd><p>The translation vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Transform.rotate">
+<span class="sig-name descname"><span class="pre">rotate</span></span><a class="headerlink" href="#lablib.operators.Transform.rotate" title="Link to this definition">¶</a></dt>
+<dd><p>The rotation angle in degrees.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Transform.scale">
+<span class="sig-name descname"><span class="pre">scale</span></span><a class="headerlink" href="#lablib.operators.Transform.scale" title="Link to this definition">¶</a></dt>
+<dd><p>The scaling vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Transform.center">
+<span class="sig-name descname"><span class="pre">center</span></span><a class="headerlink" href="#lablib.operators.Transform.center" title="Link to this definition">¶</a></dt>
+<dd><p>The center of the transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Transform.invert">
+<span class="sig-name descname"><span class="pre">invert</span></span><a class="headerlink" href="#lablib.operators.Transform.invert" title="Link to this definition">¶</a></dt>
+<dd><p>Invert the transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Transform.skewX">
+<span class="sig-name descname"><span class="pre">skewX</span></span><a class="headerlink" href="#lablib.operators.Transform.skewX" title="Link to this definition">¶</a></dt>
+<dd><p>The skew in the X direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Transform.skewY">
+<span class="sig-name descname"><span class="pre">skewY</span></span><a class="headerlink" href="#lablib.operators.Transform.skewY" title="Link to this definition">¶</a></dt>
+<dd><p>The skew in the Y direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Transform.skew_order">
+<span class="sig-name descname"><span class="pre">skew_order</span></span><a class="headerlink" href="#lablib.operators.Transform.skew_order" title="Link to this definition">¶</a></dt>
+<dd><p>The order in which the skewX and skewY
+transformations are applied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.Transform.from_node_data">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_node_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#Transform.from_node_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.Transform.from_node_data" title="Link to this definition">¶</a></dt>
+<dd><p>Create a <a class="reference internal" href="#lablib.operators.Transform" title="lablib.operators.Transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Transform</span></code></a> object from node data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.Transform.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#lablib.operators.Transform.data" title="Link to this definition">¶</a></dt>
+<dd><p>The node data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The transform object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#lablib.operators.Transform" title="lablib.operators.Transform">Transform</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lablib.operators.Transform.to_oiio_args">
+<span class="sig-name descname"><span class="pre">to_oiio_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/repositions.html#Transform.to_oiio_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.Transform.to_oiio_args" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the arguments for <code class="docutils literal notranslate"><span class="pre">oiiotool</span></code>.</p>
+<p>Uses <a class="reference internal" href="lib.html#module-lablib.lib" title="lablib.lib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lablib.lib</span></code></a> to work with transformation matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Arguments for OIIO.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lablib.operators.get_direction">
+<span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">get_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lablib/operators/color.html#get_direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lablib.operators.get_direction" title="Link to this definition">¶</a></dt>
+<dd><p>Get the direction for OCIO FileTransform.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lablib.operators.direction">
+<span class="sig-prename descclassname"><span class="pre">lablib.operators.</span></span><span class="sig-name descname"><span class="pre">direction</span></span><a class="headerlink" href="#lablib.operators.direction" title="Link to this definition">¶</a></dt>
+<dd><p>The direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Union[str, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The direction.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="generators.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Generators</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="lib.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Lib</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, maxpareschi, jakubjezek001, doerp
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Operators</a><ul>
+<li><a class="reference internal" href="#lablib.operators.BaseOperator"><code class="docutils literal notranslate"><span class="pre">BaseOperator</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.ColorOperator"><code class="docutils literal notranslate"><span class="pre">ColorOperator</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.ColorOperator.from_node_data"><code class="docutils literal notranslate"><span class="pre">ColorOperator.from_node_data()</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.ColorOperator.to_ocio_obj"><code class="docutils literal notranslate"><span class="pre">ColorOperator.to_ocio_obj()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D"><code class="docutils literal notranslate"><span class="pre">CornerPin2D</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D.from1"><code class="docutils literal notranslate"><span class="pre">CornerPin2D.from1</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D.from2"><code class="docutils literal notranslate"><span class="pre">CornerPin2D.from2</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D.from3"><code class="docutils literal notranslate"><span class="pre">CornerPin2D.from3</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D.from4"><code class="docutils literal notranslate"><span class="pre">CornerPin2D.from4</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D.to1"><code class="docutils literal notranslate"><span class="pre">CornerPin2D.to1</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D.to2"><code class="docutils literal notranslate"><span class="pre">CornerPin2D.to2</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D.to3"><code class="docutils literal notranslate"><span class="pre">CornerPin2D.to3</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D.to4"><code class="docutils literal notranslate"><span class="pre">CornerPin2D.to4</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D.from_node_data"><code class="docutils literal notranslate"><span class="pre">CornerPin2D.from_node_data()</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D.data"><code class="docutils literal notranslate"><span class="pre">CornerPin2D.data</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.CornerPin2D.to_oiio_args"><code class="docutils literal notranslate"><span class="pre">CornerPin2D.to_oiio_args()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.Crop"><code class="docutils literal notranslate"><span class="pre">Crop</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.Crop.box"><code class="docutils literal notranslate"><span class="pre">Crop.box</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.Crop.from_node_data"><code class="docutils literal notranslate"><span class="pre">Crop.from_node_data()</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.Crop.data"><code class="docutils literal notranslate"><span class="pre">Crop.data</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.Crop.to_oiio_args"><code class="docutils literal notranslate"><span class="pre">Crop.to_oiio_args()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.Mirror2"><code class="docutils literal notranslate"><span class="pre">Mirror2</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.Mirror2.flop"><code class="docutils literal notranslate"><span class="pre">Mirror2.flop</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.Mirror2.flip"><code class="docutils literal notranslate"><span class="pre">Mirror2.flip</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.Mirror2.from_node_data"><code class="docutils literal notranslate"><span class="pre">Mirror2.from_node_data()</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.Mirror2.data"><code class="docutils literal notranslate"><span class="pre">Mirror2.data</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.Mirror2.to_oiio_args"><code class="docutils literal notranslate"><span class="pre">Mirror2.to_oiio_args()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.OCIOCDLTransform"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.OCIOCDLTransform.file"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform.file</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOCDLTransform.direction"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform.direction</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOCDLTransform.cccid"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform.cccid</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOCDLTransform.offset"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform.offset</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOCDLTransform.power"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform.power</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOCDLTransform.slope"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform.slope</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOCDLTransform.saturation"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform.saturation</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOCDLTransform.interpolation"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform.interpolation</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform.file</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOCDLTransform.from_node_data"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform.from_node_data()</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOCDLTransform.to_ocio_obj"><code class="docutils literal notranslate"><span class="pre">OCIOCDLTransform.to_ocio_obj()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.OCIOColorSpace"><code class="docutils literal notranslate"><span class="pre">OCIOColorSpace</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.OCIOColorSpace.in_colorspace"><code class="docutils literal notranslate"><span class="pre">OCIOColorSpace.in_colorspace</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOColorSpace.out_colorspace"><code class="docutils literal notranslate"><span class="pre">OCIOColorSpace.out_colorspace</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOColorSpace.from_node_data"><code class="docutils literal notranslate"><span class="pre">OCIOColorSpace.from_node_data()</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOColorSpace.to_ocio_obj"><code class="docutils literal notranslate"><span class="pre">OCIOColorSpace.to_ocio_obj()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.OCIOFileTransform"><code class="docutils literal notranslate"><span class="pre">OCIOFileTransform</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.OCIOFileTransform.file"><code class="docutils literal notranslate"><span class="pre">OCIOFileTransform.file</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOFileTransform.cccid"><code class="docutils literal notranslate"><span class="pre">OCIOFileTransform.cccid</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOFileTransform.direction"><code class="docutils literal notranslate"><span class="pre">OCIOFileTransform.direction</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOFileTransform.interpolation"><code class="docutils literal notranslate"><span class="pre">OCIOFileTransform.interpolation</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOFileTransform.from_node_data"><code class="docutils literal notranslate"><span class="pre">OCIOFileTransform.from_node_data()</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.OCIOFileTransform.to_ocio_obj"><code class="docutils literal notranslate"><span class="pre">OCIOFileTransform.to_ocio_obj()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.RepositionOperator"><code class="docutils literal notranslate"><span class="pre">RepositionOperator</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.RepositionOperator.from_node_data"><code class="docutils literal notranslate"><span class="pre">RepositionOperator.from_node_data()</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.RepositionOperator.data"><code class="docutils literal notranslate"><span class="pre">RepositionOperator.data</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.RepositionOperator.to_oiio_args"><code class="docutils literal notranslate"><span class="pre">RepositionOperator.to_oiio_args()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.Transform"><code class="docutils literal notranslate"><span class="pre">Transform</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.Transform.translate"><code class="docutils literal notranslate"><span class="pre">Transform.translate</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.Transform.rotate"><code class="docutils literal notranslate"><span class="pre">Transform.rotate</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.Transform.scale"><code class="docutils literal notranslate"><span class="pre">Transform.scale</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.Transform.center"><code class="docutils literal notranslate"><span class="pre">Transform.center</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.Transform.invert"><code class="docutils literal notranslate"><span class="pre">Transform.invert</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.Transform.skewX"><code class="docutils literal notranslate"><span class="pre">Transform.skewX</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.Transform.skewY"><code class="docutils literal notranslate"><span class="pre">Transform.skewY</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.Transform.skew_order"><code class="docutils literal notranslate"><span class="pre">Transform.skew_order</span></code></a></li>
+<li><a class="reference internal" href="#lablib.operators.Transform.from_node_data"><code class="docutils literal notranslate"><span class="pre">Transform.from_node_data()</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.Transform.data"><code class="docutils literal notranslate"><span class="pre">Transform.data</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.Transform.to_oiio_args"><code class="docutils literal notranslate"><span class="pre">Transform.to_oiio_args()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lablib.operators.get_direction"><code class="docutils literal notranslate"><span class="pre">get_direction()</span></code></a><ul>
+<li><a class="reference internal" href="#lablib.operators.direction"><code class="docutils literal notranslate"><span class="pre">direction</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>
