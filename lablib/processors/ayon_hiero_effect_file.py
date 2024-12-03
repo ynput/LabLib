@@ -79,8 +79,8 @@ class AYONHieroEffectsFileProcessor(object):
 
         all_ops = [v for _, v in ops_data.items() if isinstance(v, dict)]
 
-        # TODO: what if there are multiple layer citizens with subTrackIndex
-        all_ops.sort(key=lambda op: op["subTrackIndex"])
+        # first sort all by trackIndex and then subtrackIndex
+        all_ops.sort(key=lambda op: (op["trackIndex"], op["subTrackIndex"]))
 
         for value in all_ops:
             class_name = value["class"]
