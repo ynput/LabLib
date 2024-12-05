@@ -37,4 +37,5 @@ results/
 .python-version
 
 test_results/
+.pytest_cache/
 docs/_build/
