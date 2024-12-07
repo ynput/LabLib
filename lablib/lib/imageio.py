@@ -293,7 +293,7 @@ class SequenceInfo:
     @property
     def padding(self) -> int:
         """:obj:`int`: The sequence's frame padding."""
-        return len(str(self.start_frame))
+        return len(str(self.end_frame))
 
     @property
     def frames_missing(self) -> bool:
