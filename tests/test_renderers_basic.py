@@ -12,7 +12,7 @@ from lablib.processors import (
     AYONOCIOLookFileProcessor,
 )
 from lablib.generators import OCIOConfigFileGenerator
-from lablib.renderers import BasicRenderer
+from lablib.renderers import BasicRenderer, RendererBase
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -24,7 +24,7 @@ effect_processor = AYONHieroEffectsFileProcessor(
 )
 effect_processor.load()
 ocio_config_generator = OCIOConfigFileGenerator(
-    operators=effect_processor.color_operators,
+    ocio_objects=effect_processor.ocio_objects,
     staging_dir=Path("test_results").resolve().as_posix(),
     context=mock_data["asset"],
     family=mock_data["project"]["code"],
@@ -135,3 +135,9 @@ def test_BasicRenderer(test_index, test_data):
     rend.render(debug=True)
 
     # TODO: assertions
+
+
+def test_inheritance_BasicRenderer():
+    """Ensure BasicRenderer inherits from RendererBase
+    """
+    assert issubclass(BasicRenderer, RendererBase)

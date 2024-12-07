@@ -46,11 +46,11 @@ class AYONHieroEffectsFileProcessor(object):
         self.load()
 
     @property
-    def color_operators(self) -> List:
-        """List of color operators to be processed."""
+    def ocio_objects(self) -> List:
+        """List of OCIO objects to be processed."""
         ops = []
         for op in self._color_ops:
-            ops.extend(op.to_ocio_obj())
+            ops.append(op.to_ocio_obj())
         return ops
 
     @property
@@ -71,15 +71,16 @@ class AYONHieroEffectsFileProcessor(object):
 
         # get all relative files recursively so we can make sure files in
         # transforms are having correct path
-        all_relative_files = {f.name: f for f in Path(self.filepath.parent).rglob("*")}
+        all_relative_files = {
+            f.name: f for f in Path(self.filepath.parent).rglob("*")}
 
         with open(effect_file_path, "r") as f:
             ops_data = json.load(f)
 
         all_ops = [v for _, v in ops_data.items() if isinstance(v, dict)]
 
-        # TODO: what if there are multiple layer citizens with subTrackIndex
-        all_ops.sort(key=lambda op: op["subTrackIndex"])
+        # first sort all by trackIndex and then subtrackIndex
+        all_ops.sort(key=lambda op: (op["trackIndex"], op["subTrackIndex"]))
 
         for value in all_ops:
             class_name = value["class"]
@@ -96,6 +97,7 @@ class AYONHieroEffectsFileProcessor(object):
                 self._sanitize_file_path(node_value, all_relative_files)
 
             class_obj = self._wrapper_class_members[class_name]
+            # feed data into class object
             class_obj = class_obj.from_node_data(node_value)
 
             # separate color ops from repo ops
@@ -138,13 +140,13 @@ class AYONHieroEffectsFileProcessor(object):
     def get_oiiotool_cmd(self) -> List[str]:
         """Returns arguments for oiiotool command."""
         args = []
-        for op in self.color_operators:
-            if isinstance(op, OCIO.FileTransform):
-                lut = Path(op.getSrc()).resolve()
+        for oo in self.ocio_objects:
+            if isinstance(oo, OCIO.FileTransform):
+                lut = Path(oo.getSrc()).resolve()
                 args.extend(["--ociofiletransform", f"{lut.as_posix()}"])
-            if isinstance(op, OCIO.ColorSpaceTransform):
-                args.extend(["--colorconvert", op.getSrc(), op.getDst()])
-        for op in self.repo_operators:
-            args.extend(op.to_oiio_args())
+            if isinstance(oo, OCIO.ColorSpaceTransform):
+                args.extend(["--colorconvert", oo.getSrc(), oo.getDst()])
+        for ro in self.repo_operators:
+            args.extend(ro.to_oiio_args())
 
         return args

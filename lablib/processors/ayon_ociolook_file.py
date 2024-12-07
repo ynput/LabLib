@@ -7,8 +7,7 @@ from typing import List
 from pathlib import Path
 import PyOpenColorIO as OCIO
 
-
-from ..operators import AYONOCIOLookProduct
+from .. import operators
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -21,15 +20,15 @@ class AYONOCIOLookFileProcessor(object):
         filepath (Path): Path to the OCIO Look file.
 
     Attributes:
-        operator (AYONOCIOLookProduct): The OCIO Look operator.
         target_path (Path): Target path for the operator.
         log (logging.Logger): Logger instance.
     """
 
     filepath: Path
-    operator: AYONOCIOLookProduct
     target_path: Path = None
     log: logging.Logger = log
+
+    _ocio_objects: List[OCIO.Transform] = []
 
     def __init__(
         self,
@@ -44,6 +43,15 @@ class AYONOCIOLookFileProcessor(object):
 
         self.load()
 
+    @property
+    def ocio_objects(self) -> List:
+        """List of OCIO objects to be processed."""
+        return self._ocio_objects
+
+    def clear_ocio_objects(self) -> None:
+        """Clears lists of all OCIO objects."""
+        self._ocio_objects = []
+
     def load(self) -> None:
         """Load the OCIO Look file.
 
@@ -52,9 +60,11 @@ class AYONOCIOLookFileProcessor(object):
             files in transforms are having correct path.
 
         Attention:
-            This method clears the operator before loading the file.
+            This method clears the OCIO objects before loading the file.
         """
-        self.operator = None  # clear operator
+        # first clear all OCIO objects
+        self.clear_ocio_objects()
+
         ociolook_file_path = self.filepath.resolve().as_posix()
 
         # get all relative files recursively so we can make sure files in
@@ -77,17 +87,65 @@ class AYONOCIOLookFileProcessor(object):
         for item in ops_data["data"]["ocioLookItems"]:
             self._sanitize_file_path(item, all_relative_files)
 
-        self.operator = AYONOCIOLookProduct.from_node_data(ops_data["data"])
+        self._process_look_file_to_ocio_objects(ops_data["data"])
+
+    def _process_look_file_to_ocio_objects(self, data: dict) -> None:
+        """Process the OCIO Look file to OCIO objects.
+
+        Args:
+            data (dict): The OCIO Look data.
+        """
+
+        look_working_colorspace = data["ocioLookWorkingSpace"]["colorspace"]
+        look_items = data["ocioLookItems"]
+
+        for index, item in enumerate(look_items):
+            filepath = item["file"]
+            lut_in_colorspace = item["input_colorspace"]["colorspace"]
+            lut_out_colorspace = item["output_colorspace"]["colorspace"]
+            direction = item["direction"]
+            interpolation = item["interpolation"]
+
+            if index == 0:
+                # set the first colorspace as the current working colorspace
+                current_working_colorspace = look_working_colorspace
+
+            if current_working_colorspace != lut_in_colorspace:
+                self._ocio_objects.append(
+                    OCIO.ColorSpaceTransform(
+                        src=current_working_colorspace,
+                        dst=lut_in_colorspace,
+                    )
+                )
+
+            self._ocio_objects.append(
+                OCIO.FileTransform(
+                    src=Path(filepath).as_posix(),
+                    interpolation=operators.get_interpolation(interpolation),
+                    direction=operators.get_direction(direction),
+                )
+            )
+
+            current_working_colorspace = lut_out_colorspace
+
+        # making sure we are back in the working colorspace
+        if current_working_colorspace != look_working_colorspace:
+            self._ocio_objects.append(
+                OCIO.ColorSpaceTransform(
+                    src=current_working_colorspace,
+                    dst=look_working_colorspace,
+                )
+            )
 
     def get_oiiotool_cmd(self) -> List[str]:
         """Get arguments for the OIIO command."""
         args = []
-        for xfm in self.operator.to_ocio_obj():
-            if isinstance(xfm, OCIO.FileTransform):
-                lut = Path(xfm.getSrc()).resolve()
+        for oo in self.ocio_objects:
+            if isinstance(oo, OCIO.FileTransform):
+                lut = Path(oo.getSrc()).resolve()
                 args.extend(["--ociofiletransform", f"{lut.as_posix()}"])
-            if isinstance(xfm, OCIO.ColorSpaceTransform):
-                args.extend(["--colorconvert", xfm.getSrc(), xfm.getDst()])
+            if isinstance(oo, OCIO.ColorSpaceTransform):
+                args.extend(["--colorconvert", oo.getSrc(), oo.getDst()])
         return args
 
     def _sanitize_file_path(
