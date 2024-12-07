@@ -72,7 +72,7 @@ class SlateRenderer(RendererBase):
             generator (SlateHtmlGenerator): The new generator for the renderer.
         """
         self._slate_proc = generator
-        self._slate_proc.source_files = self._source_sequence.frames
+        self._slate_proc.source_files = self._source_sequence.imageinfos
 
     @property
     def source_sequence(self) -> SequenceInfo:
@@ -88,9 +88,9 @@ class SlateRenderer(RendererBase):
         """Set new source sequence.
         """
         self._source_sequence = source_sequence
-        self._slate_proc.source_files = self._source_sequence.frames
+        self._slate_proc.source_files = self._source_sequence.imageinfos
 
-        first_frame = self._source_sequence.frames[0]
+        first_frame = min(self._source_sequence.imageinfos)
         frame_number = first_frame.frame_number
         slate_frame = str(frame_number - 1).zfill(source_sequence.padding)
         ext = first_frame.extension
@@ -112,7 +112,7 @@ class SlateRenderer(RendererBase):
         Arguments:
             debug (Optional[bool]): Whether to increase log verbosity.
         """        
-        first_frame = self.source_sequence.frames[0]
+        first_frame = min(self.source_sequence.imageinfos)
         timecode = offset_timecode(
             tc=first_frame.timecode,
             frame_offset=-1,
