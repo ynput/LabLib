@@ -22,6 +22,7 @@ function Default-Func {
     Write-Host "  install                       Install Poetry and update venv by lock file."
     Write-Host "  set-env                       Set all env vars in .env file."
     Write-Host "  get-dependencies              Download and extract all dependencies into vendor folder."
+    Write-Host "  test                          Run pytest."
     Write-Host ""
 }
 

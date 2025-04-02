@@ -1,3 +1,4 @@
+import json
 import pytest
 import logging
 from pathlib import Path
@@ -120,3 +121,72 @@ class TestAYONHieroEffectFileProcessor:
         assert (
             len(processor.ocio_objects) == results["expected_length"]
         )
+
+    def test_clear_operators(self, tmp_path):
+        dummy_file = tmp_path / "empty.json"
+        dummy_file.write_text("{}")
+
+        effect_processor = AYONHieroEffectsFileProcessor(dummy_file)
+        effect_processor._color_ops = ["test"]
+        effect_processor._repo_ops = ["test"]
+        effect_processor.clear_operators()
+        assert effect_processor.ocio_objects == []
+        assert effect_processor.repo_operators == []
+
+    def test_invalid_json(self, tmp_path):
+        invalid_json = tmp_path / "invalid.json"
+        invalid_json.touch()
+        invalid_json.write_text("{invalid json}")
+        with pytest.raises(json.JSONDecodeError):
+            processor = AYONHieroEffectsFileProcessor(invalid_json)
+            processor.load()
+
+    def test_missing_file(self):
+        with pytest.raises(FileNotFoundError):
+            processor = AYONHieroEffectsFileProcessor(Path("nonexistent.json"))
+            processor.load()
+
+    def test_operation_sorting(self, tmp_path):
+        test_data = {
+            "op1": {
+                "trackIndex": 1,
+                "subTrackIndex": 2,
+                "class": "ValidClass",
+                "node": {}
+        },
+            "op2": {
+                "trackIndex": 1,
+                "subTrackIndex": 1,
+                "class": "ValidClass",
+                "node": {}
+        }
+        }
+        test_file = tmp_path / "test.json"
+        test_file.write_text(json.dumps(test_data))
+
+        processor = AYONHieroEffectsFileProcessor(test_file)
+        processor.load()
+
+    def test_sanitize_file_path(self, tmp_path):
+        test_file = tmp_path / "test.lut"
+        test_file.touch()
+        dummy_file = tmp_path / "empty.json"
+        dummy_file.touch()
+        dummy_file.write_text("{}")
+
+        processor = AYONHieroEffectsFileProcessor(dummy_file)
+        node_value = {"file": "test.lut"}  # Use same filename as test file
+        all_relative_files = {test_file.name: test_file}
+
+        processor._sanitize_file_path(node_value, all_relative_files)
+        assert Path(node_value["file"]).exists()
+
+
+    def test_empty_effects_file(self, tmp_path):
+        empty_file = tmp_path / "empty.json"
+        empty_file.write_text("{}")
+
+        processor = AYONHieroEffectsFileProcessor(empty_file)
+        processor.load()
+        assert processor._color_ops == []
+        assert processor._repo_ops == []
