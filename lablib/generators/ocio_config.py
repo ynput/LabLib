@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import logging
 import uuid
-from typing import List, Union, Dict, Optional
+from typing import Union, Optional
 from pathlib import Path
 
 import PyOpenColorIO as OCIO
@@ -20,20 +20,20 @@ class OCIOConfigFileGenerator:
         context (str): The context of the OCIO Config file.
         config_path (Optional[str]): The path to the OCIO Config file.
         family (Optional[str]): The family of the OCIO Config file.
-        ocio_objects (Optional[List[OCIO.Transform]]): A list of OCIO Transform
+        ocio_objects (Optional[list[OCIO.Transform]]): A list of OCIO Transform
             objects.
         working_space (Optional[str]): The working space of the OCIO Config
             file.
         target_view_space (Optional[str]): The target view space of the OCIO
             Config file. For views to be using specific color spaces
             different from working space.
-        views (Optional[List[str]]): A list of views.
+        views (Optional[list[str]]): A list of views.
         description (Optional[str]): The description of the OCIO Config file.
         staging_dir (Optional[str]): The staging directory of the OCIO Config
             file.
-        environment_variables (Optional[Dict]): A dictionary of environment
+        environment_variables (Optional[dict]): A dictionary of environment
             variables.
-        search_paths (Optional[List[str]]): A list of search paths.
+        search_paths (Optional[list[str]]): A list of search paths.
 
     Example:
         >>> from lablib.operators import LUT
@@ -61,28 +61,28 @@ class OCIOConfigFileGenerator:
     log: logging.Logger = log
 
     _description: str
-    _vars: Dict[str, str] = {}
-    _views: List[str] = []
+    _vars: dict[str, str] = {}
+    _views: list[str] = []
     _config_path: Path  # OCIO Config file
     _ocio_config: OCIO.Config  # OCIO Config object
-    _ocio_search_paths: List[str] = []
+    _ocio_search_paths: list[str] = []
     _ocio_config_name: str = "config.ocio"
     _dest_path: str = ""
-    _ocio_objects: List[OCIO.Transform] = []
+    _ocio_objects: list[OCIO.Transform] = []
 
     def __init__(
         self,
         context: str,
         family: Optional[str] = None,
-        ocio_objects: Optional[List[OCIO.Transform]] = None,
+        ocio_objects: Optional[list[OCIO.Transform]] = None,
         config_path: Optional[str] = None,
         working_space: Optional[str] = None,
         target_view_space: Optional[str] = None,
-        views: Optional[List[str]] = None,
+        views: Optional[list[str]] = None,
         description: Optional[str] = None,
         staging_dir: Optional[str] = None,
-        environment_variables: Optional[Dict] = None,
-        search_paths: Optional[List[str]] = None,
+        environment_variables: Optional[dict] = None,
+        search_paths: Optional[list[str]] = None,
         logger: logging.Logger = None,
     ):
 
@@ -163,7 +163,7 @@ class OCIOConfigFileGenerator:
         """
         self._ocio_config_name = name
 
-    def set_views(self, *args: Union[str, List[str]]) -> None:
+    def set_views(self, *args: Union[str, list[str]]) -> None:
         """Set the views for the OCIO Config file.
 
         Attention:
@@ -175,7 +175,7 @@ class OCIOConfigFileGenerator:
         self.clear_views()
         self.append_views(*args)
 
-    def set_search_paths(self, *args: Union[str, List[str]]) -> None:
+    def set_search_paths(self, *args: Union[str, list[str]]) -> None:
         self.append_search_paths(*args)
 
     def set_ocio_objects(self, *args) -> None:
@@ -238,7 +238,7 @@ class OCIOConfigFileGenerator:
             else:
                 self._ocio_objects.append(arg)
 
-    def append_views(self, *args: Union[str, List[str]]) -> None:
+    def append_views(self, *args: Union[str, list[str]]) -> None:
         """Append views.
 
         Arguments:
@@ -274,22 +274,22 @@ class OCIOConfigFileGenerator:
         """
         return self._ocio_config.getDescription()
 
-    def _get_search_paths_from_config(self) -> List[str]:
+    def _get_search_paths_from_config(self) -> list[str]:
         """Return the search paths from the OCIO Config file.
 
         Returns:
-            List[str]: A list of search paths.
+            list[str]: A list of search paths.
         """
         return list(self._ocio_config.getSearchPaths())
 
-    def _sanitize_search_paths(self, paths: List[str]) -> None:
+    def _sanitize_search_paths(self, paths: list[str]) -> None:
         """Sanitize the search paths.
 
         It will check if the path is a file or a directory and add it to the
         search paths. It will also replace any variables found in the path.
 
         Arguments:
-            paths (List[str]): A list of search paths.
+            paths (list[str]): A list of search paths.
         """
         real_paths = []
         for p in paths:
@@ -433,18 +433,18 @@ class OCIOConfigFileGenerator:
         with open(dest.as_posix(), "w") as f:
             f.write(self._ocio_config.serialize())
 
-    def _get_search_paths_lines(self) -> List[str]:
+    def _get_search_paths_lines(self) -> list[str]:
         """Add search paths to the OCIO Config file.
 
         INFO: This is temporary hacky way to add search paths to the
             OCIO since OCIO is ignoring official api methods `addSearchPath()`.
 
         Arguments:
-            paths (List[str]): A list of search paths.
+            paths (list[str]): A list of search paths.
         """
         return [f"  - {path}" for path in self._ocio_search_paths]
 
-    def _get_environment_variables_lines(self) -> List[str]:
+    def _get_environment_variables_lines(self) -> list[str]:
         """Add environment variables to the OCIO Config file.
 
         INFO: This is temporary hacky way to add environment variables to the
@@ -452,7 +452,7 @@ class OCIOConfigFileGenerator:
             methods `addEnvironmentVar()`.
 
         Returns:
-            List[str]: A list of environment variables.
+            list[str]: A list of environment variables.
         """
         return [f"  {k}: {v}" for k, v in self._vars.items()]
 
@@ -477,11 +477,11 @@ class OCIOConfigFileGenerator:
         self._dest_path = dest
         return dest
 
-    def get_oiiotool_cmd(self) -> List:
+    def get_oiiotool_cmd(self) -> list:
         """Return arguments for the oiiotool command.
 
         Returns:
-            List: The arguments for the oiiotool command.
+            list: The arguments for the oiiotool command.
         """
         return [
             "--colorconfig",

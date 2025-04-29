@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import json
 import logging
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
 import pytest
 
@@ -15,7 +17,7 @@ class TestRepositionOperators:
 
     def __get_reposition_operators(
         file: Union[Path, str], type: str = None
-    ) -> List[dict]:
+    ) -> list[dict]:
         """Helper function to read reposition operators from effectsjson files.
         NOTE: should i use a fixture for this and can i mix fixtures
         """

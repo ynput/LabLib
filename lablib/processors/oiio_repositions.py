@@ -1,10 +1,9 @@
 """Processors providing positional effect arguments for OIIO."""
-
 from __future__ import annotations
 
 import inspect
 import logging
-from typing import Any, List
+from typing import Any
 
 from ..operators import repositions
 
@@ -21,7 +20,7 @@ class OIIORepositionProcessor:
         This way :obj:`OIIORepositionProcessor` will act as a basic reformat.
 
     Attributes:
-        operators (List): The list of repositioning operators.
+        operators (list): The list of repositioning operators.
         src_width (int): The source image width.
         dst_width (int): The destination image width.
         src_height (int): The source image height.
@@ -29,7 +28,7 @@ class OIIORepositionProcessor:
         fit (str): The fit mode for the image.
     """
 
-    operators: List[Any] = []
+    operators: list[Any] = []
     src_width: int = 0
     dst_width: int = 0
     src_height: int = 0
@@ -52,11 +51,11 @@ class OIIORepositionProcessor:
 
         return f"{self.__class__.__name__}({props[:-2]})"
 
-    def get_oiiotool_cmd(self) -> List[str]:
+    def get_oiiotool_cmd(self) -> list[str]:
         """Get the OIIO arguments for repositioning images.
 
         Returns:
-            List[str]: The OIIO arguments.
+            list[str]: The OIIO arguments.
         """
         result = []
         for op in self.operators:

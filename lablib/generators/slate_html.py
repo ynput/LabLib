@@ -4,7 +4,6 @@ import collections
 import datetime
 from enum import Enum
 import shutil
-from typing import List, Dict
 from pathlib import Path
 
 from selenium import webdriver
@@ -25,7 +24,7 @@ class SlateHtmlGenerator:
     """Class to generate a slate from a template.
 
     Attributes:
-        data (dict): A dictionary containing the data to be formatted in the template.    
+        data (dict): A dictionary containing the data to be formatted in the template.
         slate_template_path (str): The path to the template.
         width (int): The width of the slate.
         height (int): The height of the slate.
@@ -41,12 +40,12 @@ class SlateHtmlGenerator:
 
     def __init__(
         self,
-        data: Dict,
+        data: dict,
         slate_template_path: str,
         width: int = None,
         height: int = None,
         staging_dir: str = None,
-        source_files: List[imageio.ImageInfo] = None,
+        source_files: list[imageio.ImageInfo] = None,
         is_source_linear: bool = None,
         slate_fill_mode: SlateFillMode = None
     ):
@@ -130,7 +129,7 @@ class SlateHtmlGenerator:
         """Set the slate template path.
 
         Arguments:
-            path (str): The new path to the slate template path.    
+            path (str): The new path to the slate template path.
         """
         self._slate_template_path = Path(path).resolve().as_posix()
 
@@ -330,14 +329,14 @@ class SlateHtmlGenerator:
             )
 
     def create_base_slate(self) -> None:
-        """Prepare and create base slate. 
+        """Prepare and create base slate.
         """
         self._stage_slate()
         self._format_slate()
         self._setup_base_slate()
         self._set_thumbnail_sources()
 
-    def get_oiiotool_cmd(self) -> List:
+    def get_oiiotool_cmd(self) -> list:
         """ Get the oiiotool command to run for slate generation.
 
         Returns:

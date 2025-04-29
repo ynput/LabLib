@@ -1,6 +1,5 @@
 from abc import abstractmethod
 from dataclasses import dataclass, field
-from typing import List
 
 from lablib.lib.utils import (
     identity_matrix,
@@ -33,11 +32,11 @@ class RepositionOperator(BaseOperator):
         pass
 
     @abstractmethod
-    def to_oiio_args(self) -> List[str]:
+    def to_oiio_args(self) -> list[str]:
         """An abstract method for returning the arguments for ``oiiotool``.
 
         Returns:
-            List[str]: Arguments for OIIO.
+            list[str]: Arguments for OIIO.
         """
         pass
 
@@ -53,10 +52,10 @@ class Transform(RepositionOperator):
         The :obj:`Transform.skew_order` parameter determines the order in which the skewX and skewY transformations are applied.
 
     Attributes:
-        translate (List[float]): The translation vector.
+        translate (list[float]): The translation vector.
         rotate (float): The rotation angle in degrees.
-        scale (List[float]): The scaling vector.
-        center (List[float]): The center of the transformation.
+        scale (list[float]): The scaling vector.
+        center (list[float]): The center of the transformation.
         invert (bool): Invert the transformation.
         skewX (float): The skew in the X direction.
         skewY (float): The skew in the Y direction.
@@ -64,23 +63,23 @@ class Transform(RepositionOperator):
             transformations are applied.
     """
 
-    translate: List[float] = field(default_factory=lambda: [0.0, 0.0])
+    translate: list[float] = field(default_factory=lambda: [0.0, 0.0])
     rotate: float = 0.0
     # needs to be treated as a list of floats but can be single float
-    scale: List[float] = field(default_factory=lambda: [1.0, 1.0])
-    center: List[float] = field(default_factory=lambda: [0.0, 0.0])
+    scale: list[float] = field(default_factory=lambda: [1.0, 1.0])
+    center: list[float] = field(default_factory=lambda: [0.0, 0.0])
     invert: bool = False
     skewX: float = 0.0
     skewY: float = 0.0
     skew_order: str = "XY"
 
-    def to_oiio_args(self) -> List[str]:
+    def to_oiio_args(self) -> list[str]:
         """Gets the arguments for ``oiiotool``.
 
         Uses :obj:`lablib.lib` to work with transformation matrices.
 
         Returns:
-            List[str]: Arguments for OIIO.
+            list[str]: Arguments for OIIO.
         """
         matrix = calculate_matrix(
             t=self.translate, r=self.rotate, s=self.scale, c=self.center
@@ -123,17 +122,17 @@ class Crop(RepositionOperator):
     """Operator for cropping images.
 
     Attributes:
-        box (List[int]): The crop box.
+        box (list[int]): The crop box.
     """
 
-    box: List[int] = field(default_factory=lambda: [0, 0, 1920, 1080])
+    box: list[int] = field(default_factory=lambda: [0, 0, 1920, 1080])
     # NOTE: could also be called with width, height, x, y
 
-    def to_oiio_args(self) -> List[str]:
+    def to_oiio_args(self) -> list[str]:
         """Gets the arguments for ``oiiotool``.
 
         Returns:
-            List[int]: Arguments for OIIO.
+            list[int]: Arguments for OIIO.
         """
         return [
             "--crop",
@@ -173,7 +172,7 @@ class Mirror2(RepositionOperator):
         """Gets the arguments for ``oiiotool``.
 
         Returns:
-            List[str]: Arguments for OIIO.
+            list[str]: Arguments for OIIO.
         """
         args = []
         if self.flop:
@@ -203,30 +202,30 @@ class CornerPin2D(RepositionOperator):
         This operator is not yet tested or used in the codebase.
 
     Attributes:
-        from1 (List[float]): The first corner of the source image.
-        from2 (List[float]): The second corner of the source image.
-        from3 (List[float]): The third corner of the source image.
-        from4 (List[float]): The fourth corner of the source image.
-        to1 (List[float]): The first corner of the destination image.
-        to2 (List[float]): The second corner of the destination image.
-        to3 (List[float]): The third corner of the destination image.
-        to4 (List[float]): The fourth corner of the destination image.
+        from1 (list[float]): The first corner of the source image.
+        from2 (list[float]): The second corner of the source image.
+        from3 (list[float]): The third corner of the source image.
+        from4 (list[float]): The fourth corner of the source image.
+        to1 (list[float]): The first corner of the destination image.
+        to2 (list[float]): The second corner of the destination image.
+        to3 (list[float]): The third corner of the destination image.
+        to4 (list[float]): The fourth corner of the destination image.
     """
 
-    from1: List[float] = field(default_factory=lambda: [0.0, 0.0])
-    from2: List[float] = field(default_factory=lambda: [0.0, 0.0])
-    from3: List[float] = field(default_factory=lambda: [0.0, 0.0])
-    from4: List[float] = field(default_factory=lambda: [0.0, 0.0])
-    to1: List[float] = field(default_factory=lambda: [0.0, 0.0])
-    to2: List[float] = field(default_factory=lambda: [0.0, 0.0])
-    to3: List[float] = field(default_factory=lambda: [0.0, 0.0])
-    to4: List[float] = field(default_factory=lambda: [0.0, 0.0])
+    from1: list[float] = field(default_factory=lambda: [0.0, 0.0])
+    from2: list[float] = field(default_factory=lambda: [0.0, 0.0])
+    from3: list[float] = field(default_factory=lambda: [0.0, 0.0])
+    from4: list[float] = field(default_factory=lambda: [0.0, 0.0])
+    to1: list[float] = field(default_factory=lambda: [0.0, 0.0])
+    to2: list[float] = field(default_factory=lambda: [0.0, 0.0])
+    to3: list[float] = field(default_factory=lambda: [0.0, 0.0])
+    to4: list[float] = field(default_factory=lambda: [0.0, 0.0])
 
     def to_oiio_args(self):
         """Gets the arguments for ``oiiotool``.
 
         Returns:
-            List[str]: Arguments for OIIO.
+            list[str]: Arguments for OIIO.
         """
         # TODO: use matrix operation from utils.py
         return []

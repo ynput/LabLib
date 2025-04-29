@@ -6,7 +6,7 @@ import re
 import logging
 from pathlib import Path
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Optional
 
 import opentimelineio.opentime as opentime
 
@@ -197,12 +197,12 @@ class SequenceInfo:
 
     Attributes:
         path Any[Path, str]: Path to the image sequence directory.
-        imageinfos List[ImageInfo]: List of all files as `ImageInfo` to be
+        imageinfos list[ImageInfo]: list of all files as `ImageInfo` to be
             used.
     """
 
     path: Path = field(default_factory=Path)
-    imageinfos: List[ImageInfo] = field(default_factory=list)
+    imageinfos: list[ImageInfo] = field(default_factory=list)
 
     def __post_init__(self):
         if not all([self.path, self.imageinfos]):
@@ -211,7 +211,7 @@ class SequenceInfo:
             )
 
     @classmethod
-    def scan(cls, directory: str | Path) -> List[SequenceInfo]:
+    def scan(cls, directory: str | Path) -> list[SequenceInfo]:
         """Scan a directory for a list of images.
 
         Attention:
@@ -223,7 +223,7 @@ class SequenceInfo:
                 to be scanned.
 
         Returns:
-            List[SequenceInfo]: List of all found sequences.
+            list[SequenceInfo]: list of all found sequences.
         """
         log.info(f"Scanning {directory}")
         if not isinstance(directory, Path):
@@ -232,7 +232,7 @@ class SequenceInfo:
         if not directory.is_dir():
             raise NotImplementedError(f"{directory} is no directory")
 
-        files_map: Dict[Path, ImageInfo] = {}
+        files_map: dict[Path, ImageInfo] = {}
         for item in directory.iterdir():
             if not item.is_file():
                 continue
@@ -256,8 +256,8 @@ class SequenceInfo:
         ]
 
     @property
-    def frames(self) -> List[int]:
-        """:obj:`List[int]`: List of all available frame numbers in the sequence."""  # noqa
+    def frames(self) -> list[int]:
+        """:obj:`list[int]`: list of all available frame numbers in the sequence."""  # noqa
         return [ii.frame_number for ii in self.imageinfos]
 
     @property
