@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from abc import abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import PyOpenColorIO as OCIO
 
@@ -128,7 +130,7 @@ class OCIOFileTransform(ColorOperator):
             data? Would they even be so much different?
 
         Args:
-            data (dict): The node data. List of expected but not required keys:
+            data (dict): The node data. list of expected but not required keys:
                 - file (str): Path to the LUT file.
                 - cccid (str): Path to the cccid file.
                 - direction (int): The direction. Defaults to 0.
@@ -159,9 +161,9 @@ class OCIOCDLTransform(OCIOFileTransform):
         file (Optional[str]): Path to the LUT file.
         direction (int): The direction. Defaults to 0.
         cccid (str): The cccid. Defaults to "".
-        offset (List[float]): The offset. Defaults to [0.0, 0.0, 0.0].
-        power (List[float]): The power. Defaults to [1.0, 1.0, 1.0].
-        slope (List[float]): The slope. Defaults to [0.0, 0.0, 0.0].
+        offset (list[float]): The offset. Defaults to [0.0, 0.0, 0.0].
+        power (list[float]): The power. Defaults to [1.0, 1.0, 1.0].
+        slope (list[float]): The slope. Defaults to [0.0, 0.0, 0.0].
         saturation (float): The saturation. Defaults to 1.0.
         interpolation (str): The interpolation. Defaults to "linear".
     """
@@ -169,9 +171,9 @@ class OCIOCDLTransform(OCIOFileTransform):
     file: Optional[str] = None
     direction: int = 0
     cccid: str = ""
-    offset: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
-    power: List[float] = field(default_factory=lambda: [1.0, 1.0, 1.0])
-    slope: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
+    offset: list[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
+    power: list[float] = field(default_factory=lambda: [1.0, 1.0, 1.0])
+    slope: list[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
     saturation: float = 1.0
     interpolation: str = "linear"
 
@@ -212,17 +214,17 @@ class OCIOCDLTransform(OCIOFileTransform):
         """Create :obj:`OCIOCDLTransform` from node data.
 
         Args:
-            data (dict): The node data. List of expected but not required keys:
+            data (dict): The node data. list of expected but not required keys:
                 - file (str): Path to the LUT file.
                 - direction (int): The direction.
                     Defaults to 0.
                 - cccid (str): The cccid.
                     Defaults to "".
-                - offset (List[float]): The offset.
+                - offset (list[float]): The offset.
                     Defaults to [0.0, 0.0, 0.0].
-                - power (List[float]): The power.
+                - power (list[float]): The power.
                     Defaults to [1.0, 1.0, 1.0].
-                - slope (List[float]): The slope.
+                - slope (list[float]): The slope.
                     Defaults to [0.0, 0.0, 0.0].
                 - saturation (float): The saturation.
                     Defaults to 1.0.

@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import logging
 
-from typing import List
 from pathlib import Path
 import PyOpenColorIO as OCIO
 
@@ -28,7 +27,7 @@ class AYONOCIOLookFileProcessor(object):
     target_path: Path = None
     log: logging.Logger = log
 
-    _ocio_objects: List[OCIO.Transform] = []
+    _ocio_objects: list[OCIO.Transform] = []
 
     def __init__(
         self,
@@ -44,8 +43,8 @@ class AYONOCIOLookFileProcessor(object):
         self.load()
 
     @property
-    def ocio_objects(self) -> List:
-        """List of OCIO objects to be processed."""
+    def ocio_objects(self) -> list:
+        """list of OCIO objects to be processed."""
         return self._ocio_objects
 
     def clear_ocio_objects(self) -> None:
@@ -137,7 +136,7 @@ class AYONOCIOLookFileProcessor(object):
                 )
             )
 
-    def get_oiiotool_cmd(self) -> List[str]:
+    def get_oiiotool_cmd(self) -> list[str]:
         """Get arguments for the OIIO command."""
         args = []
         for oo in self.ocio_objects:

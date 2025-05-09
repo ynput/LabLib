@@ -3,8 +3,6 @@ from __future__ import annotations
 import json
 import logging
 import inspect
-
-from typing import List, Dict
 from pathlib import Path
 import PyOpenColorIO as OCIO
 
@@ -29,8 +27,8 @@ class AYONHieroEffectsFileProcessor(object):
 
     _wrapper_class_members = dict(
         inspect.getmembers(operators, inspect.isclass))
-    _color_ops: List = []
-    _repo_ops: List = []
+    _color_ops: list = []
+    _repo_ops: list = []
 
     def __init__(
         self,
@@ -46,16 +44,16 @@ class AYONHieroEffectsFileProcessor(object):
         self.load()
 
     @property
-    def ocio_objects(self) -> List:
-        """List of OCIO objects to be processed."""
+    def ocio_objects(self) -> list:
+        """list of OCIO objects to be processed."""
         ops = []
         for op in self._color_ops:
             ops.append(op.to_ocio_obj())
         return ops
 
     @property
-    def repo_operators(self) -> Dict:
-        """List of repositioning operators to be processed."""
+    def repo_operators(self) -> dict:
+        """list of repositioning operators to be processed."""
         return self._repo_ops
 
     def load(self) -> None:
@@ -137,7 +135,7 @@ class AYONHieroEffectsFileProcessor(object):
         self._color_ops = []
         self._repo_ops = []
 
-    def get_oiiotool_cmd(self) -> List[str]:
+    def get_oiiotool_cmd(self) -> list[str]:
         """Returns arguments for oiiotool command."""
         args = []
         for oo in self.ocio_objects:

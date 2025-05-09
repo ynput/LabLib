@@ -5,13 +5,14 @@ TODO:
 """
 
 from __future__ import annotations
+
 import os
 import math
 import uuid
 import logging
 import subprocess
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import opentimelineio as otio
 
@@ -20,7 +21,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-def get_vendored_env() -> Dict[str, Any]:
+def get_vendored_env() -> dict[str, Any]:
     """Get a prepared copy of the current environment.
 
     Checks for the presence of ``$OCIO``, ``$LABLIB_OIIO`` and ``$LABLIB_FFMPEG`` and adds them to ``$PATH``.
@@ -30,7 +31,7 @@ def get_vendored_env() -> Dict[str, Any]:
         Run ``.\start.ps1 get-dependencies`` to download the vendored files.
 
     Returns:
-        Dict[str, Any]
+        dict[str, Any]
     """
     _parts = Path(__file__).parts[:-3]
     vendor_root = Path(*_parts, "vendor")
@@ -77,11 +78,11 @@ def get_vendored_env() -> Dict[str, Any]:
     return env
 
 
-def call_cmd(cmd: List[str], timeout=None, retries=0) -> Optional[str]:
+def call_cmd(cmd: list[str], timeout=None, retries=0) -> Optional[str]:
     """Run a syscall and return the output and error.
 
     :param cmd: The command to run.
-    :type cmd: List[str]
+    :type cmd: list[str]
     """
     out, err, proc = None, None, None
     env = get_vendored_env()
@@ -213,42 +214,42 @@ def get_staging_dir() -> str:
     )
 
 
-def zero_matrix() -> List[List[float]]:
+def zero_matrix() -> list[list[float]]:
     return [[0.0] * 3 for _ in range(3)]
 
 
-def identity_matrix() -> List[List[float]]:
+def identity_matrix() -> list[list[float]]:
     return translate_matrix([0.0, 0.0])
 
 
-def translate_matrix(t: List[float]) -> List[List[float]]:
+def translate_matrix(t: list[float]) -> list[list[float]]:
     return [[1.0, 0.0, t[0]], [0.0, 1.0, t[1]], [0.0, 0.0, 1.0]]
 
 
-def rotate_matrix(r: float) -> List[List[float]]:
+def rotate_matrix(r: float) -> list[list[float]]:
     rad = math.radians(r)
     cos = math.cos(rad)
     sin = math.sin(rad)
     return [[cos, -sin, 0.0], [sin, cos, 0.0], [0.0, 0.0, 1.0]]
 
 
-def scale_matrix(s: List[float]) -> List[List[float]]:
+def scale_matrix(s: list[float]) -> list[list[float]]:
     return [[s[0], 0.0, 0.0], [0.0, s[1], 0.0], [0.0, 0.0, 1.0]]
 
 
-def mirror_matrix(x: bool = False) -> List[List[float]]:
+def mirror_matrix(x: bool = False) -> list[list[float]]:
     direction = [1.0, -1.0] if not x else [-1.0, 1.0]
     return scale_matrix(direction)
 
 
-def mult_matrix(m1: List[List[float]], m2: List[List[float]]) -> List[List[float]]:
+def mult_matrix(m1: list[list[float]], m2: list[list[float]]) -> list[list[float]]:
     return [
         [sum(a * b for a, b in zip(m1_row, m2_col)) for m2_col in zip(*m2)]
         for m1_row in m1
     ]
 
 
-def mult_matrix_vector(m: List[List[float]], v: List[float]) -> List[float]:
+def mult_matrix_vector(m: list[list[float]], v: list[float]) -> list[float]:
     result = [0.0, 0.0, 0.0]
     for i in range(len(m)):
         for j in range(len(v)):
@@ -256,7 +257,7 @@ def mult_matrix_vector(m: List[List[float]], v: List[float]) -> List[float]:
     return result
 
 
-def flip_matrix(w: float) -> List[List[float]]:
+def flip_matrix(w: float) -> list[list[float]]:
     result = identity_matrix()
     chain = [translate_matrix([w, 0.0]), mirror_matrix(x=True)]
     for m in chain:
@@ -264,7 +265,7 @@ def flip_matrix(w: float) -> List[List[float]]:
     return result
 
 
-def flop_matrix(h: float) -> List[List[float]]:
+def flop_matrix(h: float) -> list[list[float]]:
     result = identity_matrix()
     chain = [translate_matrix([0.0, h]), mirror_matrix()]
     for m in chain:
@@ -272,7 +273,7 @@ def flop_matrix(h: float) -> List[List[float]]:
     return result
 
 
-def transpose_matrix(m: List[List[float]]) -> List[List[float]]:
+def transpose_matrix(m: list[list[float]]) -> list[list[float]]:
     res = identity_matrix()
     for i in range(len(m)):
         for j in range(len(m[0])):
@@ -280,7 +281,7 @@ def transpose_matrix(m: List[List[float]]) -> List[List[float]]:
     return res
 
 
-def matrix_to_44(m: List[List[float]]) -> List[List[float]]:
+def matrix_to_44(m: list[list[float]]) -> list[list[float]]:
     result = m
     result[0].insert(2, 0.0)
     result[1].insert(2, 0.0)
@@ -289,7 +290,7 @@ def matrix_to_44(m: List[List[float]]) -> List[List[float]]:
     return result
 
 
-def matrix_to_list(m: List[List[float]]) -> List[float]:
+def matrix_to_list(m: list[list[float]]) -> list[float]:
     result = []
     for i in m:
         for j in i:
@@ -297,7 +298,7 @@ def matrix_to_list(m: List[List[float]]) -> List[float]:
     return result
 
 
-def matrix_to_csv(m: List[List[float]]) -> str:
+def matrix_to_csv(m: list[list[float]]) -> str:
     l = []
     for i in m:
         for k in i:
@@ -306,8 +307,8 @@ def matrix_to_csv(m: List[List[float]]) -> str:
 
 
 def matrix_to_cornerpin(
-    m: List[List[float]], w: int, h: int, origin_upperleft: bool = True
-) -> List:
+    m: list[list[float]], w: int, h: int, origin_upperleft: bool = True
+) -> list:
     cornerpin = []
     if origin_upperleft:
         corners = [[0, h, 1], [w, h, 1], [0, 0, 1], [w, 0, 1]]
@@ -323,8 +324,8 @@ def matrix_to_cornerpin(
 
 
 def calculate_matrix(
-    t: List[float], r: float, s: List[float], c: List[float]
-) -> List[List[float]]:
+    t: list[float], r: float, s: list[float], c: list[float]
+) -> list[list[float]]:
     c_inv = [-c[0], -c[1]]
     center = translate_matrix(c)
     center_inv = translate_matrix(c_inv)

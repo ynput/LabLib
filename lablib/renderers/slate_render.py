@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import subprocess
 import shutil
-from typing import List
 
 from pathlib import Path
 
@@ -25,7 +24,7 @@ class SlateRenderer(RendererBase):
                 # data used to fill up the slate template
                 {
                     "project": {"name": "test_project"},
-                    "intent": {"value": "test_intent"},            
+                    "intent": {"value": "test_intent"},
                     "task": {"short": "test_task"},
                     "asset": "test_asset",
                     "comment": "some random comment",
@@ -54,8 +53,8 @@ class SlateRenderer(RendererBase):
         self._source_sequence = None
         self.source_sequence = source_sequence
 
-        self._thumbs: List = None
-        self._command: List = []
+        self._thumbs: list = None
+        self._command: list = []
 
     @property
     def slate_generator(self) -> SlateHtmlGenerator:
@@ -111,7 +110,7 @@ class SlateRenderer(RendererBase):
 
         Arguments:
             debug (Optional[bool]): Whether to increase log verbosity.
-        """        
+        """
         first_frame = min(self.source_sequence.imageinfos)
         timecode = offset_timecode(
             tc=first_frame.timecode,

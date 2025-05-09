@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 import logging
 import shutil
 import tempfile
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Optional, Set, Union
 
 from pathlib import Path
 
@@ -41,7 +41,7 @@ class Codec:
                 f"codecs.\n{SUPPORTED_CODECS = }"
             )
 
-    def get_ffmpeg_args(self) -> List[str]:
+    def get_ffmpeg_args(self) -> list[str]:
         """Get the ffmpeg arguments for the codec.
 
         TODO:
@@ -49,7 +49,7 @@ class Codec:
               settings of ``Extract Review``.
 
         Returns:
-            List[str]: The ffmpeg arguments.
+            list[str]: The ffmpeg arguments.
         """
         args = []
         # fmt: off
@@ -101,7 +101,7 @@ class Burnin:
             },
 
     Attributes:
-        data (Dict[str, str]): The text to be drawn and its positioning.
+        data (dict[str, str]): The text to be drawn and its positioning.
         size (int): The size of the text.
         padding (int): The padding around the text.
         color (Set[float]): The color of the text.
@@ -109,7 +109,7 @@ class Burnin:
         outline (Optional[int]): The outline size.
     """
 
-    data: Dict[str, str] = field(default_factory=dict)
+    data: dict[str, str] = field(default_factory=dict)
 
     size: int = field(default=64)
     padding: int = field(default=30)
@@ -125,11 +125,11 @@ class Burnin:
         if self.font:
             self._font = Path(self.font).resolve()
 
-    def get_oiiotool_args(self) -> List[str]:
+    def get_oiiotool_args(self) -> list[str]:
         """Get the OIIO arguments.
 
         Returns:
-            List[str]:
+            list[str]:
         """
         args = []
         width_token = r"{TOP.width}"
@@ -247,14 +247,14 @@ class BasicRenderer(RendererBase):
 
         return f"{self.__class__.__name__}({props[:-2]})"
 
-    def get_oiiotool_cmd(self, debug=False) -> List[str]:
+    def get_oiiotool_cmd(self, debug=False) -> list[str]:
         """Get arguments for rendering with OIIO.
 
         Arguments:
             debug (Optional[bool]): Whether to increase log verbosity.
 
         Returns:
-            List[str]: The OIIO arguments.
+            list[str]: The OIIO arguments.
         """
         input_path = Path(
             self.source_sequence.path, self.source_sequence.hash_string
@@ -285,11 +285,11 @@ class BasicRenderer(RendererBase):
 
         return cmd
 
-    def get_ffmpeg_cmd(self) -> List[str]:
+    def get_ffmpeg_cmd(self) -> list[str]:
         """Get arguments for rendering with ffmpeg.
 
         Returns:
-            List[str]: The ffmpeg arguments.
+            list[str]: The ffmpeg arguments.
         """
         cmd = ["ffmpeg", "-loglevel", "info", "-hide_banner"]
 
