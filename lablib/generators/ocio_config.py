@@ -444,27 +444,26 @@ class OCIOConfigFileGenerator:
             self.target_view_space.get("view")
             and self.target_view_space.get("display")
         ):
-            # config is > v2
             display = self.target_view_space["display"]
             view = self.target_view_space["view"]
             self._ocio_config.addDisplayView(
-                display,
-                self.context,
-                view,
+                display=display,
+                view=self.context,
+                displayColorSpaceName=display,
+                viewTransform=view,
                 looks=self.context,
             )
             if display not in self._displays:
                 self._displays.insert(0, display)
         else:
-            # config is < v2
             view_colorspace = (
                 self.target_view_space.get("colorspace")
                 or self.working_space
             )
             self._ocio_config.addDisplayView(
-                self._ocio_config.getActiveDisplays().split(",")[0],
-                self.context,
-                view_colorspace,
+                display=self._ocio_config.getActiveDisplays().split(",")[0],
+                view=self.context,
+                colorSpaceName=view_colorspace,
                 looks=self.context,
             )
 
