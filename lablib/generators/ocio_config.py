@@ -24,9 +24,13 @@ class OCIOConfigFileGenerator:
             objects.
         working_space (Optional[str]): The working space of the OCIO Config
             file.
-        target_view_space (Optional[str]): The target view space of the OCIO
+        target_display (Optional[str]): The target display space of the OCIO
+            Config file. Needs to be set together with target_view.
+        target_view (Optional[str]): The target view space of the OCIO
             Config file. For views to be using specific color spaces
             different from working space.
+        target_colorspace (Optional[str]): The target colorspace of the OCIO
+            Config file.
         views (Optional[list[str]]): A list of views.
         description (Optional[str]): The description of the OCIO Config file.
         staging_dir (Optional[str]): The staging directory of the OCIO Config
@@ -62,6 +66,7 @@ class OCIOConfigFileGenerator:
 
     _description: str
     _vars: dict[str, str] = {}
+    _displays: list[str] = []
     _views: list[str] = []
     _config_path: Path  # OCIO Config file
     _ocio_config: OCIO.Config  # OCIO Config object
@@ -73,35 +78,42 @@ class OCIOConfigFileGenerator:
     def __init__(
         self,
         context: str,
-        family: Optional[str] = None,
-        ocio_objects: Optional[list[OCIO.Transform]] = None,
-        config_path: Optional[str] = None,
-        working_space: Optional[str] = None,
-        target_view_space: Optional[str] = None,
-        views: Optional[list[str]] = None,
-        description: Optional[str] = None,
-        staging_dir: Optional[str] = None,
-        environment_variables: Optional[dict] = None,
-        search_paths: Optional[list[str]] = None,
-        logger: logging.Logger = None,
+        family: str | None = None,
+        ocio_objects: list[OCIO.Transform] | None = None,
+        config_path: Path | None = None,
+        data_space: str | None = None,
+        working_space: str | None = None,
+        target_display: str | None = None,
+        target_view: str | None = None,
+        target_colorspace: str | None = None,
+        displays: list[str] | None = None,
+        views: list[str] | None = None,
+        description: str | None = None,
+        staging_dir: str | None = None,
+        environment_variables: dict | None = None,
+        search_paths: list[str] | None = None,
+        logger: logging.Logger | None = None,
     ):
 
         # Context is required
         self.context = context
-
         self.family = family or "LabLib"
+        self.data_space = data_space or "lin_ap0"
+        self.working_space = working_space or "lin_ap1"
 
-        # Default working space
-        if working_space is None:
-            self.working_space = "ACES - ACEScg"
+        if all([target_view, target_display]):
+            self.target_view_space = {
+                "view": target_view,
+                "display": target_display,
+            }
         else:
-            self.working_space = working_space
+            self.target_view_space = {
+                "colorspace": target_colorspace,
+            }
 
-        # Default target view space
-        if target_view_space is None:
-            self.target_view_space = self.working_space
-        else:
-            self.target_view_space = target_view_space
+        # Default views
+        if displays:
+            self.set_displays(displays)
 
         # Default views
         if views:
@@ -124,6 +136,7 @@ class OCIOConfigFileGenerator:
 
         if config_path.is_file():
             self._config_path = config_path
+            self.set_ocio_config_name(config_path.name)
         else:
             raise FileNotFoundError(f"Config file not found: {config_path}")
 
@@ -162,6 +175,18 @@ class OCIOConfigFileGenerator:
             name (str): The name of the OCIO Config file.
         """
         self._ocio_config_name = name
+
+    def set_displays(self, *args: Union[str, list[str]]) -> None:
+        """Set the displays for the OCIO Config file.
+
+        Attention:
+            This will clear any existing displays.
+
+        Arguments:
+            *args: A list of displays.
+        """
+        self.clear_displays()
+        self.append_displays(*args)
 
     def set_views(self, *args: Union[str, list[str]]) -> None:
         """Set the views for the OCIO Config file.
@@ -206,6 +231,10 @@ class OCIOConfigFileGenerator:
         """Clear the ocio_objects."""
         self._ocio_objects = []
 
+    def clear_displays(self):
+        """Clear the displays."""
+        self._displays = []
+
     def clear_views(self):
         """Clear the views."""
         self._views = []
@@ -237,6 +266,18 @@ class OCIOConfigFileGenerator:
                 self.append_ocio_objects(*arg)
             else:
                 self._ocio_objects.append(arg)
+
+    def append_displays(self, *args: Union[str, list[str]]) -> None:
+        """Append displays.
+
+        Arguments:
+            *args: A list of displays.
+        """
+        for arg in args:
+            if isinstance(arg, list):
+                self.append_displays(*arg)
+            else:
+                self._displays.append(arg)
 
     def append_views(self, *args: Union[str, list[str]]) -> None:
         """Append views.
@@ -380,7 +421,7 @@ class OCIOConfigFileGenerator:
         self._ocio_config.setDescription(self._description)
         group_transform = OCIO.GroupTransform(self._ocio_objects)
         look_transform = OCIO.ColorSpaceTransform(
-            src=self.working_space, dst=self.context
+            src=self.data_space, dst=self.context
         )
         colorspace = OCIO.ColorSpace()
         colorspace.setName(self.context)
@@ -394,14 +435,43 @@ class OCIOConfigFileGenerator:
             processSpace=self.working_space,
             transform=look_transform
         )
+
         self._ocio_config.addColorSpace(colorspace)
         self._ocio_config.addLook(look)
-        self._ocio_config.addDisplayView(
-            self._ocio_config.getActiveDisplays().split(",")[0],
-            self.context,
-            self.target_view_space,
-            looks=self.context,
-        )
+
+        # distribute target view space data
+        if (
+            self.target_view_space.get("view")
+            and self.target_view_space.get("display")
+        ):
+            # config is > v2
+            display = self.target_view_space["display"]
+            view = self.target_view_space["view"]
+            self._ocio_config.addDisplayView(
+                display,
+                self.context,
+                view,
+                looks=self.context,
+            )
+            if display not in self._displays:
+                self._displays.insert(0, display)
+        else:
+            # config is < v2
+            view_colorspace = (
+                self.target_view_space.get("colorspace")
+                or self.working_space
+            )
+            self._ocio_config.addDisplayView(
+                self._ocio_config.getActiveDisplays().split(",")[0],
+                self.context,
+                view_colorspace,
+                looks=self.context,
+            )
+
+        if not self._displays:
+            displays_value = self._ocio_config.getActiveDisplays()
+        else:
+            displays_value = ",".join(self._displays)
 
         if not self._views:
             views_value = self._ocio_config.getActiveViews()
@@ -409,6 +479,7 @@ class OCIOConfigFileGenerator:
             views_value = ",".join(self._views)
 
         self._ocio_config.setActiveViews(f"{self.context},{views_value}")
+        self._ocio_config.setActiveDisplays(f"{displays_value}")
 
         for env_key, env_value in self._vars.items():
             self._ocio_config.addEnvironmentVar(env_key, env_value)
@@ -486,6 +557,6 @@ class OCIOConfigFileGenerator:
         return [
             "--colorconfig",
             self._dest_path,
-            (f'--ociolook:from="{self.working_space}"' f':to="{self.working_space}"'),
+            (f'--ociolook:from="{self.working_space}"' f':to="{self.data_space}"'),
             self.context,
         ]
