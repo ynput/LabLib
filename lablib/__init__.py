@@ -4,23 +4,14 @@ from .processors import (
     OIIORepositionProcessor,
 )
 
-from .generators import (
-    OCIOConfigFileGenerator,
-    SlateHtmlGenerator,
-)
+from .generators import OCIOConfigFileGenerator
 
-from .renderers import (
-    SlateRenderer,
-    BasicRenderer,
-)
-
+from .renderers import BasicRenderer
 __all__ = [
     "OCIOConfigFileGenerator",
     "AYONHieroEffectsFileProcessor",
     "AYONOCIOLookFileProcessor",
     "OIIORepositionProcessor",
-    "SlateHtmlGenerator",
-    "SlateRenderer",
     "BasicRenderer",
 ]
 
