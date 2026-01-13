@@ -51,12 +51,6 @@ def get_vendored_env() -> dict[str, Any]:
         env["OCIO"] = str(ocio_path)
         log.debug(f"{env['OCIO'] = }")
 
-    if oiio_root := env.get("LABLIB_OIIO"):
-        log.debug(f"Using oiiotool from {oiio_root}")
-    else:
-        log.info("LABLIB_OIIO environment variable not set. Using default.")
-        oiio_root = Path(vendor_root, "oiio", "windows")
-
     if ffmpeg_root := env.get("LABLIB_FFMPEG"):
         log.debug(f"Using ffmpeg from {ffmpeg_root}")
     else:
@@ -66,9 +60,6 @@ def get_vendored_env() -> dict[str, Any]:
         )
 
     paths = [Path(p) for p in env["PATH"].split(";")]
-    if oiio_root not in paths:
-        paths.insert(0, oiio_root)
-        log.debug(f"Insert into $PATH {oiio_root = }")
     if ffmpeg_root not in paths:
         log.debug(f"Insert into $PATH {ffmpeg_root = }")
         paths.insert(0, ffmpeg_root)
