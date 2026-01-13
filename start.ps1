@@ -97,14 +97,6 @@ function get_dependencies {
         New-Item -ItemType Directory -Path $vendor_root
     }
 
-    # ensure OpenImageIO
-    if (-not (Test-Path "$vendor_root\oiio\windows\oiiotool.exe")) {
-        $oiio_url = "https://www.patreon.com/file?h=63609827&i=10247677"
-        $oiio_zip = "$vendor_root\oiiotools2.3.10.zip"
-        Invoke-WebRequest -Uri $oiio_url -OutFile $oiio_zip
-        Expand-Archive -Path $oiio_zip -DestinationPath "$vendor_root\oiio\windows"
-    }
-
     # ensure OpenColorIO Config
     if (-not (Test-Path "$vendor_root\ocioconfig")) {
         $ocio_url = "https://github.com/colour-science/OpenColorIO-Configs/releases/download/v1.2/OpenColorIO-Config-ACES-1.2.zip"
